@@ -1,0 +1,70 @@
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{xspace}
+\usepackage{multirow}
+
+%% comments
+
+\newcommand{\aris}[1]{\noindent\textcolor{orange}{\textbf{[Aris:]}~{#1}}\xspace}
+\newcommand{\haoyun}[1]{\noindent\textcolor{blue}{\textbf{[Haoyun:]}~{#1}}\xspace}
+\newcommand{\todo}[1]{\noindent\textcolor{magenta}{\textbf{[To do:]}~{#1}}\xspace}
+
+%% paragraphs
+
+\newcommand{\para}[1]{{\noindent{\textbf{#1}}}}
+\newcommand{\spara}[1]{{\smallskip\noindent{\textbf{#1}}}}
+\newcommand{\mpara}[1]{{\medskip\noindent{\textbf{#1}}}}
+
+%% notation
+
+\newcommand{\reals}{\ensuremath{\mathbb{R}}\xspace}
+\newcommand{\bigO}{\ensuremath{\mathcal{O}}\xspace}
+\newcommand{\matr}[1]{\ensuremath{\mathbf{{#1}}}\xspace}
+\newcommand{\vect}[1]{\ensuremath{\mathbf{{#1}}}\xspace}
+\newcommand{\transmatrix}{\ensuremath{\matr{P}}\xspace}
+\newcommand{\newtransmatrix}{\ensuremath{\matr{R}}\xspace}
+\newcommand{\newtransmatrixopt}{\ensuremath{\newtransmatrix^{*}}\xspace}
+\newcommand{\vectx}{\ensuremath{\vect{x}}\xspace}
+\newcommand{\vecty}{\ensuremath{\vect{y}}\xspace}
+\newcommand{\vectv}{\ensuremath{\vect{v}}\xspace}
+\newcommand{\vecte}{\ensuremath{\vect{e}}\xspace}
+\newcommand{\vects}{\ensuremath{\vect{s}}\xspace}
+\newcommand{\prvector}{\ensuremath{\vect{p}}\xspace}
+\newcommand{\indvect}[1]{\ensuremath{\vect{1}_{#1}}\xspace} % indicator vector
+\newcommand{\graph}{\ensuremath{G}\xspace}
+\newcommand{\vertices}{\ensuremath{V}\xspace}
+\newcommand{\edges}{\ensuremath{E}\xspace}
+\newcommand{\novertices}{\ensuremath{n}\xspace}
+\newcommand{\noedges}{\ensuremath{m}\xspace}
+\newcommand{\vertexu}{\ensuremath{u}\xspace}
+\newcommand{\vertexv}{\ensuremath{v}\xspace}
+\newcommand{\unitary}{\ensuremath{\matr{I}}\xspace}
+\newcommand{\matrixU}{\ensuremath{\matr{U}}\xspace}
+\newcommand{\matrixE}{\ensuremath{\matr{E}}\xspace}
+\newcommand{\nogroups}{\ensuremath{g}\xspace}
+\newcommand{\agroup}{\ensuremath{k}\xspace}
+\newcommand{\grouppr}{\ensuremath{\phi}\xspace}
+\newcommand{\loss}{\ensuremath{L}\xspace}
+\newcommand{\lossprev}{\ensuremath{\loss_{\mathit{prev}}}\xspace}
+\newcommand{\losscross}{\ensuremath{\loss_{\mathit{cross}}}\xspace}
+\newcommand{\feasiblematrices}{\ensuremath{\mathcal{C}}\xspace}
+\newcommand{\resfeasiblematrices}{\ensuremath{\mathcal{C}^{\prime}}\xspace}
+\newcommand{\boundfactor}{\ensuremath{\delta}\xspace}
+\newcommand{\iter}{\ensuremath{{\mathit{iter}}}\xspace}
+
+%% problems
+
+\newcommand{\fpr}{\ensuremath{\phi}{\sc\small PR}\xspace}
+\newcommand{\cgfpr}{{\sc\small Cross}-{\fpr}\xspace}
+\newcommand{\resfpr}{{\sc\small R}-{\fpr}\xspace}
+\newcommand{\rescgfpr}{{\sc\small R}-{\cgfpr}\xspace}
+
+%% algorithms
+
+\newcommand{\fairgd}{{\texttt{FairGD}}\xspace}
+\newcommand{\yapprox}{{\texttt{yApprox}}\xspace}
+\newcommand{\project}{{\texttt{Project}}\xspace}
+\newcommand{\crossgd}{{\texttt{CrossGD}}\xspace}
+\newcommand{\pralgo}{{\texttt{PageRank}}\xspace}
+
+
