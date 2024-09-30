@@ -1040,57 +1040,6 @@ the fairness of PageRank scores but do not guarantee perfect fairness.
 
 \subsubsection{Fair Page\-Rank}
 
-\begin{table*}[htbp]
-	\centering
-	\caption{Blogs, varying target PageRank ratios. \\
-    Initial PageRank ratio: $[0.4835, 0.5165]$.}
-	\label{tab:blogs}
-	\begin{tabular}{cc|ccccc|ccccc}
-		\hline
-    \multirow{2}{*}{$\phi[1]$} & \multirow{2}{*}{$\phi[2]$} & \multicolumn{5}{c}{$L$ (Fairness loss)} & \multicolumn{5}{c}{$\delta$ (Relative change)} \\
-    \cline{3-7} \cline{8-12}
-    & & FairGD & LFPRU & LFPRN & FairWalk & CrossWalk & FairGD & LFPRU & LFPRN & FairWalk & CrossWalk \\
-
-		\hline
-    0.1 & 0.9 & 0.03049746 & 0.0000 & 0.0000 & 0.0271 & 0.0752 & 0.2815 & 0.6330 & 0.8178 & 0.5893 & 0.7798 \\
-    0.2 & 0.8 & 0.00335592 & 0.0000 & 0.0000 & 0.0165 & 0.0374 & 0.3523 & 0.5628 & 0.7299 & 0.5137 & 0.7239 \\
-    0.3 & 0.7 & 0.00000066 & 0.0000 & 0.0000 & 0.0083 & 0.0132 & 0.1016 & 0.5131 & 0.6630 & 0.4544 & 0.6674 \\
-    0.4 & 0.6 & 0.00000001 & 0.0000 & 0.0000 & 0.0028 & 0.0012 & 0.0276 & 0.4854 & 0.6239 & 0.4182 & 0.6401 \\
-    0.5 & 0.5 & 0.00000057 & 0.0000 & 0.0000 & 0.0001 & 0.0020 & 0.0040 & 0.4811 & 0.6180 & 0.4112 & 0.6596 \\
-    0.6 & 0.4 & 0.00000077 & 0.0000 & 0.0000 & 0.0006 & 0.0151 & 0.0347 & 0.5004 & 0.6461 & 0.4350 & 0.6448 \\
-    0.7 & 0.3 & 0.00000021 & 0.0000 & 0.0000 & 0.0046 & 0.0444 & 0.2020 & 0.5411 & 0.7042 & 0.4850 & 0.6801 \\
-    0.8 & 0.2 & 0.00873229 & 0.0000 & 0.0000 & 0.0122 & 0.0816 & 0.2430 & 0.6005 & 0.7856 & 0.5541 & 0.7661 \\
-    0.9 & 0.1 & 0.04409839 & 0.0000 & 0.0000 & 0.0237 & 0.1341 & 0.2575 & 0.6781 & 0.8840 & 0.6362 & 0.8209 \\
-    
-		\hline
-	\end{tabular}
-\end{table*}
-
-\begin{table*}[htbp]
-	\centering
-	\caption{Twitter, varying target PageRank ratios. \\
-    Initial PageRank ratio: $[0.4234, 0.5766]$.}
-	\label{tab:twitter}
-	\begin{tabular}{cc|ccccc|ccccc}
-		\hline
-    \multirow{2}{*}{$\phi[1]$} & \multirow{2}{*}{$\phi[2]$} & \multicolumn{5}{c}{$L$ (Fairness loss)} & \multicolumn{5}{c}{$\delta$ (Relative change)} \\
-    \cline{3-7} \cline{8-12}
-    & & FairGD & LFPRU & LFPRN & FairWalk & CrossWalk & FairGD & LFPRU & LFPRN & FairWalk & CrossWalk \\
-
-		\hline
-    0.1 &	0.9 & 0.12347248 & 0.0 & 0.0 & 0.0860 & 0.0987 & 0.5182 & 0.6097 & 0.6407 & 0.2312 & 0.5413 \\
-    0.2 &	0.8 & 0.04543222 & 0.0 & 0.0 & 0.0395 & 0.0470 & 0.5011 & 0.5548 & 0.5822 & 0.1986 & 0.5223 \\
-    0.3 &	0.7 & 0.00712386 & 0.0 & 0.0 & 0.0109 & 0.0142 & 0.4267 & 0.5157 & 0.5388 & 0.1699 & 0.4932 \\
-    0.4 &	0.6 & 0.00000043 & 0.0 & 0.0 & 0.0001 & 0.0004 & 0.0571 & 0.4955 & 0.5145 & 0.1475 & 0.5135 \\
-    0.5 &	0.5 & 0.00000083 & 0.0 & 0.0 & 0.0072 & 0.0060 & 0.3935 & 0.4958 & 0.5119 & 0.1345 & 0.5069 \\
-    0.6 &	0.4 & 0.00628326 & 0.0 & 0.0 & 0.0321 & 0.0312 & 0.7963 & 0.5168 & 0.5314 & 0.1338 & 0.4964 \\
-    0.7 &	0.3 & 0.04881410 & 0.0 & 0.0 & 0.0749 & 0.0746 & 0.7967 & 0.5560 & 0.5707 & 0.1455 & 0.5039 \\
-    0.8 &	0.2 & 0.13094114 & 0.0 & 0.0 & 0.1356 & 0.1383 & 0.7987 & 0.6101 & 0.6260 & 0.1670 & 0.5274 \\
-    0.9 &	0.1 & 0.25326871 & 0.0 & 0.0 & 0.2143 & 0.2209 & 0.7987 & 0.6761 & 0.6937 & 0.1951 & 0.5188 \\
-
-		\hline
-	\end{tabular}
-\end{table*}
 
 First, we study the condition under which $\phi$-fairness and cross-group $\phi$-fairness can be achieved by the FairGD and CrossGD algorithms. We run the FairGD on the Blogs and Twitter with a uniform restart vector. We vary the target PageRank scores of the two groups and record the fairness loss $L$ and the relative change to the transition matrix $\delta$ with FairGD and baselines. The results are shown in Table~\ref{tab:blogs} and Table~\ref{tab:twitter}.
 
@@ -1136,112 +1085,117 @@ In terms of the fairness loss, FairGD also outperforms FairWalk and CrossWalk.
 
 % We notice the relationship between the performance of FairGD and the modularity of the network.
 
-\haoyun{Is there a better way to show the tables?}
+\begin{figure*}[htbp] % Use figure* for spanning across two columns
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{fig/blogs_fairness Loss.pdf} % Avoid spaces in filename
+        \caption{Fairness loss with $\phi$ in $[0.1, \cdots, 0.9]$}
+        \label{fig:unconstraint_blog_loss}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{fig/blogs_Weight Change.pdf} % Avoid spaces in filename
+        \caption{Transition matrix weight change with $\phi$ in $[0.1, \cdots, 0.9]$}
+        \label{fig:unconstraint_blog_weight_change}
+    \end{subfigure}
+    \caption{Fairness loss and transition matrix weight change on the Blog dataset.}
+    \label{fig:unconstraint_phi_plot_blog}
+\end{figure*}
+\todo{
+1. show number of edges added or deleted by each alg. (why when phi = 0.1 the loss is higher than baselines?
+2. show the ranking coefficient before changing the transition matrix and after changing the matrix with different phi. Does the FairGD preserves the ranking?
+3. Can we find a counter example s.t. you cannot achieve certain fairness if you are not allowed to add or delete edges?
+4. revise the code to show 0.1 and 0.9 on the two end.
+)}
 
-\begin{table*}[htbp]
-	\centering
-	\caption{Multi-group datasets.}
-	\label{tab:multi}
-	\begin{tabular}{l|ccccc|ccccc}
-		\hline
-    \multirow{2}{*}{Dataset} & \multicolumn{5}{c}{$L$ (Fairness loss)} & \multicolumn{5}{c}{$\delta$ (Relative change)} \\
-    \cline{2-6} \cline{7-11}
-    & FairGD & LFPRU & LFPRN & FairWalk & CrossWalk & FairGD & LFPRU & LFPRN & FairWalk & CrossWalk \\
 
-		\hline
+\iffalse
+\begin{figure*}[htbp] % Use figure* for spanning across two columns
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{fig/blogs_fairness Loss__constraint_0.05.pdf} % Avoid spaces in filename
+        \caption{Fairness loss with $\phi$ in $[0.1, \cdots, 0.9]$}
+        \label{fig:constraint_blog_loss}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{fig/blogs_Weight Change__constraint_0.05.pdf} % Avoid spaces in filename
+        \caption{Transition matrix weight change with $\phi$ in $[0.1, \cdots, 0.9]$}
+        \label{fig:constraint_blog_weight_change}
+    \end{subfigure}
+    \caption{Fairness loss and transition matrix weight change on the Blog dataset with $\delta = 0.05$.}
+    \label{fig:constraint_phi_plot_blog}
+\end{figure*}
+\fi
+\begin{figure*}[htbp] % Use figure* for spanning across two columns
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{fig/soc-political-retweet_fairness Loss.pdf} % Avoid spaces in filename
+        \caption{Fairness loss with $\phi$ in $[0.1, \cdots, 0.9]$}
+        \label{fig:constraint_twitter_loss}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{fig/soc-political-retweet_Weight Change.pdf} % Avoid spaces in filename
+        \caption{Transition matrix weight change with $\phi$ in $[0.1, \cdots, 0.9]$}
+        \label{fig:constraint_twitter_weight_change}
+    \end{subfigure}
+    \caption{Fairness loss and transition matrix weight change on the Twitter dataset.}
+    \label{fig:unconstraint_phi_plot_twitter}
+\end{figure*}
 
-    Books & 0.00000099 & 0.0 & 0.0 & 0.0003 & 0.0005 & 0.1406 & 0.6053 & 0.6101 & 0.1803 & 0.6510 \\
 
-    Slashdot & 0.00000075 & 0.0 & 0.0 & 0.0003 & 0.0010 & 0.0601 & 0.6921 & 0.6929 & 0.2775 & 0.3287 \\
-
-    Google & 0.00000081 & 0.0 & 0.0 & 0.000007 & 0.000006 & 0.0043 & 0.8623 & 0.8560 & 0.3095 & 0.4835 \\
-
-		\hline
-	\end{tabular}
+\begin{table*}[h!]
+    \centering
+    \begin{tabular}{c|ccccccccc}
+        \hline
+        $\phi$ & $\delta = 0.05$ & $\delta = 0.1$ & $\delta = 0.15$ & $\delta = 0.2$ & $\delta = 0.25$ & $\delta = 0.3$ & Fairwalk & Crosswalk \\
+        \hline
+        0.1 & 103.7 & 100.8 & 98.97 & 97.20 & 95.50 & 93.94 & 133.4 & 123.9 \\
+        0.2 & 48.58 & 47.30 & 46.05 & 44.85 & 43.69 & 42.63 & 100.5 & 94.66 \\
+        0.3 & 14.50 & 13.80 & 13.13 & 12.49 & 11.88 & 11.35 & 88.72 & 85.43 \\
+        0.4 & 0.417 & 0.306 & 0.213 & 0.139 & 0.082 & 0.043 & 98.09 & 96.46 \\
+        0.5 & 5.431 & 5.008 & 4.600 & 4.209 & 3.831 & 5.862 & 128.6 & 128.2 \\
+        0.6 & 30.17 & 29.16 & 28.16 & 27.18 & 26.22 & 31.13 & 180.2 & 180.2 \\
+        0.7 & 74.91 & 73.31 & 71.73 & 70.15 & 68.59 & 76.36 & 253.0 & 252.6 \\
+        0.8 & 139.7 & 137.5 & 135.3 & 133.1 & 131.0 & 141.5 & 346.8 & 345.3 \\
+        0.9 & 224.4 & 221.6 & 218.9 & 216.1 & 213.3 & 226.7 & 461.8 & 458.0 \\
+        \hline
+    \end{tabular}
+    \caption{Fairness loss for the Twitter dataset, with rows corresponding to $\phi$ and columns to FairGD algorithm with$\delta \in [0.05, 0.3]$, fairwalk, and crosswalk. All values are multiplied by $10^{-3}$.}
+    \label{tab:constraint_twitter_loss}
 \end{table*}
 
-\haoyun{For google dataset, the initial PageRank scores are almost fair. Tried different numbers of partition but still fair.}
-
-\subsubsection{Cross-group Fair Page\-Rank}
-
-We now study \crossgd algorithm.
-
-\begin{table*}[htbp]
-	\centering
-	\caption{Cross-group fairness.}
-	\label{tab:cg}
-	\begin{tabular}{l|ccccc|ccccc}
-		\hline
-    \multirow{2}{*}{Dataset} & \multicolumn{5}{c}{$L$ (Fairness loss)} & \multicolumn{5}{c}{$\delta$ (Relative change)} \\
-    \cline{2-6} \cline{7-11}
-    & FairGD & LFPRU & LFPRN & FairWalk & CrossWalk & FairGD & LFPRU & LFPRN & FairWalk & CrossWalk \\
-
-		\hline
-
-    Books & 0.1074 & 0.0000 & 0.0000 & 0.1093 & 0.1208 & 0.6118 & NA & NA & 0.1803 & 0.6510 \\
-
-    Blogs & 0.0236 & 0.0000 & 0.0000 & 0.0431 & 0.1277 & 0.8882 & NA & NA & 0.4101 & 0.6316 \\
-
-    % Twitter & 
-
-    % Slashdot & 0.00000075 & 0.0 & 0.0 & 0.0003 & 0.0010 & 0.0601 & 0.6921 & 0.6929 & 0.2775 & 0.3287 \\
-
-    % Google & 0.00000081 & 0.0 & 0.0 & 0.000007 & 0.000006 & 0.0043 & 0.8623 & 0.8560 & 0.3095 & 0.4835 \\
-
-		\hline
-	\end{tabular}
+\begin{table*}[h!]
+    \centering
+    \begin{tabular}{c|ccccccccccc}
+        \hline
+        $\phi$ & $\delta = 0.05$ & $\delta = 0.1$ & $\delta = 0.15$ & $\delta = 0.2$ & $\delta = 0.25$ & $\delta = 0.3$ & $LFPR_U$ & $LFPR_N$ & Fairwalk & Crosswalk \\
+        \hline
+        0.1 & 22.98 & 46.23 & 76.79 & 93.08 & 141.99 & 193.89 & 609.7 & 640.7 & 231.2 & 575.5 \\
+        0.2 & 25.55 & 51.55 & 68.11 & 104.9 & 120.5 & 157.1 & 554.8 & 582.2 & 198.6 & 564.2 \\
+        0.3 & 26.50 & 53.81 & 70.03 & 108.9 & 123.97 & 124.8 & 515.7 & 538.8 & 169.9 & 542.7 \\
+        0.4 & 23.32 & 45.57 & 71.76 & 84.61 & 111.3 & 134.0 & 495.5 & 514.5 & 147.5 & 522.8 \\
+        0.5 & 22.21 & 39.18 & 61.93 & 88.09 & 105.8 & 0.119 & 495.8 & 511.9 & 134.5 & 540.4 \\
+        0.6 & 22.98 & 40.36 & 63.78 & 80.95 & 109.6 & 0.275 & 516.8 & 531.4 & 133.8 & 533.5 \\
+        0.7 & 21.82 & 43.68 & 69.06 & 87.36 & 105.5 & 0.430 & 555.9 & 570.7 & 145.5 & 549.5 \\
+        0.8 & 23.16 & 40.70 & 64.40 & 81.82 & 111.1 & 0.585 & 610.1 & 626.0 & 167.0 & 567.9 \\
+        0.9 & 21.15 & 42.34 & 66.98 & 85.15 & 102.7 & 0.738 & 676.1 & 693.7 & 195.1 & 590.1 \\
+        \hline
+    \end{tabular}
+    \caption{Transition matrix weight change for the Twitter dataset, with rows corresponding to $\phi$ and columns to FairGD algorithm with $\delta \in [0.05, 0.3]$, $LFPR_U$,$LFPR_N$, Fairwalk, and Crosswalk. All values are multiplied by $10^{-3}$.}
+    \label{tab:constraint_twitter_wdiff}
 \end{table*}
 
-\begin{table*}[htbp]
-  \centering
-	\caption{Fairness loss.}
-  \begin{tabular}{l|ccccc}
-    \hline
-    & FairGD & LFPRU & LFPRN & FairWalk & CrossWalk \\
-    \hline
-    Books & 0.00000099 & 0.0 & 0.0 & 0.00026933 & 0.00051765 \\
-    % Blogs & 0.00000075 & 0.0 & 0.0 & 0.0003 & 0.0010 \\
-    % Twitter & 0.00000081 & 0.0 & 0.0 & 0.000007 & 0.000006 \\
-    Slashdot & 0.00000075 & 0.0 & 0.0 & 0.00027270 & 0.00100066 \\
-    Google & 0.00000081 & 0.0 & 0.0 & 0.00000701 & 0.00000558 \\
-    \hline
-    
-  \end{tabular}
-\end{table*}
 
-\begin{table*}[htbp]
-  \centering
-	\caption{Fairness loss \loss.}
-  \begin{tabular}{l|ccccc}
-    \hline
-    & FairGD & LFPRU & LFPRN & FairWalk & CrossWalk \\
-    \hline
-    Books & 0.00000099 & 0.0 & 0.0 & 0.00026933 & 0.00051765 \\
-    Blogs & 0.00000075 & 0.0 & 0.0 & 0.00047937 & 0.00073687 \\
-    Twitter & 0.00000285 & 0.0 & 0.0 & 0.00056446 & 0.00105136 \\
-    Slashdot & 0.00000075 & 0.0 & 0.0 & 0.00027270 & 0.00100066 \\
-    Google & 0.00000081 & 0.0 & 0.0 & 0.00000701 & 0.00000558 \\
-    \hline
-    
-  \end{tabular}
-\end{table*}
 
-% \begin{table*}[htbp]
-%   \centering
-% 	\caption{Change to transition matrix.}
-%   \begin{tabular}{l|ccccc}
-%     \hline
-%     & FairGD & LFPRU & LFPRN & FairWalk & CrossWalk \\
-%     \hline
-%     Books & 0.00000099 & 0.0 & 0.0 & 0.00026933 & 0.00051765 \\
-%     Blogs & 0.00000075 & 0.0 & 0.0 & 0.00047937 & 0.00073687 \\
-%     Twitter & 0.00000285 & 0.0 & 0.0 & 0.00056446 & 0.00105136 \\
-%     Slashdot & 0.00000075 & 0.0 & 0.0 & 0.00027270 & 0.00100066 \\
-%     Google & 0.00000081 & 0.0 & 0.0 & 0.00000701 & 0.00000558 \\
-%     \hline
-    
-%   \end{tabular}
-% \end{table*}
+
 
 %%
 %% The acknowledgments section is defined using the "acks" environment
