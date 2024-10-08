@@ -5,13 +5,42 @@
 \usepackage{graphicx}
 \usepackage{subcaption} % For subfigures
 \usepackage{float} % For precise figure placement with [H]
+\usepackage{fixltx2e} % To use \textsubscript command
+\usepackage{cleveref}
 
 
 %% comments
 
 \newcommand{\aris}[1]{\noindent\textcolor{orange}{\textbf{[Aris:]}~{#1}}\xspace}
 \newcommand{\haoyun}[1]{\noindent\textcolor{blue}{\textbf{[Haoyun:]}~{#1}}\xspace}
-\newcommand{\todo}[1]{\noindent\textcolor{magenta}{\textbf{[To do:]}~{#1}}\xspace}
+\newcommand{\honglian}[1]{\noindent\textcolor{magenta}{\textbf{[Honglian:]}~{#1}}\xspace}
+\newcommand{\todo}[1]{\noindent\textcolor{red}{\textbf{[To Do:]}~{#1}}\xspace}
+
+
+
+%% Labels the equations within the section
+\numberwithin{equation}{section}
+% the theorems
+\newtheorem{nottobeused}{Nottobeused}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newtheorem{claim}{Claim}
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Problem}
+\newtheorem*{remark}{Remark}
+\newtheorem{example}{Example}
+\newtheorem{observation}{Observation}
+
+% Define solution environment
+\newenvironment{solution}
+    {\textit{Solution:}}
+    {}
+ \newenvironment{sketch}
+    {\textit{Sketch:}}
+    {} 
+
+    
 
 %% paragraphs
 
@@ -37,6 +66,8 @@
 \newcommand{\indvect}[1]{\ensuremath{\vect{1}_{#1}}\xspace} % indicator vector
 \newcommand{\graph}{\ensuremath{G}\xspace}
 \newcommand{\vertices}{\ensuremath{V}\xspace}
+\def\group_#1{\vertices_{#1}}
+\def\labelof_#1{\ensuremath{l}_{#1}}
 \newcommand{\edges}{\ensuremath{E}\xspace}
 \newcommand{\novertices}{\ensuremath{n}\xspace}
 \newcommand{\noedges}{\ensuremath{m}\xspace}
@@ -45,7 +76,7 @@
 \newcommand{\unitary}{\ensuremath{\matr{I}}\xspace}
 \newcommand{\matrixU}{\ensuremath{\matr{U}}\xspace}
 \newcommand{\matrixE}{\ensuremath{\matr{E}}\xspace}
-\newcommand{\nogroups}{\ensuremath{g}\xspace}
+\newcommand{\nogroups}{\ensuremath{C}\xspace}
 \newcommand{\agroup}{\ensuremath{k}\xspace}
 \newcommand{\grouppr}{\ensuremath{\phi}\xspace}
 \newcommand{\loss}{\ensuremath{L}\xspace}
@@ -63,12 +94,25 @@
 \newcommand{\resfpr}{{\sc\small R}-{\fpr}\xspace}
 \newcommand{\rescgfpr}{{\sc\small R}-{\cgfpr}\xspace}
 
-%% algorithms
+%% algorithms and Baselines
 
+\newcommand{\pagerank}{Page\-Rank\xspace}
 \newcommand{\fairgd}{{\texttt{FairGD}}\xspace}
 \newcommand{\yapprox}{{\texttt{yApprox}}\xspace}
 \newcommand{\project}{{\texttt{Project}}\xspace}
 \newcommand{\crossgd}{{\texttt{CrossGD}}\xspace}
 \newcommand{\pralgo}{{\texttt{PageRank}}\xspace}
+\newcommand{\fairwalk}{\textsf{\small FairWalk}\xspace}
+\newcommand{\crosswalk}{\textsf{\small CrossWalk}\xspace}
+\newcommand{\lfpru}{\textsf{\small LFPR\textsubscript{U}}\xspace}
+\newcommand{\lfprn}{\textsf{\small LFPR\textsubscript{N}}\xspace}
 
+
+
+% datasets
+\newcommand{\book}{\textsf{\small Book}\xspace}
+\newcommand{\blogs}{\textsf{\small Blogs}\xspace}
+\newcommand{\twitter}{\textsf{\small Twitter}\xspace}
+\newcommand{\slashdot}{\textsf{\small Slashdot}\xspace}
+\newcommand{\google}{\textsf{\small Google}\xspace}
 
