@@ -172,12 +172,54 @@ uncover patterns of influence, and mitigate vulnerabilities within networks.
 Link-analysis algorithms have been used in numerous applications, 
 including, web search, social-network analysis, and recommendation systems.
 
-% At a high level, the problem of fairness-aware PageRank~\citep{tsioutsiouliklis_fairness-aware_2021} can be formulated as follows.
+The problem of fairness-aware PageRank~\citep{tsioutsiouliklis_fairness-aware_2021} 
+can be broadly formulated as follows.
+We are interested in computing the PageRank scores
+on a graph whose vertices are partitioned into \nogroups groups, 
+where the partition is defined by, say, a protected attribute. 
+For simplicity let us assume $\nogroups=2$ and refer to the two groups 
+of vertices as \emph{red} and \emph{blue}.
+The fairness of the PageRank distribution is then evaluated
+based on the total PageRank scores assigned to \emph{red} and \emph{blue} vertices.
+We want to avoid situations where the PageRank mass is distributed unevenly (/unfairly) 
+between the two groups. 
+For example, given a target score $\phi$, 
+we say that PageRank is $\phi$-fair if the total PageRank of the \emph{red} group is equal to $\phi$.
 
-In this paper we present a new approach for incorporating fairness into the Page\-Rank algorithm,
-by reweighting the transition probabilities of the Page\-Rank matrix. 
+The task is to design an intervention strategy so that the PageRank
+scores of the graph vertices become $\phi$-fair, or ``close enough'' to being $\phi$-fair.
+Considering the PageRank algorithm, 
+there are different ways to design intervention strategies, including: 
+($i$)~modifying the PageRank restart probability;
+($ii$)~modifying the restart vector; 
+($iii$)~adding/deleting edges in/from the graph; 
+($iv$)~modifying the edge weights of the graph; or
+($v$)~combinations of the above.
+
+In this paper, we focus on intervention strategies of type ($iv$),
+namely, achieving fair PageRank by re\-weighting the graph edges.
+Our motivation is that such interventions are 
+\emph{intrinsic to the graph structure} and often easily actionable, 
+for example, edge re\-weighting can be achieved by 
+appropriate prioritizing/demoting content from one's connections in a social-media platform. 
+Intervention strategies of type ($iii$), i.e., edge additions/deletions, 
+are also intrinsic to the graph structure but often less actionable, 
+for example, they rely on link recommendations and have to account 
+for the probability of the recommendation being accepted. 
+In contrast, intervention strategies of type ($i$) and ($ii$), i.e., 
+modifying the PageRank restart probability or restart vector, are 
+\emph{extrinsic to the graph structure} and rely on tuning
+hyper-parameters of the PageRank algorithm. 
+In many cases, it is not meaningful, nor actionable, to modify those hyper-parameters.
+As an example, in the personalized PageRank algorithm the restart vector 
+has a clear interpretation, which is to model the interests of the user
+and is not amenable to~modification.
+
+Motivated by the above discussion, 
+we present a new approach to incorporate fairness into the Page\-Rank algorithm,
+by re\-weighting the transition probabilities of the Page\-Rank matrix. 
 More concretely, we formulate the problem of minimizing the Page\-Rank distance
-to a fair distribution, while allowing only for reweighting the network edges
+to a fair distribution, while allowing only for re\-weighting the network edges
 within prespecified limits. 
 With our formulation we can quantify and improve fairness 
 with respect to many vertex groups in the network.
@@ -192,21 +234,18 @@ to the target fairness objective.
 Our approach provides an actionable environment for achieving fairness in Page\-Rank-type methods, 
 as the new edge weights, computed by our method, 
 can be used to suggest concrete changes in the network ecosystem,
-e.g., reweighting and prioritizing the feed of users in a social network. 
+e.g., re\-weighting and prioritizing the feed of users in a social network. 
 
-We propose a projected gradient descent method for computing locally-optimal edge reweightings
+We propose a projected gradient descent method for computing locally-optimal edge re\-weightings
 and we show how it can be implemented efficiently. 
 We empirically compare our approach with state-of-the-art baselines
 and demonstrate the efficacy of our method, 
 where very small changes in the transition matrix lead to significant improvement 
 in the fairness of the Page\-Rank algorithm.
 
-
 \citet{tsioutsiouliklis_fairness-aware_2021} measure the importance of a group by the total Page\-Rank scores of vertices in the group. They rebalance the graph such that the Page\-Rank vector is $\grouppr$-fair, i.e., the total Page\-Rank scores of vertices in the protected group is $\grouppr$. We extend this work to multiple groups. Additionally, instead of having the total Page\-Rank scores in the groups exactly equal to $\grouppr$, we would like to approximate the total Page\-Rank scores in the groups to $\grouppr$. 
 
 \aris{List of contributions below: 
-(Haoyun: feel free to edits the contributions, 
-and list additional contributions, as you consider appropriate.)
 \begin{itemize}
 \item New fairness definition of Page\-Rank, based on matrix reweighting and 
         not changing the network topology.
