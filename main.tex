@@ -206,6 +206,7 @@ Compared to intervention strategies of type ($iv$) and ($iii$), type ($i$) and (
 
 \aris{We can also say that previous methods enforce fairness at each node (we can say that this is a ``local''-fairness notion), but this is too strict, and it motivates us to ask the question whether can have ``global'' fairness without requiring ``local'' fairness.
 Essentially, the question we address in this paper is: it is easy to see that local-fairness implies global-fairness, but can we have global-fairness without necessarily having local-fairness?}
+\todo{Maybe this part could be moved to the related work, by adding a short paragraph of discussions.}
 
 Motivated by the above discussion, we present a new approach to incorporate fairness into the \pagerank algorithm by re\-weighting the transition probabilities of the \pagerank matrix. 
 More concretely, we formulate the problem of minimizing the \pagerank distance to a fair distribution while allowing only for re\-weighting the network edges within prespecified limits. 
@@ -239,7 +240,8 @@ in the fairness of the \pagerank algorithm.
 
 In recent years, algorithmic fairness in graph mining has emerged as a significant area of research (for a comprehensive survey, see \citep{saxena2024fairsna}). This paper focuses on enhancing fairness within the well-known PageRank algorithm, which has been widely utilized for tasks such as node ranking, classification, and community detection. Considering fairness, the algorithm should allocate pagerank to nodes in a manner that considers both the nodes' group affiliations and the overall structure of the network \citep{tsioutsiouliklis_fairness-aware_2021,saxena2024fairsna}.
 
-In the vanilla \pagerank algorithm, a random walk moves from one node to its neighbors with equal probability, proportional to the node's degree. To address potential group bias, FairWalk \citep{rahman_fairwalk_2019} introduces equal transition probabilities across all groups within a node's neighborhood. CrossWalk \citep{khajehnejad_crosswalk_2022} further refines this approach by considering the local group structure and reweighting edges based on their distance from group boundaries. Both FairWalk and CrossWalk adjust the transition matrix using heuristic-based methods.
+In the naive \pagerank algorithms \citep{gleich_pagerank_2015,brin_anatomy_1998,tabrizi2013personalized}, a random walk moves from one node to its neighbors with equal probability, proportional to the node's degree. In the literature, a few analytical studies \citep{espin2022inequality,ghoshal2011ranking} have unveild the inequality (unfairness) of \pagerank.
+To address potential group bias, FairWalk \citep{rahman_fairwalk_2019} introduces equal transition probabilities across all groups within a node's neighborhood. CrossWalk \citep{khajehnejad_crosswalk_2022} further refines this approach by considering the local group structure and reweighting edges based on their distance from group boundaries. Both FairWalk and CrossWalk adjust the transition matrix using heuristic-based methods.
 
 \citet{tsioutsiouliklis_fairness-aware_2021} introduce a novel fairness metric for \pagerank and propose two algorithm families: FSPR and LFPRs. FSPR retains the original graph structure and edge weights, while seeking an optimal jump vector to minimize the disparity between the fair \pagerank vector and the original \pagerank vector, subject to fairness constraints. Similar to FairWalk and CrossWalk, LFPRs aim to achieve fairness at the individual vertex level and include three variations: $LFPR_N$, $LFPR_U$, and $LFPR_P$. Each variation reweights the transition matrix in a distinct way while incorporating a fair jump vector. Although the authors suggest that FSPR and LFPRs could be extended to scenarios involving more than two groups, they do not provide details on the specific mechanisms for such extensions.
 
@@ -608,7 +610,7 @@ In this section, we propose a projected gradient-descent algorithm
 for finding the optimal transition matrix $\newtransmatrix$ for the \phiPageRank problem. 
 We then extend the algorithm to solve the group-adapted \phiPageRank problem.
 
-\subsection{Projected gradient descent for \phiPageRank}
+\subsection{Projected gradient descent for $\groupDist$-\pagerank}
 
 We first derive the gradient of the fairness loss function 
 $\loss(\transmatrix, \gamma, \vectv)$ 
@@ -1029,7 +1031,8 @@ the fairness of PageRank scores but do not guarantee perfect fairness.
 \subsubsection{\pagerank}
 
 
-First, we study the condition under which $\phi$-fairness and group-adpated $\phi$-fairness can be achieved by the FairGD and CrossGD algorithms. We run the FairGD on the Blogs and Twitter with a uniform restart vector. We vary the target PageRank scores of the two groups and record the fairness loss $L$ and the relative change to the transition matrix $\delta$ with FairGD and baselines. The results are shown in Table~\ref{tab:blogs} and Table~\ref{tab:twitter}.
+First, we study the condition under which $\phi$-fairness and group-adpated $\phi$-fairness can be achieved by the FairGD and CrossGD algorithms. We run the FairGD on the Blogs and Twitter with a uniform restart vector. We vary the target PageRank scores of the two groups and record the fairness loss $L$ and the relative change to the transition matrix $\delta$ with FairGD and baselines. 
+% The results are shown in Table~\ref{tab:blogs} and Table~\ref{tab:twitter}.
 
 \haoyun{We can add a null baseline that does not change the transition matrix, to show the initial fairness loss.}
 
@@ -1055,7 +1058,7 @@ Each figure shows a metric (fairness loss or relative change) with respect to th
 The Blogs and Twitter datasets contain two groups.
 We vary the target \pagerank scores of the two groups
 from 0.2 to 0.8 and from 0.8 to 0.2, respectively.
-As shown in Table~\ref{tab:blogs} and Table~\ref{tab:twitter},
+% As shown in Table~\ref{tab:blogs} and Table~\ref{tab:twitter},
 when the target \pagerank scores are close to the initial \pagerank scores,
 FairGD has a significantly smaller relative change to the transition matrix
 than LFBRU and LFBRN, while having an almost zero fairness loss.
@@ -1064,7 +1067,7 @@ In these cases, FairGD also outperforms FairWalk and CrossWalk in terms of the F
 The other datasets contain more than two groups. 
 We set the target PageRank scores $\phi$ proportional to the number of vertices in each group, 
 indicating the demographic parity. 
-From Table~\ref{tab:multi}, we observe that the FairGD algorithm achieves
+% From Table~\ref{tab:multi}, we observe that the FairGD algorithm achieves
 $\phi$-fairness in PageRank scores for all datasets,
 with the fairness loss close to zero.
 In terms of the relative change to the transition matrix,
