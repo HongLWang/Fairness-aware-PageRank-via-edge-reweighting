@@ -29,7 +29,7 @@
 
 
 \begin{abstract}
-Link-analysis algorithms, such as \pagerank, are instrumental in understanding the structural dynamics of networks by evaluating the importance and influence of individual nodes based on their connectivity patterns. Recently, with the rising importance of responsible AI, the question of fairness in link-analysis algorithms has gained traction.
+Link-analysis algorithms, such as \pagerank, are instrumental in understanding the structural dynamics of networks by evaluating the importance and influence of individual vertices based on their connectivity patterns. Recently, with the rising importance of responsible AI, the question of fairness in link-analysis algorithms has gained traction.
 
 In this paper, we present a new approach for incorporating group fairness into the \pagerank algorithm by reweighting the transition probabilities in the underlying transition matrix. We formulate the problem of achieving fair \pagerank by seeking to minimize the fairness loss, which is the difference between the original group-wise \pagerank distribution and a target \pagerank distribution. We further define a group-adapted fairness notion, which accounts for group homophily by considering random walks with group-biased restart for each group.
 Since the fairness loss is non-convex, we propose an efficient projected gradient-descent method for computing locally optimal edge weights. Unlike earlier approaches, we do not recommend adding new edges to the network, nor do we adjust the restart vector. Instead, we keep the topology of the underlying network unchanged and only modify the relative importance of existing edges. We empirically compare our approach with state-of-the-art baselines and demonstrate the efficacy of our method, where very small changes in the transition matrix lead to significant improvement in the fairness of the \pagerank algorithm.
@@ -123,31 +123,41 @@ and never use \texttt{$\backslash$cite}.}
 Machine-learning algorithms and data-driven decision making are playing 
 increasingly crucial roles in our lives, 
 impacting job markets, healthcare, government, industry, and education. 
-However, as reliance on automated decisions grows, 
+As reliance on automated decisions grows, however, 
 so does the concern for fairness in algorithms. 
 Ensuring that machine-learning algorithms are reliable
 and satisfy strong notions of fairness
 has become an issue of societal concern and, 
 justifiably, has received significant attention in the computer-science literature \citep{fu2022fair,kearns2017fair}.
-Up to date, algorithmic fairness has been studied for
+To date, algorithmic fairness has been studied for
 many different tasks of primarily supervised~\citep{hardt2016equality,joseph2016fairness,pedreshi2008discrimination,zemel2013learning},
 but also unsupervised learning~\citep{bera2019fair,chen2019proportionally,chierichetti2017fair}.
 In the context of network algorithms, 
 which is the focus of this paper, 
 a few different approaches for fairness-aware link analysis 
-have been proposed ~\citep{khajehnejad_crosswalk_2022,rahman_fairwalk_2019,tsioutsiouliklis_fairness-aware_2021,tsioutsiouliklis_link_2022,zeng_fair_2021}.
+have been proposed \citep{khajehnejad_crosswalk_2022,rahman_fairwalk_2019,tsioutsiouliklis_fairness-aware_2021,tsioutsiouliklis_link_2022,zeng_fair_2021}.
 However, the topic has received significantly less attention
 than the study of fairness in other machine-learning problems. 
 
-Link-analysis algorithms such as the \pagerank series are fundamental tools for analyzing large-scale network data, to name a few \citep{tabrizi2013personalized,gleich_pagerank_2015,wang2020personalized,bahmani2012pagerank,kay2021identification}.
-These \pagerank algorithms quantify the importance or relevance of nodes within a network based on their connections and the quality of those connections, provide a means to identify authoritative nodes \citep{wang2020personalized}, detect communities \citep{tabrizi2013personalized}, uncover patterns of influence \citep{liu2017influence}, and mitigate vulnerabilities within networks \citep{kay2021identification}. From the application aspect, the \pagerank algorithms have been successfully used in domains including web search, social network analysis, and recommendation systems.
+Link-analysis algorithms, such as the \pagerank family of methods, 
+are fundamental tools for analyzing large-scale network data 
+\citep{tabrizi2013personalized,gleich_pagerank_2015,wang2020personalized,bahmani2012pagerank,kay2021identification}.
+These \pagerank algorithms quantify the importance or relevance of vertices within a network 
+based on their connections and the quality of those connections, 
+providing a means to identify authoritative vertices \citep{wang2020personalized}, 
+detect communities \citep{tabrizi2013personalized}, 
+uncover patterns of influence \citep{liu2017influence}, and 
+mitigate vulnerabilities within networks \citep{kay2021identification}. 
+From the application aspect, \pagerank algorithms have been used successfully in 
+many different domains including web search, social network analysis, and recommendation systems.
 
 % Link-analysis algorithms, such as the \pagerank series (to name a few \citep{tabrizi2013personalized,gleich_pagerank_2015,wang2020personalized,bahmani2012pagerank,kay2021identification}), are fundamental tools for analyzing large-scale network data. 
-% These \pagerank algorithms quantify the importance or relevance of nodes within a network based on their connections and the quality of those connections, provide a means to identify authoritative nodes \citep{wang2020personalized}, detect communities \citep{tabrizi2013personalized}, uncover patterns of influence \citep{liu2017influence}, and mitigate vulnerabilities within networks \citep{kay2021identification}. 
+% These \pagerank algorithms quantify the importance or relevance of vertices within a network based on their connections and the quality of those connections, provide a means to identify authoritative vertices \citep{wang2020personalized}, detect communities \citep{tabrizi2013personalized}, uncover patterns of influence \citep{liu2017influence}, and mitigate vulnerabilities within networks \citep{kay2021identification}. 
 % Link-analysis algorithms have been used in numerous applications, 
 % including web search, social network analysis, and recommendation systems.
 
-
+\vspace{1mm}
+\para{Fairness-aware \pagerank.}
 The problem of fairness-aware PageRank~\citep{tsioutsiouliklis_fairness-aware_2021} 
 can be broadly formulated as follows.
 We are interested in computing the \pagerank scores
@@ -157,10 +167,11 @@ For simplicity, let us assume $\nogroups=2$ and refer to the two groups
 of vertices as \emph{red} and \emph{blue}.
 The fairness of the \pagerank distribution is then evaluated
 based on the total \pagerank scores assigned to \emph{red} and \emph{blue} vertices.
-We want to avoid situations where the \pagerank mass is distributed unevenly (/unfairly) 
+We would like to avoid situations where the \pagerank mass is distributed unevenly (/unfairly) 
 between the two groups. 
-For example, given a target score tuple $\groupDist = (\phi_{red}, \phi_{blue})$, 
-we say that \pagerank is $\groupDist $-fair if the total \pagerank scores of the \emph{red} group is equal to $\phi_{red}$.
+For example, given a target score tuple $\groupDist = (\phi_\mathrm{red}, \phi_\mathrm{blue})$, 
+we say that \pagerank is $\groupDist $-fair if the total \pagerank score of the
+vertices in the \emph{red} group is equal to~$\phi_\mathrm{red}$.
 
 % \iffalse
 % For example, given a target score $\phi$, 
@@ -168,9 +179,10 @@ we say that \pagerank is $\groupDist $-fair if the total \pagerank scores of the
 % \honglian{I want to define the fairness as a tuple, $(\phi_1, \cdots, \phi_K)$}
 % \fi
 
-
+\vspace{1mm}
+\para{Intervention strategies.}
 The task is to design an intervention strategy so that the \pagerank
-scores of the graph vertices become $\phi$-fair, or ``close enough'' to $\phi$-fair.
+scores of the graph vertices become $\groupDist$-fair, or ``close enough'' to $\groupDist$-fair.
 Considering the \pagerank algorithm, 
 there are different ways to design intervention strategies, including: 
 ($i$)~modifying the \pagerank restart probability;
@@ -182,9 +194,17 @@ there are different ways to design intervention strategies, including:
 In this paper, we focus on intervention strategies of type ($iv$),
 namely, achieving fair \pagerank by re\-weighting the graph edges.
 Our motivation is that such interventions are 
-\emph{intrinsic to the graph structure} and often easily actionable. For example, edge re\-weighting can be achieved by appropriately prioritizing/demoting content from one's connections in a social network. Similarly, strategies of type ($iii$) involving edge additions or deletions are also intrinsic to the graph structure but tend to be less practical. These strategies rely on link recommendations and have to account for the likelihood of acceptance, making them more complex to implement.
-To illustrate this point, consider the context of ranking transportation routes. Adjusting edge weights to prioritize underserved areas or to mitigate biases in ridership data (e.g., historical neglect of specific neighborhoods) is typically easier than adding new routes or removing existing ones. 
+\emph{intrinsic to the graph structure} and often can be implemented with actionable operations. 
+For example, edge re\-weighting can be achieved by appropriately prioritizing/demoting content from one's connections in a social network. Similarly, strategies of type ($iii$) involving edge additions or deletions are also intrinsic to the graph structure but tend to be less practical. These strategies rely on link recommendations and have to account for the likelihood of acceptance, making them more complex to implement.
+To illustrate this point, consider the context of ranking transportation routes. Adjusting edge weights to prioritize under\-served areas or to mitigate biases in ridership data (e.g., historical neglect of specific neighborhoods) is typically easier than adding new routes or removing existing ones. 
+
+\aris{The example with the transportation is nice, 
+but reviewers may complain about its relevance to the web conference.
+Can you think of a nice example in the context of the Web?
+Alternatively, it can be omitted, especially since introduction is long.}
+
 Compared to intervention strategies of type ($iv$) and ($iii$), type ($i$) and ($ii$) strategies, i.e., modifying the \pagerank restart probability or restart vector is \emph{extrinsic to the graph structure} and rely on tuning hyper-parameters of the \pagerank algorithm. In many cases, it is not meaningful, nor actionable, to modify those hyper-parameters. For example, in the personalized \pagerank algorithm, the restart vector has a clear interpretation, which is to model the user interests and is not amenable to modification.
+
 
 % In this paper, we focus on intervention strategies of type ($iv$),
 % namely, achieving fair \pagerank by re\-weighting the graph edges.
@@ -204,52 +224,90 @@ Compared to intervention strategies of type ($iv$) and ($iii$), type ($i$) and (
 % For example, in the personalized \pagerank algorithm, the restart vector has a clear interpretation, which is to model the user interests
 % and is not amenable to modification.
 
-\aris{We can also say that previous methods enforce fairness at each node (we can say that this is a ``local''-fairness notion), but this is too strict, and it motivates us to ask the question whether can have ``global'' fairness without requiring ``local'' fairness.
-Essentially, the question we address in this paper is: it is easy to see that local-fairness implies global-fairness, but can we have global-fairness without necessarily having local-fairness?}
-\todo{Maybe this part could be moved to the related work, by adding a short paragraph of discussions.}
+\vspace{1mm}
+\para{Locally-\,vs.~globally-fair \pagerank.}
+Existing papers 
+\citep{khajehnejad_crosswalk_2022,rahman_fairwalk_2019,tsioutsiouliklis_fairness-aware_2021} 
+make the observation 
+that if fairness is ensured at each step of the random walk 
+that underlies the \pagerank computation,
+then fairness is guaranteed for the final \pagerank distribution.
+Ensuring fairness at each step (which we call locally-fair \pagerank)
+translates to having equal probability of visiting all groups from each vertex. 
+While this is a sound approach, 
+the requirement of locally-fair \pagerank can be too rigid and may lead to a
+disproportionate modification of the graph structure or the edge weights. 
+Instead, in this paper, we pose the question of whether it is possible to 
+achieve globally-fair \pagerank without having to impose the strict requirement of 
+locally-fair \pagerank. 
+As we will see, we answer this question in the~affirmative.
 
+\vspace{1mm}
+\para{Our approach.}
 Motivated by the above discussion, we present a new approach to incorporate fairness into the \pagerank algorithm by re\-weighting the transition probabilities of the \pagerank matrix. 
-More concretely, we formulate the problem of minimizing the \pagerank distance to a fair distribution while allowing only for re\-weighting the network edges within prespecified limits. 
+More concretely, we formulate the problem of minimizing the \pagerank distance to a fair distribution while allowing only for re\-weighting the network edges within pre\-specified limits. 
 With our formulation, we can quantify and improve fairness with respect to many vertex groups in the network.
-Unlike earlier approaches, we do not recommend that new edges be added to the network, nor do we adjust the restart vector. 
-Instead, we keep the topology of the underlying network unchanged and only modify the relative importance of existing edges. 
-If perfect fairness cannot be achieved with the permissible transition-matrix modifications, our formulation aims to find a solution as close as possible to the target fairness objective.
-Our approach provides an actionable environment for achieving fairness in \pagerank-type methods, as the new edge weights, computed by our method, can be used to suggest concrete changes in the network ecosystem, e.g., re\-weighting and prioritizing the feed of users in a social network. 
+Unlike earlier approaches, 
+we do not recommend that new edges be added to the network, nor do we adjust the restart vector. 
+Instead, we keep the topology of the underlying network unchanged and 
+only modify the relative importance of existing edges. 
+Additionally, we aim for globally-fair \pagerank, without requiring local fairness at each vertex.
+If perfect fairness cannot be achieved with the permissible transition-matrix modifications, 
+our formulation aims to find a solution as close as possible to the target fairness objective.
+Our approach provides an actionable environment for achieving fairness in \pagerank-type methods, 
+as the new edge weights, computed by our method, 
+can be used to suggest concrete changes in the network ecosystem, e.g., 
+re\-weighting and prioritizing the feed of users in a social network. 
 
 We propose a projected gradient descent method for computing locally-optimal edge re\-weightings and show how it can be implemented efficiently. 
 We empirically compare our approach with state-of-the-art baselines
-and demonstrate the efficacy of our method, where very small changes in the transition matrix lead to significant improvement 
+and demonstrate the efficacy of our method, 
+where small changes in the transition matrix lead to significant improvement 
 in the fairness of the \pagerank algorithm.
 
+\iffalse
 \citet{tsioutsiouliklis_fairness-aware_2021} measure the importance of a group by the total \pagerank scores of vertices in the group. They rebalance the graph such that the \pagerank vector is $\grouppr$-fair, i.e., the total \pagerank scores of vertices in the protected group is $\grouppr$. We extend this work to multiple groups. Additionally, instead of having the total \pagerank scores in the groups exactly equal to $\grouppr$, we would like to approximate the total \pagerank scores in the groups to $\grouppr$. 
+\fi
 
-\aris{List of contributions below: 
-\begin{itemize}
-\item New fairness definition of \pagerank, based on matrix reweighting and 
-        not changing the network topology.
-\item minimize the loss function with respect to target fairness
-\item notion extends to $k$ groups, and group-adapted fairness
-\item gradient descent method converges to local optimum
-\item intuitive interpretation of gradient
-\item efficient computation via approximation of power iteration
-\item experimentally, method outperfroms baselines and makes very small changes in the transition matrix
+\vspace{1mm}
+\para{Contributions.}
+In concrete, we make the following contributions.
+\begin{itemize}[leftmargin=*]
+\item 
+We present a new approach for incorporating group fairness into the \pagerank algorithm 
+by re\-weighting the transition probabilities in the transition matrix. 
+% Unlike earlier approaches, we do not recommend adding new edges to the network,  nor do we adjust the restart vector.  Instead, we keep the topology of the underlying network unchanged and only modify the relative importance of existing edges.
+We aim to find a solution as close as possible to the target fairness objective, 
+with minimal modifications in the transition matrix.
+\item 
+We aim for globally-fair \pagerank without the strict requirement of achieving 
+local fairness at each vertex.
+This can lead to solutions with smaller modifications in the transition matrix.
+\item 
+We introduce a novel group-adapted fairness notion, 
+which accounts for group homophily by considering random walks with group-biased restart for each group.
+\item 
+We propose an efficient projected gradient-descent method for finding optimal edge weights.
+\item 
+We empirically compare our approach with state-of-the-art baselines and demonstrate the efficacy of our method, 
+where very small changes in the transition matrix lead to significant improvement in the fairness of the \pagerank algorithm.
 \end{itemize}
-}
+
 
 \section{Related Work}
 
-In recent years, algorithmic fairness in graph mining has emerged as a prominent area of research --- for a comprehensive survey, see the recent paper by \citet{saxena2024fairsna}. This paper focuses on enhancing fairness in the content of the well-known \pagerank algorithm, which has been widely utilized for tasks such as node ranking, classification, and community detection. The objective in accounting for a fairness notion in the context of \pagerank, is to enable allocating \pagerank scores to nodes in a manner that considers both the nodes' group affiliations and the overall structure of the network~\citep{tsioutsiouliklis_fairness-aware_2021,saxena2024fairsna}.
+In recent years, algorithmic fairness in graph mining has emerged as a prominent area of research --- for a comprehensive survey, see the recent paper by \citet{saxena2024fairsna}. This paper focuses on enhancing fairness in the content of the well-known \pagerank algorithm, which has been widely utilized for tasks such as vertex ranking, classification, and community detection. The objective in accounting for a fairness notion in the context of \pagerank, is to enable allocating \pagerank scores to vertices in a manner that considers both the vertices' group affiliations and the overall structure of the network~\citep{tsioutsiouliklis_fairness-aware_2021,saxena2024fairsna}.
 
 In the standard \pagerank algorithm \citep{gleich_pagerank_2015,brin_anatomy_1998,tabrizi2013personalized}, 
-a random-walk process defines the transition from one node to its neighbors,
-each transition being made with equal probability, proportional to the node's degree, 
-while also with certain probability considering a ``jump'' to one of the nodes defined by a restart vector.
-When considering the group association of nodes, defined by a protected attribute, 
+a random-walk process defines the transition from one vertex to its neighbors,
+each transition being made with equal probability, proportional to the vertex's degree, 
+while also with certain probability considering a ``jump'' to one of the vertices defined by a restart vector.
+When considering the group association of vertices, defined by a protected attribute, 
 analytical studies in the literature~\citep{espin2022inequality,ghoshal2011ranking} 
 have unveild the unfairness of \pagerank.
 To address such potential group bias, 
 FairWalk \citep{rahman_fairwalk_2019} proposes to modify the transition matrix of the random walk
-so that the transition probabilities from each node to all groups become equal. 
+so that the transition probabilities from each vertex to all groups become equal. 
 CrossWalk \citep{khajehnejad_crosswalk_2022} further refines this idea by considering 
 the local group structure and reweighting edges based on their distance from group boundaries. 
 Both FairWalk and CrossWalk adjust the transition matrix using heuristic-based methods.
@@ -279,13 +337,13 @@ Other papers consider the problem of infusing fairness into rankings
 without focusing specifically into the \pagerank algorithm.
 For instance, \citet{krasanakis_applying_2021} propose a model that 
 weights training samples to make classifiers fair and 
-adapt it to estimate an unbiased personalization that yields fairer node ranks. 
+adapt it to estimate an unbiased personalization that yields fairer vertex ranks. 
 
 In this paper, we propose an edge-reweighting approach to enhance fairness in \pagerank.
 Our method differs from previous studies in several ways: 
 First, we consider only edge reweighting, which can lead to more actionable operations to achieve fairness.
 Second, we focus on global fairness, 
-without enforcing the more rigid requirement of fair transitions from each node. 
+without enforcing the more rigid requirement of fair transitions from each vertex. 
 As a result, our method can lead to significantly smaller modification of the transition matrix.
 Finally, our approach offers a clear and practical framework for handling effectively
 fairness over multiple groups.
@@ -303,7 +361,7 @@ define \pagerank fairness.
 \subsection{Preliminaries}
 
 Consider a directed graph $\graph = (\vertices, \edges)$ with a set $\vertices$ of vertices and a set $\edges$ edges. Let $\novertices = |\vertices|$ represent the number of vertices and $\noedges = |\edges|$ represent the number of edges.   
-Assume the nodes are partitioned to \nogroups groups $\{\group_1 \cdots \group_{\nogroups}\}$. 
+Assume the vertices are partitioned to \nogroups groups $\{\group_1 \cdots \group_{\nogroups}\}$. 
 Let $\labelof_{v}$ indicate the group that a vertex $\vertexv \in \vertices$ belongs to.
 
 The \pagerank algorithm takes \graph as input, and produces a \pagerank score vector \prvector that indicates the relative importance of each vertex in the graph ~\citep{brin_anatomy_1998}.
