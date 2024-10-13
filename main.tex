@@ -29,33 +29,10 @@
 
 
 \begin{abstract}
-Link-analysis algorithms, such as \pagerank, 
-are instrumental in understanding the structural dynamics of networks 
-by evaluating the importance and influence of individual nodes 
-based on their connectivity patterns.
-Recently, with the raising importance of responsible AI, 
-the question of fairness in link-analysis algorithms has gained traction.
+Link-analysis algorithms, such as \pagerank, are instrumental in understanding the structural dynamics of networks by evaluating the importance and influence of individual nodes based on their connectivity patterns. Recently, with the rising importance of responsible AI, the question of fairness in link-analysis algorithms has gained traction.
 
-In this paper, we present a new approach for incorporating group fairness into the \pagerank algorithm,
-by reweighting the transition probabilities in the underlying transition matrix.
-We formulate the problem of achieving \pagerank
-by seeking to minimize the fairness loss, which is 
- the difference between the original group-wise \pagerank distribution and 
-a target \pagerank distribution. 
-% Our problem can be defined for multiple groups. 
-We further define a cross-group fairness notion, 
-which accounts for group homophily by considering  
-random walks with group-biased restart for each group.
-Since the fairness loss is non-convex, we propose an efficient projected gradient-descent method for computing locally-optimal edge reweightings.
-As opposed to earlier approaches, 
-we do not recommend new edges to be added in the network, 
-nor do we adjust the restart vector, 
-instead, we keep the topology of the underlying network unchanged
-and only modify the relative importance of existing edges. 
-We empirically compare our approach with state-of-the-art baselines
-and demonstrate the efficacy of our method, 
-where very small changes in the transition matrix lead to significant improvement 
-in the fairness of the Page\-Rank algorithm.
+In this paper, we present a new approach for incorporating group fairness into the \pagerank algorithm by reweighting the transition probabilities in the underlying transition matrix. We formulate the problem of achieving fair \pagerank by seeking to minimize the fairness loss, which is the difference between the original group-wise \pagerank distribution and a target \pagerank distribution. We further define a group-adapted fairness notion, which accounts for group homophily by considering random walks with group-biased restart for each group.
+Since the fairness loss is non-convex, we propose an efficient projected gradient-descent method for computing locally optimal edge weights. Unlike earlier approaches, we do not recommend adding new edges to the network, nor do we adjust the restart vector. Instead, we keep the topology of the underlying network unchanged and only modify the relative importance of existing edges. We empirically compare our approach with state-of-the-art baselines and demonstrate the efficacy of our method, where very small changes in the transition matrix lead to significant improvement in the fairness of the \pagerank algorithm.
 %
 % The new edge weights, computed by our method,  can be used to suggest concrete changes in the network ecosystem, e.g., reweighting and prioritizing the feed of users in a social network.
 \end{abstract}
@@ -99,7 +76,7 @@ in the fairness of the Page\-Rank algorithm.
 %%
 %% Keywords. The author(s) should pick words that accurately describe
 %% the work being presented. Separate the keywords with commas.
-\keywords{Link analysis, Page\-Rank, graph analysis, fairness}
+\keywords{Link analysis, \pagerank, graph analysis, fairness}
 %% A "teaser" image appears between the author and affiliation
 %% information and the body of the document, and typically spans the
 %% page.
@@ -130,7 +107,7 @@ where I have defined some macros and have used them in the main file.}
 \iffalse
 \aris{Do not use citations as proper nouns. 
 For instance, it is OK to write
-``The Page\-Rank algorithm \cite{brin_anatomy_1998} ...''
+``The \pagerank algorithm \cite{brin_anatomy_1998} ...''
 but not OK to write 
 ``... adapted from \cite{tsioutsiouliklis_fairness-aware_2021}.''
 Instead we should write 
@@ -141,8 +118,8 @@ A good idea is to use only commands
 and never use \texttt{$\backslash$cite}.}
 \fi 
 
-\section{Introduction [Aris]}
-
+\section{Introduction}
+\label{section:intro}
 Machine-learning algorithms and data-driven decision making are playing 
 increasingly crucial roles in our lives, 
 impacting job markets, healthcare, government, industry, and education. 
@@ -151,106 +128,106 @@ so does the concern for fairness in algorithms.
 Ensuring that machine-learning algorithms are reliable
 and satisfy strong notions of fairness
 has become an issue of societal concern and, 
-justifiably, has received significant attention in the computer-science literature.
-Algorithmic fairness has been studied for
+justifiably, has received significant attention in the computer-science literature \citep{fu2022fair,kearns2017fair}.
+Up to date, algorithmic fairness has been studied for
 many different tasks of primarily supervised~\citep{hardt2016equality,joseph2016fairness,pedreshi2008discrimination,zemel2013learning},
 but also unsupervised learning~\citep{bera2019fair,chen2019proportionally,chierichetti2017fair}.
-%
 In the context of network algorithms, 
 which is the focus of this paper, 
 a few different approaches for fairness-aware link analysis 
-have been proposed recently~\citep{khajehnejad_crosswalk_2022,rahman_fairwalk_2019,tsioutsiouliklis_fairness-aware_2021,tsioutsiouliklis_link_2022,zeng_fair_2021}, 
-however, the topic has received significantly less attention
+have been proposed ~\citep{khajehnejad_crosswalk_2022,rahman_fairwalk_2019,tsioutsiouliklis_fairness-aware_2021,tsioutsiouliklis_link_2022,zeng_fair_2021}.
+However, the topic has received significantly less attention
 than the study of fairness in other machine-learning problems. 
 
-Link-analysis algorithms, such as PageRank, 
-are fundamental tools for analyzing large-scale network data. 
-By quantifying the importance or relevance of nodes within a network, 
-based on their connections and the quality of those connections, 
-these algorithms provide a means to identify authoritative nodes, detect communities, 
-uncover patterns of influence, and mitigate vulnerabilities within networks. 
-Link-analysis algorithms have been used in numerous applications, 
-including, web search, social-network analysis, and recommendation systems.
+Link-analysis algorithms such as the \pagerank series are fundamental tools for analyzing large-scale network data, to name a few \citep{tabrizi2013personalized,gleich_pagerank_2015,wang2020personalized,bahmani2012pagerank,kay2021identification}.
+These \pagerank algorithms quantify the importance or relevance of nodes within a network based on their connections and the quality of those connections, provide a means to identify authoritative nodes \citep{wang2020personalized}, detect communities \citep{tabrizi2013personalized}, uncover patterns of influence \citep{liu2017influence}, and mitigate vulnerabilities within networks \citep{kay2021identification}. From the application aspect, the \pagerank algorithms have been successfully used in domains including web search, social network analysis, and recommendation systems.
+
+% Link-analysis algorithms, such as the \pagerank series (to name a few \citep{tabrizi2013personalized,gleich_pagerank_2015,wang2020personalized,bahmani2012pagerank,kay2021identification}), are fundamental tools for analyzing large-scale network data. 
+% These \pagerank algorithms quantify the importance or relevance of nodes within a network based on their connections and the quality of those connections, provide a means to identify authoritative nodes \citep{wang2020personalized}, detect communities \citep{tabrizi2013personalized}, uncover patterns of influence \citep{liu2017influence}, and mitigate vulnerabilities within networks \citep{kay2021identification}. 
+% Link-analysis algorithms have been used in numerous applications, 
+% including web search, social network analysis, and recommendation systems.
+
 
 The problem of fairness-aware PageRank~\citep{tsioutsiouliklis_fairness-aware_2021} 
 can be broadly formulated as follows.
-We are interested in computing the PageRank scores
+We are interested in computing the \pagerank scores
 on a graph whose vertices are partitioned into \nogroups groups, 
 where the partition is defined by, say, a protected attribute. 
-For simplicity let us assume $\nogroups=2$ and refer to the two groups 
+For simplicity, let us assume $\nogroups=2$ and refer to the two groups 
 of vertices as \emph{red} and \emph{blue}.
-The fairness of the PageRank distribution is then evaluated
-based on the total PageRank scores assigned to \emph{red} and \emph{blue} vertices.
-We want to avoid situations where the PageRank mass is distributed unevenly (/unfairly) 
+The fairness of the \pagerank distribution is then evaluated
+based on the total \pagerank scores assigned to \emph{red} and \emph{blue} vertices.
+We want to avoid situations where the \pagerank mass is distributed unevenly (/unfairly) 
 between the two groups. 
-For example, given a target score $\phi$, 
-we say that PageRank is $\phi$-fair if the total PageRank of the \emph{red} group is equal to $\phi$.
+For example, given a target score tuple $\groupDist = (\phi_{red}, \phi_{blue})$, 
+we say that \pagerank is $\groupDist $-fair if the total \pagerank scores of the \emph{red} group is equal to $\phi_{red}$.
 
-The task is to design an intervention strategy so that the PageRank
-scores of the graph vertices become $\phi$-fair, or ``close enough'' to being $\phi$-fair.
-Considering the PageRank algorithm, 
+% \iffalse
+% For example, given a target score $\phi$, 
+% we say that \pagerank is $\phi$-fair if the total \pagerank of the \emph{red} group is equal to $\phi$.
+% \honglian{I want to define the fairness as a tuple, $(\phi_1, \cdots, \phi_K)$}
+% \fi
+
+
+The task is to design an intervention strategy so that the \pagerank
+scores of the graph vertices become $\phi$-fair, or ``close enough'' to $\phi$-fair.
+Considering the \pagerank algorithm, 
 there are different ways to design intervention strategies, including: 
-($i$)~modifying the PageRank restart probability;
+($i$)~modifying the \pagerank restart probability;
 ($ii$)~modifying the restart vector; 
 ($iii$)~adding/deleting edges in/from the graph; 
 ($iv$)~modifying the edge weights of the graph; or
 ($v$)~combinations of the above.
 
 In this paper, we focus on intervention strategies of type ($iv$),
-namely, achieving fair PageRank by re\-weighting the graph edges.
+namely, achieving fair \pagerank by re\-weighting the graph edges.
 Our motivation is that such interventions are 
-\emph{intrinsic to the graph structure} and often easily actionable, 
-for example, edge re\-weighting can be achieved by 
-appropriate prioritizing/demoting content from one's connections in a social-media platform. 
-Intervention strategies of type ($iii$), i.e., edge additions/deletions, 
-are also intrinsic to the graph structure but often less actionable, 
-for example, they rely on link recommendations and have to account 
-for the probability of the recommendation being accepted. 
-In contrast, intervention strategies of type ($i$) and ($ii$), i.e., 
-modifying the PageRank restart probability or restart vector, are 
-\emph{extrinsic to the graph structure} and rely on tuning
-hyper-parameters of the PageRank algorithm. 
-In many cases, it is not meaningful, nor actionable, to modify those hyper-parameters.
-As an example, in the personalized PageRank algorithm the restart vector 
-has a clear interpretation, which is to model the interests of the user
-and is not amenable to~modification.
+\emph{intrinsic to the graph structure} and often easily actionable. For example, edge re\-weighting can be achieved by appropriately prioritizing/demoting content from one's connections in a social network. Similarly, strategies of type ($iii$) involving edge additions or deletions are also intrinsic to the graph structure but tend to be less practical. These strategies rely on link recommendations and have to account for the likelihood of acceptance, making them more complex to implement.
+To illustrate this point, consider the context of ranking transportation routes. Adjusting edge weights to prioritize underserved areas or to mitigate biases in ridership data (e.g., historical neglect of specific neighborhoods) is typically easier than adding new routes or removing existing ones. 
+Compared to intervention strategies of type ($iv$) and ($iii$), type ($i$) and ($ii$) strategies, i.e., modifying the \pagerank restart probability or restart vector is \emph{extrinsic to the graph structure} and rely on tuning hyper-parameters of the \pagerank algorithm. In many cases, it is not meaningful, nor actionable, to modify those hyper-parameters. For example, in the personalized \pagerank algorithm, the restart vector has a clear interpretation, which is to model the user interests and is not amenable to modification.
 
-Motivated by the above discussion, 
-we present a new approach to incorporate fairness into the Page\-Rank algorithm,
-by re\-weighting the transition probabilities of the Page\-Rank matrix. 
-More concretely, we formulate the problem of minimizing the Page\-Rank distance
-to a fair distribution, while allowing only for re\-weighting the network edges
-within prespecified limits. 
-With our formulation we can quantify and improve fairness 
-with respect to many vertex groups in the network.
-As opposed to earlier approaches, 
-we do not recommend new edges to be added in the network, 
-nor do we adjust the restart vector, 
-instead we keep the topology of the underlying network unchanged
-and only modify the relative importance of existing edges. 
-If perfect fairness cannot be achieved with the permissible transition-matrix modifications, 
-our formulation aims to find a solution that is as close as possible 
-to the target fairness objective.
-Our approach provides an actionable environment for achieving fairness in Page\-Rank-type methods, 
-as the new edge weights, computed by our method, 
-can be used to suggest concrete changes in the network ecosystem,
-e.g., re\-weighting and prioritizing the feed of users in a social network. 
+% In this paper, we focus on intervention strategies of type ($iv$),
+% namely, achieving fair \pagerank by re\-weighting the graph edges.
+% Our motivation is that such interventions are 
+% \emph{intrinsic to the graph structure} and often easily actionable
+% (for example, edge re\-weighting can be achieved by 
+% appropriate prioritizing/demoting content from one's connections in a social network). 
+% Intervention strategies of type ($iii$), i.e., edge additions/deletions, 
+% are also intrinsic to the graph structure but often less actionable
+% (for example, they rely on link recommendations and have to account 
+% for the probability of the recommendation being accepted). 
+% In contrast, intervention strategies of type ($i$) and ($ii$), i.e., 
+% modifying the \pagerank restart probability or restart vector is 
+% \emph{extrinsic to the graph structure} and rely on tuning
+% hyper-parameters of the \pagerank algorithm. 
+% In many cases, it is not meaningful, nor actionable, to modify those hyper-parameters.
+% For example, in the personalized \pagerank algorithm, the restart vector has a clear interpretation, which is to model the user interests
+% and is not amenable to modification.
 
-We propose a projected gradient descent method for computing locally-optimal edge re\-weightings
-and we show how it can be implemented efficiently. 
+\aris{We can also say that previous methods enforce fairness at each node (we can say that this is a ``local''-fairness notion), but this is too strict, and it motivates us to ask the question whether can have ``global'' fairness without requiring ``local'' fairness.
+Essentially, the question we address in this paper is: it is easy to see that local-fairness implies global-fairness, but can we have global-fairness without necessarily having local-fairness?}
+
+Motivated by the above discussion, we present a new approach to incorporate fairness into the \pagerank algorithm by re\-weighting the transition probabilities of the \pagerank matrix. 
+More concretely, we formulate the problem of minimizing the \pagerank distance to a fair distribution while allowing only for re\-weighting the network edges within prespecified limits. 
+With our formulation, we can quantify and improve fairness with respect to many vertex groups in the network.
+Unlike earlier approaches, we do not recommend that new edges be added to the network, nor do we adjust the restart vector. 
+Instead, we keep the topology of the underlying network unchanged and only modify the relative importance of existing edges. 
+If perfect fairness cannot be achieved with the permissible transition-matrix modifications, our formulation aims to find a solution as close as possible to the target fairness objective.
+Our approach provides an actionable environment for achieving fairness in \pagerank-type methods, as the new edge weights, computed by our method, can be used to suggest concrete changes in the network ecosystem, e.g., re\-weighting and prioritizing the feed of users in a social network. 
+
+We propose a projected gradient descent method for computing locally-optimal edge re\-weightings and show how it can be implemented efficiently. 
 We empirically compare our approach with state-of-the-art baselines
-and demonstrate the efficacy of our method, 
-where very small changes in the transition matrix lead to significant improvement 
-in the fairness of the Page\-Rank algorithm.
+and demonstrate the efficacy of our method, where very small changes in the transition matrix lead to significant improvement 
+in the fairness of the \pagerank algorithm.
 
-\citet{tsioutsiouliklis_fairness-aware_2021} measure the importance of a group by the total Page\-Rank scores of vertices in the group. They rebalance the graph such that the Page\-Rank vector is $\grouppr$-fair, i.e., the total Page\-Rank scores of vertices in the protected group is $\grouppr$. We extend this work to multiple groups. Additionally, instead of having the total Page\-Rank scores in the groups exactly equal to $\grouppr$, we would like to approximate the total Page\-Rank scores in the groups to $\grouppr$. 
+\citet{tsioutsiouliklis_fairness-aware_2021} measure the importance of a group by the total \pagerank scores of vertices in the group. They rebalance the graph such that the \pagerank vector is $\grouppr$-fair, i.e., the total \pagerank scores of vertices in the protected group is $\grouppr$. We extend this work to multiple groups. Additionally, instead of having the total \pagerank scores in the groups exactly equal to $\grouppr$, we would like to approximate the total \pagerank scores in the groups to $\grouppr$. 
 
 \aris{List of contributions below: 
 \begin{itemize}
-\item New fairness definition of Page\-Rank, based on matrix reweighting and 
+\item New fairness definition of \pagerank, based on matrix reweighting and 
         not changing the network topology.
 \item minimize the loss function with respect to target fairness
-\item notion extends to $k$ groups, and cross-group fairness
+\item notion extends to $k$ groups, and group-adapted fairness
 \item gradient descent method converges to local optimum
 \item intuitive interpretation of gradient
 \item efficient computation via approximation of power iteration
@@ -260,40 +237,25 @@ in the fairness of the Page\-Rank algorithm.
 
 \section{Related Work}
 
-In recent years, algorithmic fairness in graph mining has emerged as a significant area of research (for a comprehensive survey, see \citep{saxena2024fairsna}). This paper focuses on enhancing fairness within the well-known PageRank algorithm, widely utilized for tasks such as node ranking, classification, and community detection. Fair PageRank algorithms seek to allocate weights to nodes in a way that accounts for both the nodes' group affiliations and the overall network structure.
+In recent years, algorithmic fairness in graph mining has emerged as a significant area of research (for a comprehensive survey, see \citep{saxena2024fairsna}). This paper focuses on enhancing fairness within the well-known PageRank algorithm, which has been widely utilized for tasks such as node ranking, classification, and community detection. Considering fairness, the algorithm should allocate pagerank to nodes in a manner that considers both the nodes' group affiliations and the overall structure of the network \citep{tsioutsiouliklis_fairness-aware_2021,saxena2024fairsna}.
 
-In the standard PageRank algorithm \citep{gleich_pagerank_2015}, a random walk moves from one node to its neighbors with equal probability, proportional to the node's degree. To address potential data bias, FairWalk \citep{rahman_fairwalk_2019} introduces equal transition probabilities across all groups within a node's neighborhood. CrossWalk \citep{khajehnejad_crosswalk_2022} further refines this approach by considering the local group structure, reweighting edges based on their distance from group boundaries. Both FairWalk and CrossWalk adjust the transition matrix using heuristic-based methods.
+In the vanilla \pagerank algorithm, a random walk moves from one node to its neighbors with equal probability, proportional to the node's degree. To address potential group bias, FairWalk \citep{rahman_fairwalk_2019} introduces equal transition probabilities across all groups within a node's neighborhood. CrossWalk \citep{khajehnejad_crosswalk_2022} further refines this approach by considering the local group structure and reweighting edges based on their distance from group boundaries. Both FairWalk and CrossWalk adjust the transition matrix using heuristic-based methods.
 
-\citet{tsioutsiouliklis_fairness-aware_2021} introduce a novel fairness metric for PageRank and propose two algorithm families: FSPR and LFPRs. FSPR retains the original graph structure and edge weights, while seeking an optimal jump vector to minimize the disparity between the fair PageRank vector and the original PageRank vector, subject to fairness constraints. Similar to FairWalk and CrossWalk, LFPRs aim to achieve fairness at the individual vertex level and include three variations: $LFPR_N$, $LFPR_U$, and $LFPR_P$. Each variation reweights the transition matrix in a distinct way while incorporating a fair jump vector. Although the authors suggest that FSPR and LFPRs could be extended to scenarios involving more than two groups, they do not provide details on the specific mechanisms for such extensions.
+\citet{tsioutsiouliklis_fairness-aware_2021} introduce a novel fairness metric for \pagerank and propose two algorithm families: FSPR and LFPRs. FSPR retains the original graph structure and edge weights, while seeking an optimal jump vector to minimize the disparity between the fair \pagerank vector and the original \pagerank vector, subject to fairness constraints. Similar to FairWalk and CrossWalk, LFPRs aim to achieve fairness at the individual vertex level and include three variations: $LFPR_N$, $LFPR_U$, and $LFPR_P$. Each variation reweights the transition matrix in a distinct way while incorporating a fair jump vector. Although the authors suggest that FSPR and LFPRs could be extended to scenarios involving more than two groups, they do not provide details on the specific mechanisms for such extensions.
 
-Additionally, link recommendation has been investigated as an alternative method for promoting fairness in PageRank, as demonstrated by \citet{tsioutsiouliklis_link_2022}.
-
-In this paper, we propose a novel edge reweighting approach to enhance fairness in PageRank.
+Additionally, link recommendation has been explored as an alternative approach to promoting fairness in PageRank. In their study, \citet{tsioutsiouliklis_link_2022} present analytical formulas for calculating the impact of adding edges on fairness.
+In this paper, we propose an edge reweighting approach to enhance fairness in \pagerank.
 Our approach offers a clear and practical framework for effectively handling multiple groups.
-Our approach differs from the related works in the following key aspects:
-\honglian{to continue}
 
 
-
-\todo{show the differences.}
-
-
-
-% \textbf{FairWalk}~\citep{rahman_fairwalk_2019}. In node embedding learning, when choosing the next step in a random walk, equal probability is assigned to all groups in the neighborhood of the current node.
-
-% \textbf{CrossWalk}~\citep{khajehnejad_crosswalk_2022}. In addition to FairWalk, CrossWalk further reweights edges according to the distance to the group boundary.
-
-% \textbf{Fairness-aware Page\-Rank}. \citet{tsioutsiouliklis_fairness-aware_2021} defines a novel metric for fairness in Page\-Rank and proposes two families of algorithms FSPR and LFPR to achieve this fairness. FSPR changes the restart vector, and LFPR reweights the transition matrix with introducing new edges.
-
-% \textbf{Link Recommendations for Page\-Rank Fairness}. \citet{tsioutsiouliklis_link_2022} analyzes the effect of potentially new edges as well as existed edges on the fairness of Page\-Rank. They proposes a linear time link recommendation algorithm that maximizes fairness.
+% \textbf{Link Recommendations for \pagerank Fairness}. \citet{tsioutsiouliklis_link_2022} analyzes the effect of potentially new edges as well as existed edges on the fairness of \pagerank. They proposes a linear time link recommendation algorithm that maximizes fairness.
 
 % \textbf{Fair representation learning for heterogeneous information networks}. \citet{zeng_fair_2021} chooses vertex in the disadvantaged groups with higher probability when generating meta-paths.
 
 % \textbf{Applying Fairness Constraints on Graph Node Ranks Under Personalization Bias}. \citet{krasanakis_applying_2021} mitigates disparate impact in ranking under personalization bias by a personalization editing mechanism.
 
-\todo{1. Move the delta constraint to front.
-2. Stress that we only allow change on the transition matrix. 3. explain why we don't change restart vector or the restart probability. (1) cannot manipulate (2) easy example by setting restart probability to 0 and revise restart vector
-4. Explain the lower bound of the fairness ratio}
+\todo{
+Related work: add more related papers. e.g. s\citep{zeng_fair_2021,krasanakis_applying_2021}.}
 
 
 \section{Definitions}
@@ -314,7 +276,7 @@ The \pagerank score vector \prvector is the solution to the following equation:
     \prvector^T = (1 - \gamma) \prvector^T \transmatrix + \gamma \vectv^T.
 \end{equation}
 
-Here, the transition matrix \transmatrix is derived by normalizing each row of the adjacency matrix of $\graph$. The restart vector \vectv specifies a distribution over all vertices, indicating where a random walk might restart. The parameter $\gamma$ represents the probability that the random walk will restart at any given step. To handle sinking vertices, which are vertices with no outgoing edges, we replace the corresponding zero rows of \transmatrix with the restart vector \vectv.
+Here, the transition matrix \transmatrix is row stochastic, derived by normalizing each row of the adjacency matrix of $\graph$. The restart vector \vectv specifies a distribution over all vertices, indicating where a random walk might restart. The parameter $\gamma$ represents the probability that the random walk will restart at any given step. To handle sinking vertices, which are vertices with no outgoing edges, we replace the corresponding zero rows of \transmatrix with the restart vector \vectv.
 
 By solving \Cref{eq:pagerank}, we obtain the following expression for the \pagerank score vector: 
 \begin{equation} 
@@ -324,80 +286,66 @@ By solving \Cref{eq:pagerank}, we obtain the following expression for the \pager
 \subsection{Fair \pagerank}
 
 
-In line with the earlier definition of fairness-aware \pagerank~\citep{tsioutsiouliklis_fairness-aware_2021, tsioutsiouliklis_link_2022},
-we consider the graph's vertices as being partitioned into distinct groups.
-These groups can represent, for example, social categories defined by sensitive attributes, such as gender, ethnicity, or sexual orientation. 
+Building on the earlier definition of fairness-aware PageRank \citep{tsioutsiouliklis_fairness-aware_2021, tsioutsiouliklis_link_2022}, we consider the vertices of a graph to be divided into distinct groups. These groups may represent social categories based on sensitive attributes such as gender, ethnicity, or sexual orientation. We begin by defining the fair PageRank problem, followed by a discussion of various approaches to achieving PageRank fairness, and conclude with a formal definition of the $\groupDist$-\pagerank (\fpr) problem and the Restricted $\groupDist$-\pagerank (\resfpr) problem.
 
 
 
+\subsubsection{Group-wise Fair \pagerank}
 
-To operationalize the notion of Page\-Rank fairness we assume 
-a \emph{target Page\-Rank score} $\grouppr_\agroup$,
-for each vertex group $\agroup=1,\ldots,\nogroups$, 
-which is the total Page\-Rank mass expected to be assigned by the Page\-Rank algorithm
-on the vertices of group $\vertices_\agroup$.
-%
-A natural choice is to set $\grouppr_\agroup$
-equal to the fraction of vertices in~$\vertices_\agroup$ within~\vertices, 
-i.e., $\grouppr_\agroup = |\vertices_\agroup| / \novertices$.
-However, other choices are possible depending on the application scenario. 
-In this work, as in earlier papers, 
-we assume that the target Page\-Rank score $\grouppr_\agroup$, 
-for each group $\agroup=1,\ldots,\nogroups$,
-is provided as input to our problem setting.
 
-Let us denote the indicator vector of group $\vertices_\agroup$ as 
-$\indvect{\agroup} \in \{0, 1\}^{\novertices}$,
-that is, $\indvect{\agroup}[i] = 1$ if vertex $i \in \vertices_\agroup$ and $\indvect{\agroup}[i] = 0$ otherwise. 
-Consider the Page\-Rank vector \prvector
-computed by the Page\-Rank algorithm on a transition matrix \transmatrix, 
-with restart probability~$\gamma$, and restart vector~\vectv.
-The total Page\-Rank score in group $\vertices_\agroup$ is given by $\indvect{\agroup}^T \prvector$. 
 
-Given an input graph \graph, and associated transition matrix \transmatrix, 
-our objective is to find a new transition matrix $\newtransmatrix$, 
-defined over the same input graph \graph, 
-so that the group-wise PageRank distribution computed over \newtransmatrix (to be defined shortly)
-is as close as possible to the group-wise target 
-PageRank distribution $\{\grouppr_\agroup\}_{\agroup=1,\ldots,\nogroups}$.
+To establish the concept of \pagerank fairness, we assume a \emph{target \pagerank score}, $\grouppr_\agroup$ for each vertex group $\agroup = 1, \ldots, \nogroups$. This score represents the total \pagerank mass that the algorithm is expected to allocate to the vertices in group $\vertices_\agroup$. A common approach is to set $\grouppr_\agroup$ equal to the proportion of vertices in $\vertices_\agroup$ relative to the entire set $\vertices$, i.e., $\grouppr_\agroup = |\vertices_\agroup| / \novertices$. However, other choices may be more suitable depending on the specific application. In this work, as in prior studies, we assume that the target \pagerank score $\grouppr_\agroup$ for each group is provided as input to our problem formulation.
 
-Implicit in our formulation is the idea that it is meaningful to 
-modify the edge weights of a graph 
-in order to nudge the PageRank scores into a more fair distribution. 
+Let $\indvect{\agroup} \in \{0, 1\}^{\novertices}$ denote the indicator vector for group $\vertices_\agroup$, where $\indvect{\agroup}[i] = 1$ if vertex $i \in \vertices_\agroup$ and $\indvect{\agroup}[i] = 0$ otherwise. Let \prvector\ be the PageRank vector computed by the PageRank algorithm using a transition matrix \transmatrix, with restart probability~$\gamma$ and restart vector~\vectv. The total PageRank score for group $\vertices_\agroup$ is then given by $\indvect{\agroup}^T \prvector$. 
 
+
+
+Given an input graph \graph\ and its associated transition matrix \transmatrix, our goal is to find a new transition matrix $\newtransmatrix$, defined on the same input graph \graph, such that the group-wise \pagerank distribution computed over \newtransmatrix\ (defined shortly) closely matches the target group-wise \pagerank distribution $\groupDist = (\grouppr_1, \cdots, \grouppr_\nogroups)$.
+
+
+\paragraph{Remark.}  
+For any given $\transmatrix$, $\gamma$, and $\vectv$, the total PageRank score for group $\group_\agroup$ is lowered bounded by $\gamma \indvect{\agroup}^T \vectv$, which represents the probability that a random walk restarts from group $\agroup$. This can be seen from the equation $\indvect{\agroup}^T \prvector = (1 - \gamma)  \indvect{\agroup}^T  \transmatrix^T \prvector + \gamma \indvect{\agroup}^T \vectv \geq \gamma \indvect{\agroup}^T \vectv$. Hence, it is clear that it may not always be possible to find a $\newtransmatrixopt$ that exactly achieves the desired target distribution $\groupDist$.
+
+
+% ${\grouppr_\agroup}_{\{\agroup=1,\ldots,\nogroups\}}$.
+
+% Implicit in our formulation is the idea that it is meaningful to 
+% modify the edge weights of a graph 
+% in order to nudge the PageRank scores into a more fair distribution. 
+
+\subsubsection{Rationale for \pagerank Fairness via Edge-Reweighting}
+
+Consider the case where both $\vectv$ and $\gamma$ can be freely adjusted. In this scenario, achieving the target fair distribution $\groupDist$ is straightforward: we can simply set $\vectv[i] = \frac{\grouppr_{\labelof_i}}{|\group_{\labelof_i}|}$ and $\gamma = 1$. However, adjusting $\vectv$ and $\gamma$ is impractical in real-world applications because these parameters are not within our control in actual models. In contrast, modifying the transition matrix is feasible; this can be accomplished by appropriately prioritizing or demoting content from an individual's connections in a social network.
+
+Therefore, in this paper, we focus solely on adjusting the transition matrix $\transmatrix$ to achieve the desired fairness distribution. To maintain the original structure of the input graph \graph defined by the original transition matrix $\transmatrix$, we impose the requirement that the new transition matrix $\newtransmatrix$ must satisfy $\newtransmatrix[i, j] = 0$ whenever $\transmatrix[i, j] = 0$. This condition ensures that no new edges are introduced into the graph.
+
+
+\iffalse
 As a simple example, given two entries of the transition matrix $\transmatrix[u,v]=\transmatrix[u,w]=0.5$,
 indicating that a random walk from vertex~$u$ proceeds to vertices $v$ or $w$ with probability $0.5$ each, 
 a permissible solution could be a new transition matrix \newtransmatrix 
 with entries $\newtransmatrix[u,v]=0.65$ and $\newtransmatrix[u,w]=0.35$,
 indicating a random walk with transition from $u$ to $v$ or $w$ with probabilities $0.65$ and $0.35$, respectively.
+\fi
 
-To preserve the original structure of the input graph \graph 
-we require that the new transition matrix $\newtransmatrix$ 
-satisfies $\newtransmatrix[i, j] = 0$ if $\transmatrix[i, j] = 0$. 
-This condition ensures that no new edges are added
-to the graph that correspond to the new transition matrix $\newtransmatrix$.
+\subsubsection{Fairness Loss Function and The $\groupDist$-\pagerank (\fpr) Problem}
 
-To formalize our problem, 
-we first define the fairness loss function.
-\begin{definition}
-\label{definition:fairness-loss}
-Given a row-stochastic transition matrix \transmatrix, 
-a restart probability $0 < \gamma < 1$, 
-a restart vector $\vectv \in \reals^{\novertices}$ with $\|\vectv\|_1 = 1$, 
-groups $\vertices_1, \ldots, \vertices_\nogroups$, and 
-group-wise target Page\-Rank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, 
-for $\nogroups\ge 2$, 
-the \emph{fairness loss function} is defined as
-\begin{equation}
-    \loss(\transmatrix, \gamma, \vectv) = 
-        \frac{1}{\nogroups} \sum_{\agroup=1}^\nogroups \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right)^2,
-\label{equation:fairness-loss}
-\end{equation}
-where \prvector is the Page\-Rank vector with respect to parameters $(\transmatrix, \gamma, \vectv)$.
-\end{definition}
+To formalize our problem, we first define the fairness loss function. It evaluates how much the actual fairness distribution deviates from the target distribution for a given transition matrix $\transmatrix$.
+
+
+\begin{definition} 
+\label{definition:fairloss} 
+Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, a row-stochastic transition matrix \transmatrix, a restart probability $0 < \gamma < 1$, a restart vector $\vectv \in \reals^{\novertices}$ satisfying $|\vectv|_1 = 1$, and group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, the \emph{fairness loss function} is defined as: 
+\begin{equation} 
+\loss(\transmatrix, \gamma, \vectv) = \frac{1}{\nogroups} \sum_{\agroup=1}^\nogroups \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right)^2, 
+\label{eq:loss_function} 
+\end{equation} 
+where \prvector is the \pagerank vector corresponding to the parameters $(\transmatrix, \gamma, \vectv)$. \end{definition}
+
+
 
 \begin{lemma}
-The loss function $\loss(\transmatrix, \gamma, \vectv)$ defined in \Cref{equation:fairness-loss} is not convex.
+The loss function $\loss(\transmatrix, \gamma, \vectv)$, as defined in \Cref{eq:loss_function}, is not convex with respect to $\transmatrix$.
 \end{lemma}
 \begin{proof}
 To demonstrate the non-convexity, it suffices to provide a single counterexample. Consider a fully connected graph $\graph$ with three vertices: $a$, $b$, and $c$. Let the labels be $\labelof_a =$ blue, and $\labelof_b = \labelof_c =$ red.
@@ -424,112 +372,168 @@ Let $\newtransmatrix_1 =  \begin{pmatrix}
 Given restart vector $\vectv = (1/3, 1/3, 1/3)$ and restart probability $\gamma$, one can calculate that the \pagerank vector $\prvector_1$, $\prvector_2$ and $\prvector_3$ for $\newtransmatrix_1$, $\newtransmatrix_2$ and $\newtransmatrix_3$ are $\prvector_1 = \left(\frac{\gamma^2-3\gamma+3}{3(2-\gamma)}, \frac{3-2\gamma}{3(2-\gamma)}, \frac{\gamma}{3}\right)$, $\prvector_2=\left(\frac{\gamma^2-3\gamma+3}{3(2-\gamma)},  \frac{\gamma}{3}, \frac{3-2\gamma}{3(2-\gamma)},\right)$ and $\prvector_3=\left( \frac{1}{3},\frac{1}{3},\frac{1}{3}\right)$ respectively. 
 
 Now, consider the group-wise target \pagerank score, defined as $\grouppr_1 = \frac{\gamma^2-3\gamma+3}{3(2-\gamma)}$ and $\grouppr_2 = 1-\grouppr_1$. It holds that $\frac{1}{2}\loss(\newtransmatrix_1, \gamma, \vectv) + \frac{1}{2}\loss(\newtransmatrix_2, \gamma, \vectv) = 0 $. One can easily find a $\gamma$ such that that $\loss(\frac{1}{2}\newtransmatrix_1 + \frac{1}{2}\newtransmatrix_2, \gamma, \vectv) = \loss(\newtransmatrix_3, \gamma, \vectv) >0$, which contradicts the definition of convexity. This completes the proof.
-
-
 \end{proof}
-We consider that a Page\-Rank vector \prvector is closer to $\grouppr$-fairness 
-if the fairness loss is smaller. 
-Moreover, a Page\-Rank vector \prvector is $\grouppr$-fair 
-if it incurs zero fairness loss. 
-We can now formulate the $\grouppr$-\pagerank (\fpr) problem as follows:
 
-\begin{problem}[$\grouppr$-\pagerank (\fpr)]
-Given a graph $\graph = (\vertices, \edges)$ with row-stochastic transition matrix \transmatrix, 
-a restart probability $0 < \gamma < 1$, 
-a restart vector $\vectv \in \reals^{\novertices}$ with $||\vectv||_1 = 1$, 
-groups $\vertices_1, \ldots, \vertices_\nogroups$, and 
-group-wise target Page\-Rank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, 
-for $\nogroups\ge 2$, 
-find a new transition matrix $\newtransmatrixopt$
-that minimizes the fairness loss function, i.e.,
+
+
+% We consider that a \pagerank vector \prvector is closer to $\grouppr$-fairness 
+% if the fairness loss is smaller. 
+% Moreover, a \pagerank vector \prvector is $\grouppr$-fair 
+% if it incurs zero fairness loss. 
+% We can now formulate the \phiPageRank (\fpr) problem as follows:
+
+% \begin{problem}[$\groupDist$-\pagerank (\fpr)]
+% Given a graph $\graph = (\vertices, \edges)$ with row-stochastic transition matrix \transmatrix, 
+% a restart probability $0 < \gamma < 1$, 
+% a restart vector $\vectv \in \reals^{\novertices}$ with $||\vectv||_1 = 1$, 
+% groups $\vertices_1, \ldots, \vertices_\nogroups$, and 
+% group-wise target \pagerank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, 
+% for $\nogroups\ge 2$, 
+% find a new transition matrix $\newtransmatrixopt$
+% that minimizes the fairness loss function, i.e.,
+% \begin{equation}
+% \newtransmatrixopt = \arg \min_{\newtransmatrix \in \feasiblematrices(\transmatrix)} \loss(\newtransmatrix, \gamma, \vectv),
+% \end{equation}
+% where $\feasiblematrices(\transmatrix)$ is the set of row-stochastic matrices 
+% that have non-negative entries and satisfy 
+% $\newtransmatrix[i, j] = 0$ if $\transmatrix[i, j] = 0$.
+% \end{problem}
+
+
+
+With the fairness loss function defined, we introduce two problems that aim to achieve fair \pagerank by minimizing this loss through edge reweighting.
+
+
+\begin{problem}[$\groupDist$-\pagerank (\fpr)]
+Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix \transmatrix of \graph, a restart probability $0 < \gamma < 1$, and a restart vector $\vectv \in \reals^{\novertices}$ satisfying $|\vectv|_1 = 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, the goal is to find a new transition matrix $\newtransmatrixopt$ that minimizes the fairness loss function $\loss(\newtransmatrixopt, \gamma, \vectv)$, i.e.,
 \begin{equation}
 \newtransmatrixopt = \arg \min_{\newtransmatrix \in \feasiblematrices(\transmatrix)} \loss(\newtransmatrix, \gamma, \vectv),
+\label{eq:fair_problem}
 \end{equation}
-where $\feasiblematrices(\transmatrix)$ is the set of row-stochastic matrices 
-that have non-negative entries and satisfy 
-$\newtransmatrix[i, j] = 0$ if $\transmatrix[i, j] = 0$.
+where 
+\begin{equation*}
+\feasiblematrices(\transmatrix) = \{ \newtransmatrix \in \mathbb{R}_{\geq 0}^{\novertices \times \novertices} \mid \newtransmatrix \uniformvect = \uniformvect, \, \newtransmatrix_{ij} = 0 \text{ if } \transmatrix_{ij} = 0 \}
+\end{equation*}
+is the set of row-stochastic matrices that have non-negative entries, and the edge-reweighting of \graph can take place only on existing edges.
 \end{problem}
 
 
-\subsection{Cross-group \pagerank}
 
-In the \fpr %  $\grouppr$-\pagerank 
-problem we require the total Page\-Rank score $\indvect{\agroup}^T\prvector$ 
+
+
+\begin{problem}[Restricted $\groupDist$-\pagerank (\resfpr)]
+Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix $\transmatrix$ of \graph, a restart probability $0 < \gamma < 1$, and a restart vector $\vectv \in \reals^{\novertices}$ satisfying $|\vectv|_1 = 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, a relative modification-bound factor $\boundfactor \ge 0$ and an absolute modification-bound factor $\absboundfactor \ge 0$, the goal is to find a new transition matrix $\newtransmatrixopt$ that minimizes the fairness loss function $\loss(\newtransmatrixopt, \gamma, \vectv)$, i.e.,
+
+
+\begin{equation}
+\newtransmatrixopt = \arg \min_{\newtransmatrix \in \resfeasiblematrices(\transmatrix) \cap \feasiblematrices(\transmatrix)} \loss(\newtransmatrix, \gamma, \vectv),
+\label{eq:restrict_fair_problem}
+\end{equation}
+where 
+
+\begin{equation*}
+    \resfeasiblematrices(\transmatrix)
+    =
+    \{ \newtransmatrix \in \mathbb{R}_{\geq 0}^{\novertices \times \novertices} \mid (1 - \boundfactor) \transmatrix[i, j] - \absboundfactor \le \newtransmatrix[i, j] \le (1 + \boundfactor) \transmatrix[i, j] + \absboundfactor\}.
+\end{equation*}
+\end{problem}
+
+In other words, $\resfeasiblematrices(\transmatrix)$ restricts the entries of the new transition matrix $\newtransmatrix$ to be within the range $(1 - \boundfactor)$ and $(1 + \boundfactor)$ of the corresponding entries in the original transition matrix $\transmatrix$, while also imposing an absolute modification bound $\absboundfactor$. The absolute bound is crucial because, for very small values in $\transmatrix$, even slight absolute changes can result in large relative variations. By applying both a relative and an absolute bound, we ensure that small absolute changes do not cause disproportionately large relative fluctuations.
+
+Without loss of generality, in this paper, we study both \fpr and \resfpr with a uniform restart vector $\vectv = \frac{\uniformvect}{\novertices}$.
+
+\iffalse
+\subsection{group-adpated Fair \pagerank}
+In the \fpr % 
+problem we require the total \pagerank score $\indvect{\agroup}^T\prvector$ 
 in each group $\vertices_\agroup$ to be equal to $\grouppr_\agroup$. 
 When it is not possible to satisfy the requirement $\indvect{\agroup}^T \prvector = \grouppr_\agroup$
 using only edge re\-weightings, 
 our formulation seeks to minimize the fairness loss function $\loss(\cdot, \gamma, \vectv)$,
-so that the group-wise Page\-Rank scores $\indvect{\agroup}^T \prvector$
+so that the group-wise \pagerank scores $\indvect{\agroup}^T \prvector$
 are as close as possible to the corresponding target scores $\grouppr_\agroup$.
 
-For computing the Page\-Rank vector \prvector 
+For computing the \pagerank vector \prvector 
 we assume that the restart probability $\gamma$ and the restart vector \vectv are given as input. 
 In the absence of a preferred restart vector it is common to consider the uniform vector
 $\vectv_0 = \frac{1}{\novertices} [1,\ldots,1]$.
-On the other hand, real-world networks are mostly homophilic, 
-i.e., vertices in the same group are more likely to be connected to each other. 
-Hence, the total Page\-Rank scores in group $\vertices_\agroup$ are largely contributed 
-by random walks (re)\-starting at vertices in group $\vertices_\agroup$. 
-%
+\fi
+
+\subsection{Group-Adapted Fair \pagerank}
+
+
+Real-world networks are mostly homophilic, 
+i.e., vertices in the same group are more likely to be connected to each other \citep{mcpherson2001birds,tarbush2012homophily,stoica2018homophily}. 
+Hence, the total \pagerank scores in group $\vertices_\agroup$ are largely contributed by random walks (re)\-starting at vertices in group $\vertices_\agroup$. 
+\iffalse
 To increase the diversity in the network, 
-it is desirable for the total Page\-Rank score $\indvect{\agroup}^T\prvector$  
+it is desirable for the total \pagerank score $\indvect{\agroup}^T\prvector$  
 in group~$\vertices_\agroup$ to be equal to~$\grouppr_\agroup$
 \emph{when random walks (re)\-start at any~group}. 
+\fi
+Thus, in this section, we propose the notion of \emph{group-adapted fairness}, 
+which enhances \pagerank by considering random walks that (re)\-start at each group and penalizing the fairness loss for each such (re)\-starting batch.
 
-In this section, we propose the notion of \emph{cross-group fairness}, 
-which enhances \pagerank 
-by considering random walks that (re)\-start at each group, 
-and penalizing the fairness loss for each such (re)\-starting batch.
+More specifically, let $\vectv_\agroup = \frac{1}{|\vertices_\agroup|} \indvect{\agroup}$ be the normalized indicator vector of group $\vertices_\agroup$. 
+Here, $\vectv_\agroup$ indicates that the random walk restarts uniformly only from group $\agroup$. 
+We define the \emph{group-adapted fairness loss function} as follows:
 
-More specifically, 
-let $\vectv_\agroup = \frac{1}{|\vertices_\agroup|} \indvect{\agroup}$ 
-be the normalized indicator vector of group $\vertices_\agroup$.
-We define the \emph{cross-group fairness loss function} as follows:
 
 \begin{definition}
-\label{definition:cgfl}
+\label{definition:groupfairloss}
 Given a row-stochastic transition matrix \transmatrix, 
 a restart probability $0 < \gamma < 1$, 
 groups $\vertices_1, \ldots, \vertices_\nogroups$, and 
-group-wise target Page\-Rank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, 
-for $\nogroups \ge 2$,
-the cross-group fairness loss function is defined as 
+group-wise target \pagerank scores $\groupDist = \{\grouppr_1,\cdots, \grouppr_{\nogroups}\}$, 
+the group-adapted fairness loss function is defined as 
 \begin{equation}
 \label{equation:cgfl}
-    \losscross(\transmatrix, \gamma)  
+    \groupAdapLoss(\transmatrix, \gamma)  
         = \frac{1}{\nogroups} \sum_{\ell=1}^\nogroups \loss(\transmatrix, \gamma, \vectv_{\ell})
         = \frac{1}{\nogroups^2} \sum_{\ell=1}^\nogroups \sum_{\agroup=1}^\nogroups 
                 \left(\indvect{\agroup}^T \prvector_\ell - \grouppr_\agroup\right)^2,
 \end{equation}
-where $\prvector_\ell$ is the Page\-Rank vector with respect to parameters 
+where $\prvector_\ell$ is the \pagerank vector with respect to parameters 
 $(\transmatrix, \gamma, \vectv_{\ell})$.
 \end{definition}
 
-In the cross-group fairness loss, 
-we iterate through all groups and sum up the fairness loss
+In the group-adapted fairness loss, 
+we iterate through all groups and sum up the fairness loss 
 when restarting the random walk at each group. 
-Asking to minimize cross-group fairness loss function
-suggests the cross-group $\grouppr$-\pagerank (\cgfpr) problem.
+Minimizing the group-adapted fairness loss function 
+leads to the group-adapted \phiPageRank (\gafpr) problem.
 
-\begin{problem}[Cross-Group $\grouppr$-\pagerank (\cgfpr)]
-Given a graph $\graph = (\vertices, \edges)$ with  
-row-stochastic transition matrix \transmatrix, 
-a restart probability $0 < \gamma < 1$, 
-groups $\vertices_1, \ldots, \vertices_\nogroups$, and 
-group-wise target Page\-Rank scores $\grouppr_1,  \ldots, \grouppr_\nogroups$, 
-for $\nogroups\ge 2$, 
-find a new transition matrix $\newtransmatrixopt$ that minimizes the cross-group fairness loss function, i.e.,
+\begin{problem}[Group-adapted \phiPageRank (\gafpr)]
+Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix \transmatrix of \graph, a restart probability $0 < \gamma < 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness loss function
+
+% Given a graph $\graph = (\vertices, \edges)$ with  
+% row-stochastic transition matrix \transmatrix, 
+% a restart probability $0 < \gamma < 1$, 
+% groups $\vertices_1, \ldots, \vertices_\nogroups$, and 
+% group-wise target \pagerank scores $\grouppr_1,  \ldots, \grouppr_\nogroups$, 
+% for $\nogroups\ge 2$, 
+% find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness loss function, i.e.,
 \begin{equation}
     \newtransmatrixopt = \arg\min_{\newtransmatrix \in \feasiblematrices(\transmatrix)} 
-                            \losscross(\newtransmatrix, \gamma),
+                            \groupAdapLoss(\newtransmatrix, \gamma),
 \end{equation}
-where $\feasiblematrices(\transmatrix)$ is the set of row-stochastic matrices 
-that have non-negative entries and satisfy $\newtransmatrix[i, j] = 0$ if $\transmatrix[i, j] = 0$.
 \end{problem}
 
+Similarly, we define the restricted group-adapted \phiPageRank (\resgafpr) problem.
+
+\begin{problem}[Restricted Group-adapted \phiPageRank \\ (\resgafpr)]
+Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix $\transmatrix$ of \graph, a restart probability $0 < \gamma < 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, a relative modification-bound factor $\boundfactor \ge 0$ and an absolute modification-bound factor $\absboundfactor \ge 0$, find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness loss function $\groupAdapLoss(\newtransmatrixopt, \gamma)$, i.e.,
+\begin{equation*}
+    \newtransmatrixopt = \arg\min_{\newtransmatrix \in \resfeasiblematrices(\transmatrix) \cap \feasiblematrices(\transmatrix)} 
+                         \groupAdapLoss(\newtransmatrix, \gamma),
+\end{equation*}
+\end{problem}
+
+
+\iffalse
 \subsection{Restricting edge reweighting}
 
-In the \fpr and \cgfpr problems, discussed in the previous section, 
+In the \fpr and \gafpr problems, discussed in the previous section, 
 we require that the changes in the transition matrix \transmatrix, 
 to obtain a new transition matrix \newtransmatrix, 
 should take place only on existing edges.
@@ -541,14 +545,14 @@ we restrict the element-wise changes in the transition matrix \transmatrix
 by introducing lower- and upper-bound constraints on 
 the entries of the new transition matrix \newtransmatrix.
 Applying this restriction to the \fpr problem,
-we have the following restricted $\grouppr$-\pagerank (\resfpr)~problem.
+we have the following restricted \phiPageRank (\resfpr)~problem.
 
-\begin{problem}[Restricted $\grouppr$-\pagerank (\resfpr)]
+\begin{problem}[Restricted \phiPageRank (\resfpr)]
 Given a graph $\graph = (\vertices, \edges)$ with row-stochastic transition matrix \transmatrix, 
 a restart probability $0 < \gamma < 1$, 
 a restart vector $\vectv \in \reals^{\novertices}$ with $||\vectv||_1 = 1$, 
 groups $\vertices_1, \ldots, \vertices_\nogroups$, 
-group-wise target Page\-Rank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, 
+group-wise target \pagerank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, 
 for $\nogroups\ge 2$, 
 and a modification-bound factor $\boundfactor \ge 0$,
 find a new transition matrix $\newtransmatrixopt$
@@ -575,20 +579,20 @@ Notice that Inequalities~(\ref{inequalities:change-constraint})
 imply also the constraint ``if $\transmatrix[i, j] = 0$ then $\newtransmatrix[i, j] = 0$,''
 so it is not necessary to specify that constraint separately. 
 
-Similarly, we define the restricted cross-group $\grouppr$-\pagerank (\rescgfpr) problem.
+Similarly, we define the restricted group-adpated \phiPageRank (\resgafpr) problem.
 
-\begin{problem}[Restricted Cross-Group $\grouppr$-\pagerank \\ (\rescgfpr)]
+\begin{problem}[Restricted group-adpated \phiPageRank \\ (\resgafpr)]
 Given a graph $\graph = (\vertices, \edges)$ with  
 row-stochastic transition matrix \transmatrix, 
 a restart probability $0 < \gamma < 1$, 
 groups $\vertices_1, \ldots, \vertices_\nogroups$, 
-group-wise target Page\-Rank scores $\grouppr_1,  \ldots, \grouppr_\nogroups$, 
+group-wise target \pagerank scores $\grouppr_1,  \ldots, \grouppr_\nogroups$, 
 for $\nogroups\ge 2$, 
 and a modification-bound factor $\boundfactor \ge 0$,
-find a new transition matrix $\newtransmatrixopt$ that minimizes the cross-group fairness loss function, i.e.,
+find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness loss function, i.e.,
 \begin{equation*}
     \newtransmatrixopt = \arg\min_{\newtransmatrix \in \resfeasiblematrices(\transmatrix)} 
-                         \losscross(\newtransmatrix, \gamma),
+                         \groupAdapLoss(\newtransmatrix, \gamma),
 \end{equation*}
 where $\resfeasiblematrices(\transmatrix)$ is the set of row-stochastic matrices
 that have non-negative entries, and for all $i, j$ satisfy the constraint
@@ -596,18 +600,21 @@ that have non-negative entries, and for all $i, j$ satisfy the constraint
     (1 - \boundfactor) \transmatrix[i, j] \le \newtransmatrix[i, j] \le (1 + \boundfactor) \transmatrix[i, j] .
 \end{equation*} 
 \end{problem}
+\fi
 
 \section{Algorithms}
 
 In this section, we propose a projected gradient-descent algorithm 
-for finding the optimal transition matrix $\newtransmatrix$ for the $\grouppr$-\pagerank problem. 
-We then extend the algorithm to solve the cross-group $\grouppr$-\pagerank problem.
+for finding the optimal transition matrix $\newtransmatrix$ for the \phiPageRank problem. 
+We then extend the algorithm to solve the group-adapted \phiPageRank problem.
 
-\subsection{Projected gradient descent for \grouppr-\pagerank}
+\subsection{Projected gradient descent for \phiPageRank}
 
 We first derive the gradient of the fairness loss function 
 $\loss(\transmatrix, \gamma, \vectv)$ 
 with respect to the transition matrix \transmatrix.
+
+\honglian{I think it is not very appropriate to call this a theorem.}
 \begin{theorem}
 \label{theorem:gradient-fairness-loss}
 The gradient of the fairness loss function 
@@ -625,7 +632,7 @@ with respect to the transition matrix \transmatrix is given by
 \end{aligned}
 \end{equation*}
 where $\matrixU = \unitary - (1 - \gamma) \transmatrix^T$, 
-\prvector is the Page\-Rank vector with respect to $(\transmatrix, \gamma, \vectv)$, and 
+\prvector is the \pagerank vector with respect to $(\transmatrix, \gamma, \vectv)$, and 
 $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup} = 
     \gamma (\unitary - (1 - \gamma) \transmatrix)^{-1} \indvect{\agroup}$.
 \end{theorem}
@@ -648,7 +655,7 @@ we have the following:
 \end{aligned}
 \end{equation}
 By the chain rule of matrix calculus \citep[Equation~(126)]{petersen_matrix_2008}, 
-we have
+we obtain:
 \begin{equation}
 \label{eq:chain_rule}
 \begin{aligned}
@@ -660,19 +667,19 @@ we have
         \right]
 \end{aligned}
 \end{equation}
-By considering the derivative of the inverse~\cite[Equation~(55)]{petersen_matrix_2008}, it is
+By considering the derivative of the inverse~\cite[Equation~(55)]{petersen_matrix_2008}, we have:
 
 \begin{equation*}
     \frac{\partial (\indvect{\agroup}^T \matrixU^{-1} \vectv)}{\partial \matrixU} 
         = -\matrixU^{-T} \indvect{\agroup} \vectv^T \matrixU^{-T}.
 \end{equation*}
-We also have 
+The gradient of $\matrixU$ with respect to $\transmatrix[i, j]$ is:
 \begin{equation*}
     \frac{\partial \matrixU}{\partial \transmatrix[i, j]} 
         = - (1 - \gamma) \frac{\partial \transmatrix^T}{\partial \transmatrix[i, j]} = - (1 - \gamma) \matrixE_{ij},
 \end{equation*}
 where $\matrixE_{ij}$ is the matrix whose $[i,j]$ entry is 1 and all other entries are 0.
-From Equation~\eqref{eq:chain_rule}, we have
+From Equation~\eqref{eq:chain_rule}, we get:
 \begin{equation}
 \label{eq:gradient_onek_Uinv_v}
 \begin{aligned}
@@ -687,39 +694,59 @@ Substituting~\eqref{eq:gradient_onek_Uinv_v} into Equation~\eqref{eq:gradient_fa
 completes the proof.
 \end{proof}
 
-In Theorem~\ref{theorem:gradient-fairness-loss} we have defined
-$\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$.
-The $j$-th coordinate of~$\vecty_\agroup$ is equal to 
-$\vecty_{\agroup}[j] = \indvect{\agroup}^T (\gamma \matrixU^{-1} \mathbf{e}_j)$
-and is the sum of Page\-Rank scores of vertices in group $\vertices_\agroup$
-with restart at the one-hot vector~$\vecte_j$, 
-i.e., the random walk always (re)\-starts at vertex $j$. 
 
-Hence, the gradient of the fairness loss has the following intuitive interpretation:
-the $[i, j]$ entry of the gradient matrix is a weighted sum of the products of 
-$\prvector[i]$ and $\vecty_\agroup[j]$. 
-The coordinate $\prvector[i]$ represents the frequency that a random walk 
-restarting at \vectv visits vertex~$i$, 
-while the coordinate $\vecty_\agroup[j]$ represents the frequency that a random walk restarting at vertex~$j$ 
-visits vertices in the group~$\vertices_\agroup$. 
-Hence, the $\agroup$-th term of the summation represents the weighted contribution of the edge $(i, j)$ 
-on the total Page\-Rank score of group~$\vertices_\agroup$.
-The weight of the $\agroup$-th term is proportional to the difference between the total Page\-Rank scores 
-in group $\vertices_\agroup$ and the group-wise target score~$\grouppr_\agroup$.
-
+\iffalse
 In terms of computational cost, 
 the gradient of the fairness loss 
 involves the inverse of the matrix $\matrixU = \unitary - (1 - \gamma) \transmatrix^T$, 
 which is computationally expensive. 
 To avoid a matrix inversion, 
 we approximate $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$ with a power iteration:
-\begin{equation}\label{eq:power_iteration}
-  \begin{aligned}
-    \vecty_\agroup 
-        & = \gamma \sum_{i=0}^{\infty} (1 - \gamma)^i \transmatrix^i \indvect{\agroup} \\
-        & = \gamma \left(\indvect{\agroup} + (1 - \gamma) \transmatrix \indvect{\agroup} + (1 - \gamma)^2 \transmatrix (\transmatrix \indvect{\agroup}) + \ldots\right).
-  \end{aligned}
+\fi
+
+\spara{Matrix Inversion Acceleration.}
+The calculation of $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$ involves the inverse of the matrix $\matrixU^T = \unitary - (1 - \gamma) \transmatrix$, which is computationally expensive. To avoid computing matrix inversion, we approximation $\matrixU^{-T}$ with the Neumann series
+\begin{equation}
+\label{eq:neuman}
+    \matrixU^{-T} = \sum_{i=0}^{\infty} (1-\gamma)^i \transmatrix^i,
 \end{equation}
+substituting \Cref{eq:neuman} into $\vecty_\agroup$ gives
+\begin{equation}
+\label{eq:yapprox}
+    \vecty_\agroup = \gamma \sum_{i=0}^{\infty}(1-\gamma)^i \transmatrix^i \indvect{\agroup}. 
+\end{equation}
+
+
+% $\vecty_\agroup$ with a power iteration:
+% \begin{equation}\label{eq:power_iteration}
+%   \begin{aligned}
+%     \vecty_\agroup 
+%         & = \gamma \sum_{i=0}^{\infty} (1 - \gamma)^i (\transmatrix^T)^i \indvect{\agroup} \\
+%         & = \gamma \left(\indvect{\agroup} + (1 - \gamma) \transmatrix \indvect{\agroup} + (1 - \gamma)^2 \transmatrix (\transmatrix \indvect{\agroup}) + \ldots\right).
+%   \end{aligned}
+% \end{equation}
+
+
+\spara{Gradient interpretation.}
+In Theorem~\ref{theorem:gradient-fairness-loss} we have defined
+$\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$.
+The $j$-th coordinate of~$\vecty_\agroup$ is given by
+$\vecty_{\agroup}[j] = \indvect{\agroup}^T (\gamma \matrixU^{-1} \mathbf{e}_j)$,
+which represents the sum of \pagerank scores for the vertices in the group $\vertices_\agroup$, with the random walk restarting at the unit vector~$\vecte_j$. In other words, the random walk always (re)\-starts from vertex $j$. 
+
+Hence, the gradient of the fairness loss has the following intuitive interpretation:
+the $[i, j]$-th entry of the gradient matrix is a weighted sum of the products of 
+$\prvector[i]$ and $\vecty_\agroup[j]$. 
+The coordinate $\prvector[i]$ represents the frequency with which a random walk, restarting at \vectv, visits vertex~$i$, 
+while the coordinate $\vecty_\agroup[j]$ represents the frequency with which a random walk, restarting at vertex~$j$, 
+visits vertices in the group~$\vertices_\agroup$. 
+Therefore, the $\agroup$-th term of the summation reflects the weighted contribution of the edge $(i, j)$ 
+to the overall \pagerank score of the group~$\vertices_\agroup$.
+The weight of the $\agroup$-th term is proportional to the difference between the total \pagerank scores 
+of group $\vertices_\agroup$ and the group-wise target score~$\grouppr_\agroup$.
+\honglian{what "the j-th term of the summation" refers to is not clear. Rewrite this.}
+
+\spara{Gradient projection.}
 Denoting by \newtransmatrix the transition matrix sought by the projected gradient-descent method, 
 after each gradient descent step, 
 \newtransmatrix is projected back to the feasible set 
@@ -734,24 +761,24 @@ The first step of the projection is skipped
 in the inplementation, 
 since we only store and update matrix entries where $\transmatrix[i, j] > 0$. 
 
-\haoyun{I am not sure if it is necessary to discuss how to handle sink vertices. \\
-1. It is not the emphasis of this paper, \\
-2. There is almost no change in results with or without handling the sink vertices. \\
-3. I find it difficult to discuss it clearly.}
+% \haoyun{I am not sure if it is necessary to discuss how to handle sink vertices. \\
+% 1. It is not the emphasis of this paper, \\
+% 2. There is almost no change in results with or without handling the sink vertices. \\
+% 3. I find it difficult to discuss it clearly.}
 
-\aris{I am not sure what you mean by 
-\emph{``Hence, we ignore the sink vertices in \transmatrix. This will not affect the Page\-Rank algorithm.''}
-Can you elaborate a bit? \\
-Also, what happens if there is the gradient-descent creates a new row with zeros
-(due to step (2) of the projection)?
-}
+% \aris{I am not sure what you mean by 
+% \emph{``Hence, we ignore the sink vertices in \transmatrix. This will not affect the \pagerank algorithm.''}
+% Can you elaborate a bit? \\
+% Also, what happens if there is the gradient-descent creates a new row with zeros
+% (due to step (2) of the projection)?
+% }
 
-\haoyun{I meant Page\-Rank by default handles sink vertices by replacing the zero rows 
-in the transition matrix with the restart vector, 
-so that we can ignore the sink vertices in the transition matrix. \\
-Now I rewrite the paragraph and make it clearer. \\
-I didn't think about the case where the gradient-descent creates a zero row.
-It is too rare to happen, but if it happens, we can replace the zero row with a uniform vector.}
+% \haoyun{I meant \pagerank by default handles sink vertices by replacing the zero rows 
+% in the transition matrix with the restart vector, 
+% so that we can ignore the sink vertices in the transition matrix. \\
+% Now I rewrite the paragraph and make it clearer. \\
+% I didn't think about the case where the gradient-descent creates a zero row.
+% It is too rare to happen, but if it happens, we can replace the zero row with a uniform vector.}
 
 
 Since rows in the transition matrix \transmatrix corresponding to sink vertices 
@@ -773,7 +800,7 @@ Equation~\eqref{eq:pagerank} is then modified to
 \begin{equation}
     \prvector^T = (1 - \gamma) \prvector^T (\transmatrix_{0} + \indvect{s} \vectv^T) + \gamma \vectv^T,
 \end{equation}
-and Equation~\eqref{eq:power_iteration} is modified to
+and Equation~\eqref{eq:yapprox} is modified to
 \begin{equation}
 %  \begin{aligned}
     \vecty_\agroup = \gamma \sum_{i=0}^{\infty} (1 - \gamma)^i (\transmatrix_{0} + \indvect{s} \vectv^T)^i \indvect{\agroup}.
@@ -795,7 +822,7 @@ where the transition matrix \newtransmatrix is projected back to the feasible se
   \caption{\label{alg:fairgd}\fairgd: \pagerank projected gradient descent}
   \begin{algorithmic}[1]
     \REQUIRE Transition matrix~\transmatrix, restart probability~$\gamma$, restart vector~\vectv, 
-    groups $\vertices_1, \ldots, \vertices_\nogroups$, target Page\-Rank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, learning rate~$\alpha$, power iteration exponent~$t$, convergence criterion $\epsilon$
+    groups $\vertices_1, \ldots, \vertices_\nogroups$, target \pagerank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, learning rate~$\alpha$, power iteration exponent~$t$, convergence criterion $\epsilon$
     \ENSURE Optimized transition matrix $\newtransmatrix$
     \STATE $\newtransmatrix \gets \transmatrix$
     \STATE ${\iter} \gets 0$ \aris{\iter is not used}
@@ -845,23 +872,22 @@ where the transition matrix \newtransmatrix is projected back to the feasible se
 
 \spara{Time complexity analysis.} \todo{}
 
-\subsection{Cross-group \pagerank}
+\subsection{group-adpated \pagerank}
 
-The \fairgd algorithm can be extended to solve the cross-group $\grouppr$-\pagerank 
-problem by adding an outer loop that iterates through all groups. 
+The \fairgd algorithm can be extended to solve the group-adpated \phiPageRank problem by adding an outer loop that iterates through all groups. 
 The algorithm, dubbed \crossgd, is presented in Algorithm~\ref{alg:crossgd}.
 
 \begin{algorithm}
   
-  \caption{\label{alg:crossgd}\crossgd: cross-group \pagerank projected gradient descent}
+  \caption{\label{alg:crossgd}\crossgd: group-adpated \pagerank projected gradient descent}
   \begin{algorithmic}[1]
-    \REQUIRE Transition matrix \transmatrix, restart probability $\gamma$, groups $\vertices_1,\ldots, \vertices_\nogroups$, target Page\-Rank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, learning rate $\alpha$, power iteration exponent~$t$, convergence criterion $\epsilon$
+    \REQUIRE Transition matrix \transmatrix, restart probability $\gamma$, groups $\vertices_1,\ldots, \vertices_\nogroups$, target \pagerank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, learning rate $\alpha$, power iteration exponent~$t$, convergence criterion $\epsilon$
     \ENSURE Optimized transition matrix $\newtransmatrix$
     \STATE $\newtransmatrix \gets \transmatrix$
     \STATE ${\iter} \gets 0$ \aris{\iter is not used}
     \STATE ${\lossprev} \gets \infty$
-    \WHILE {$|\losscross(\newtransmatrix, \gamma, \vectv) - {\lossprev}| > \epsilon$}
-      \STATE ${\lossprev} \gets \losscross(\newtransmatrix, \gamma, \vectv)$
+    \WHILE {$|\groupAdapLoss(\newtransmatrix, \gamma, \vectv) - {\lossprev}| > \epsilon$}
+      \STATE ${\lossprev} \gets \groupAdapLoss(\newtransmatrix, \gamma, \vectv)$
       \FOR {$\ell = 1$ to $\nogroups$}
         \STATE $\prvector_{\ell} \gets {\pralgo}(\newtransmatrix, \gamma,  \frac{1}{|\vertices_{\ell}|} \indvect{\ell})$
         \FOR {$\agroup = 1$ to $\nogroups$}
@@ -878,9 +904,9 @@ The algorithm, dubbed \crossgd, is presented in Algorithm~\ref{alg:crossgd}.
   \end{algorithmic}
 \end{algorithm}
 
-\section{Experimental evaluation  [Haoyun]}
+\section{Experimental evaluation}
 
-\aris{Algorithms for community detection: (1) Louvain (2) METIS}
+% \aris{Algorithms for community detection: (1) Louvain (2) METIS}
 
 % research questions: what are the things that we want to evaluate in our experiments?
 % -- comparison with baselines
@@ -895,16 +921,18 @@ The algorithm, dubbed \crossgd, is presented in Algorithm~\ref{alg:crossgd}.
 We evaluate the performance of our \fairgd and \crossgd algorithms on real-world networks. In particular, we study the following research questions:
 
 
-\noindent \textbf{RQ1:} How much can the \fairgd and \crossgd algorithms improve the fairness and cross-group fairness of the PageRank scores? \\
-\textbf{RQ2:} When $\grouppr$-fairness and cross-group $\grouppr$-fairness are achieved, how do the \fairgd and \crossgd algorithms compare with the baselines in terms of changes to the transition matrix? \\
-\textbf{RQ3:} How do the algorithms scale with the size of the data? \\
+\noindent \textbf{RQ1:} To what extent can the \fairgd and \crossgd algorithms improve the fairness and group-adapted fairness of the \pagerank scores? \\
+\textbf{RQ2:} 
+% When $\groupDist$-fairness and group-adpated $\groupDist$-fairness are achieved, 
+How do the \fairgd and \crossgd algorithms compare to the baselines in terms of changes to the transition matrix? \\
+\textbf{RQ3:} What is the impact of the parameters $\boundfactor$ and $\absboundfactor$ on the performance of the \fairgd and \crossgd algorithms  ? \\
 
-The changes to the transition matrix are measured by the relative change in the Frobenius norm of the transition matrix:
+The changes to the transition matrix are quantified by the relative change in its Frobenius norm, given by:
 \begin{equation}
-  \delta = \frac{||\newtransmatrix - \transmatrix||_F}{||\transmatrix||_F}.
+  \Delta_\transmatrix = \frac{||\newtransmatrix - \transmatrix||_F}{||\transmatrix||_F}.
 \end{equation}
 
-The fairness and cross-group fairness of PageRank scores are measured by the fairness loss and cross-group fairness loss defined in Definitions~\ref{definition:fairness-loss} and \ref{definition:cgfl}.
+The fairness and group-adapted fairness of the \pagerank scores are evaluated using the fairness loss and group-adapted fairness loss, as defined in Definitions~\ref{definition:fairloss} and \ref{definition:groupfairloss}.
 
 \subsection{Datasets}
 
@@ -915,37 +943,71 @@ The fairness and cross-group fairness of PageRank scores are measured by the fai
     \toprule
     Dataset & \#Vertices & \#Edges & \#Groups & Modularity \\
     \midrule
-    Books & 105 & 882 & 3 & 0.4149 \\
-    Blogs & 1224 & 19025 & 2 & 0.4111 \\
-    Twitter & 18470 & 48365 & 2 & 0.4755 \\
-    Slashdot & 82168 & 948464 & 4 & 0.2950 \\
-    Google & 875713 & 5105039 & 8 & 0.7420 \\
+    \book & 105 & 882 & 3 & 0.4149 \\
+    \blogs & 1224 & 19025 & 2 & 0.4111 \\
+    \mind & 2269 & 11345 &  2 & 0.075 \\
+    \twitter & 18470 & 48365 & 2 & 0.4755 \\
+    \slashdot & 82168 & 948464 & 4 & 0.2950 \\
     \bottomrule
   \end{tabular}
 \end{table}
 
 The datasets used in the experiments are as follows:
 
-\noindent \textbf{Books} \footnote{\url{http://www-personal.umich.edu/~mejn/netdata/}}. An undirected network of political books sold by Amazon. Each edge represents frequent co-purchases of two books. The books are divided into three groups: liberal, neutral, and conservative. Since the network is undirected, we convert each edge to two directed edges. \\
-\textbf{Blogs} \citep{adamic_political_2005}. A directed network of political blogs. Each edge represents a hyperlink between two blogs. The two vertex groups represent liberal and conservative blogs. \\
-\textbf{Twitter} \citep{nr-sigkdd16}. A directed political retweet network. Each edge represents a retweet from one user to another. The two vertex groups are left-leaning and right-leaning users.
-
-The following datasets are not labeled with their group information. We use METIS graph partitioning algorithm \citep{karypis_metis_1997} to partition the vertices into groups. 
-
-\noindent \textbf{Slashdot} \citep{leskovec_community_2009}. A directed network where edges are friend/foe links between users of Slashdot. \\
-\noindent \textbf{Google} \citep{leskovec_community_2009}. A directed network where vertices are web pages and edges are hyperlinks between web pages.
+\noindent \book \footnote{\url{http://www-personal.umich.edu/~mejn/netdata/}}. This is an undirected network of political books sold on Amazon. Each edge represents frequent co-purchases of two books. The books are categorized into three groups: liberal, neutral, and conservative. Since the network is undirected, each edge is converted into two directed edges. \\
+\blogs \citep{adamic_political_2005}. A directed network of political blogs, where each edge represents a hyperlink between two blogs. The vertices are divided into two groups: liberal and conservative blogs. \\
+\mind \citep{wu2020mind} A dataset built from user impression logs on Microsoft News. Each log captures a user's impressions of current news articles, along with their reading history. News articles are labeled, and we construct a directed graph from these logs, filtering out news articles with a frequency of fewer than 50 occurrences. A directed edge is created from a historically read news article to a current one if both appear in the same user's log. For each news vertex, only the top-5 weighted edges are retained. The two vertex groups correspond to lifestyle-related and society-related news. \footnote{The original dataset contains 14 labels. We aggregate vertices with the labels \{lifestyle, food and drink, sports, health\} into group 1, and those with the labels \{entertainment, travel, tv, news, finance, movies, autos, music, weather, video\} into group 2.}\\
+\twitter \citep{nr-sigkdd16}. A directed network of political retweets, where each edge represents a retweet from one user to another. The vertex groups are left-leaning and right-leaning users.\\
+\noindent \slashdot \citep{leskovec_community_2009}. A directed network representing friend/foe relationships between users on Slashdot. Since this dataset lacks group labels, we apply the METIS graph partitioning algorithm \citep{karypis_metis_1997} to divide the vertices into groups. 
+\\
+% \noindent \textbf{Google} \citep{leskovec_community_2009}. A directed network where vertices are web pages and edges are hyperlinks between web pages.
 
 \subsection{Baselines}
 
-We compare the \fairgd and \crossgd algorithms with the following baselines:
+We compare the proposed \fairgd and \crossgd algorithms against the following baselines. In our experiments, 
+\newtransmatrix represents the revised transition matrix, and 
+\newrestartvec represents the revised restart vector for both our algorithms and all the baselines.
 
-\noindent \textbf{LFBRN} \citep{tsioutsiouliklis_fairness-aware_2021}. 
-A neighborhood-based algorithm that achieves perfect $\phi$-fairness in PageRank scores. \\
-\textbf{LFBRU} \citep{tsioutsiouliklis_fairness-aware_2021}. 
-A residual-based algorithm that achieves perfect $\phi$-fairness in PageRank scores. \\
-\textbf{FairWalk} \citep{rahman_fairwalk_2019}. 
-Reweight the edges such that a random walker has equal probability of visiting vertices in each reachable group. \\
-\textbf{CrossWalk} \citep{khajehnejad_crosswalk_2022}. 
+\honglian{I am not sure whether we need to give all the details of the revised transition matrix.}
+
+\noindent \lfpru\citep{tsioutsiouliklis_fairness-aware_2021}. 
+A residual-based algorithm that revises both the restart vector and the transition matrix to achieve perfect $\groupDist$-fairness in \pagerank scores. The intuition is that each node distributes a portion of its PageRank to the under-represented groups, and distributes the remaining portion to its neighbors uniformly. 
+
+The revised restart vector is $\newrestartvec = \sum_{\agroup=1}^{2} \frac{1}{|\vertices_\agroup|} \indvect{\agroup} $, and the revised transition matrix is $\newtransmatrix = \transmatrix_L + \mathbf{R}$, where:
+\begin{equation}
+    \transmatrix_L =  
+    \left\{\begin{matrix}
+        \frac{1-\grouppr_1}{out_2(i)}, &  \text{if } (i,j)\in \edges \text{ and } i \in L_1\\
+         \frac{\grouppr_1}{out_1(i)}, &  \text{if } (i,j)\in \edges \text{ and } i \in L_2\\
+         0 & \text{otherwise} \\
+    \end{matrix}\right.
+    \end{equation}
+and $out_{\agroup}(i)$ represents the number of out-neighbors of vertex $i$ that belongs to group \agroup, and $L_\agroup$ denotes the set of vertices whose portion of neighbors that belong to group \agroup is smaller than the fairness target $\grouppr_\agroup$. $\mathbf{R}$ is given by
+\begin{equation}
+    \mathbf{R} = \delta_1 \mathbf{x}^T + \delta_2 \mathbf{y}^T
+\end{equation}
+where $\delta_1[i] = \grouppr_1 -\frac{(1-\grouppr_1)out_1(i)}{out_2(i)}$, $\delta_2[i] = (1-\grouppr_1) -\frac{\grouppr_1 out_2(i)}{out_1(i)}$. $\mathbf{x}$ and $\mathbf{y}$ are two indicator vectors where $\mathbf{x}(i) = 1 \text{ if }  i\in \group_1$ and $\mathbf{y}(i) = 1 \text{ if } i\in \group_2$.
+\\
+
+\lfprn \citep{tsioutsiouliklis_fairness-aware_2021}. 
+A neighborhood-based algorithm that achieves perfect $\groupDist$-fairness in \pagerank scores. The revised restart vector is $\newrestartvec = \sum_{\agroup=1}^{2} \frac{1}{|\vertices_\agroup|} \indvect{\agroup} $, and the revised transition matrix is given by $\newtransmatrix = \sum_{\agroup =1}^{2}\grouppr_\agroup \transmatrix_\agroup$, where 
+\begin{equation*}
+    \transmatrix_\agroup =  \left\{\begin{matrix}
+        \frac{1}{out_\agroup(i)}, &  \text{if } (i,j) \in E \text{ and } j \in \group_k \\
+         \frac{1}{|\group_k|}, & \text{if } out_\agroup(i) = 0 \text{ and } j \in \group_k \\
+         0 &  \text{otherwise} \\
+\end{matrix}\right.
+\end{equation*}
+\\
+\fairwalk \citep{rahman_fairwalk_2019}. 
+This algorithm reweights the edges such that a random walker has equal probability of visiting vertices in each reachable group. \fairwalk does not change the restart vector, and the revised transition matrix is given by
+\begin{equation}
+    \newtransmatrix = 
+\end{equation}
+\\
+
+
+\crosswalk \citep{khajehnejad_crosswalk_2022}. 
 Based on FairWalk, also take into account the distance of each vertex to other groups in the random walk.
 
 LFBRN and LFBRU are guaranteed to achieve perfect $\phi$-fairness in PageRank scores,
@@ -967,7 +1029,7 @@ the fairness of PageRank scores but do not guarantee perfect fairness.
 \subsubsection{\pagerank}
 
 
-First, we study the condition under which $\phi$-fairness and cross-group $\phi$-fairness can be achieved by the FairGD and CrossGD algorithms. We run the FairGD on the Blogs and Twitter with a uniform restart vector. We vary the target PageRank scores of the two groups and record the fairness loss $L$ and the relative change to the transition matrix $\delta$ with FairGD and baselines. The results are shown in Table~\ref{tab:blogs} and Table~\ref{tab:twitter}.
+First, we study the condition under which $\phi$-fairness and group-adpated $\phi$-fairness can be achieved by the FairGD and CrossGD algorithms. We run the FairGD on the Blogs and Twitter with a uniform restart vector. We vary the target PageRank scores of the two groups and record the fairness loss $L$ and the relative change to the transition matrix $\delta$ with FairGD and baselines. The results are shown in Table~\ref{tab:blogs} and Table~\ref{tab:twitter}.
 
 \haoyun{We can add a null baseline that does not change the transition matrix, to show the initial fairness loss.}
 
@@ -991,10 +1053,10 @@ Each figure shows a metric (fairness loss or relative change) with respect to th
 % the relative change to the transition matrix.
 
 The Blogs and Twitter datasets contain two groups.
-We vary the target Page\-Rank scores of the two groups
+We vary the target \pagerank scores of the two groups
 from 0.2 to 0.8 and from 0.8 to 0.2, respectively.
 As shown in Table~\ref{tab:blogs} and Table~\ref{tab:twitter},
-when the target Page\-Rank scores are close to the initial Page\-Rank scores,
+when the target \pagerank scores are close to the initial \pagerank scores,
 FairGD has a significantly smaller relative change to the transition matrix
 than LFBRU and LFBRN, while having an almost zero fairness loss.
 In these cases, FairGD also outperforms FairWalk and CrossWalk in terms of the Fairness loss.
@@ -1042,40 +1104,59 @@ In terms of the fairness loss, FairGD also outperforms FairWalk and CrossWalk.
     \centering
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{fig/blogs_fairness Loss__constraint_0.05.pdf} % Avoid spaces in filename
+        \includegraphics[width=\textwidth]{fig/blogs_fairness Loss.pdf} % Avoid spaces in filename
         \caption{Fairness loss with $\phi$ in $[0.1, \cdots, 0.9]$}
-        \label{fig:constraint_blog_loss}
+        \label{fig:basic_blog_fair}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{fig/blogs_Weight Change__constraint_0.05.pdf} % Avoid spaces in filename
+        \includegraphics[width=\textwidth]{fig/blogs_Weight Change.pdf} % Avoid spaces in filename
         \caption{Transition matrix weight change with $\phi$ in $[0.1, \cdots, 0.9]$}
-        \label{fig:constraint_blog_weight_change}
+        \label{fig:basic_blog_weight}
     \end{subfigure}
     \caption{Fairness loss and transition matrix weight change on the Blog dataset with $\delta = 0.05$.}
-    \label{fig:constraint_phi_plot_blog}
+    \label{fig:basic_blog}
 \end{figure*}
 \fi
 \begin{figure*}[htbp] % Use figure* for spanning across two columns
     \centering
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{fig/soc-political-retweet_fairness Loss.pdf} % Avoid spaces in filename
+        \includegraphics[width=\textwidth]{fig/books_fairness Loss.pdf} % Avoid spaces in filename
         \caption{Fairness loss with $\phi$ in $[0.1, \cdots, 0.9]$}
-        \label{fig:constraint_twitter_loss}
+        \label{fig:basic_book_fair}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{fig/soc-political-retweet_Weight Change.pdf} % Avoid spaces in filename
+        \includegraphics[width=\textwidth]{fig/books_Weight Change.pdf} % Avoid spaces in filename
         \caption{Transition matrix weight change with $\phi$ in $[0.1, \cdots, 0.9]$}
-        \label{fig:constraint_twitter_weight_change}
+        \label{fig:basic_book_weight}
     \end{subfigure}
-    \caption{Fairness loss and transition matrix weight change on the Twitter dataset.}
-    \label{fig:unconstraint_phi_plot_twitter}
+    \caption{Fairness loss and transition matrix weight change on the books dataset.}
+    \label{fig:basic_book}
 \end{figure*}
 
+
+\begin{figure*}[htbp] % Use figure* for spanning across two columns
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{fig/mind_fairness Loss.pdf} % Avoid spaces in filename
+        \caption{Fairness loss with $\phi$ in $[0.1, \cdots, 0.9]$}
+        \label{fig:basic_mind_fair}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{fig/mind_Weight Change.pdf} % Avoid spaces in filename
+        \caption{Transition matrix weight change with $\phi$ in $[0.1, \cdots, 0.9]$}
+        \label{fig:basic_mind_weight}
+    \end{subfigure}
+    \caption{Fairness loss and transition matrix weight change on the mind dataset.}
+    \label{fig:basic_mind}
+\end{figure*}
 
 \begin{table*}[h!]
     \centering
