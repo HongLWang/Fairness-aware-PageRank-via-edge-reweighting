@@ -238,16 +238,57 @@ in the fairness of the \pagerank algorithm.
 
 \section{Related Work}
 
-In recent years, algorithmic fairness in graph mining has emerged as a significant area of research (for a comprehensive survey, see \citep{saxena2024fairsna}). This paper focuses on enhancing fairness within the well-known PageRank algorithm, which has been widely utilized for tasks such as node ranking, classification, and community detection. Considering fairness, the algorithm should allocate pagerank to nodes in a manner that considers both the nodes' group affiliations and the overall structure of the network \citep{tsioutsiouliklis_fairness-aware_2021,saxena2024fairsna}.
+In recent years, algorithmic fairness in graph mining has emerged as a prominent area of research --- for a comprehensive survey, see the recent paper by \citet{saxena2024fairsna}. This paper focuses on enhancing fairness in the content of the well-known \pagerank algorithm, which has been widely utilized for tasks such as node ranking, classification, and community detection. The objective in accounting for a fairness notion in the context of \pagerank, is to enable allocating \pagerank scores to nodes in a manner that considers both the nodes' group affiliations and the overall structure of the network~\citep{tsioutsiouliklis_fairness-aware_2021,saxena2024fairsna}.
 
-In the naive \pagerank algorithms \citep{gleich_pagerank_2015,brin_anatomy_1998,tabrizi2013personalized}, a random walk moves from one node to its neighbors with equal probability, proportional to the node's degree. In the literature, a few analytical studies \citep{espin2022inequality,ghoshal2011ranking} have unveild the inequality (unfairness) of \pagerank.
-To address potential group bias, FairWalk \citep{rahman_fairwalk_2019} introduces equal transition probabilities across all groups within a node's neighborhood. CrossWalk \citep{khajehnejad_crosswalk_2022} further refines this approach by considering the local group structure and reweighting edges based on their distance from group boundaries. Both FairWalk and CrossWalk adjust the transition matrix using heuristic-based methods.
+In the standard \pagerank algorithm \citep{gleich_pagerank_2015,brin_anatomy_1998,tabrizi2013personalized}, 
+a random-walk process defines the transition from one node to its neighbors,
+each transition being made with equal probability, proportional to the node's degree, 
+while also with certain probability considering a ``jump'' to one of the nodes defined by a restart vector.
+When considering the group association of nodes, defined by a protected attribute, 
+analytical studies in the literature~\citep{espin2022inequality,ghoshal2011ranking} 
+have unveild the unfairness of \pagerank.
+To address such potential group bias, 
+FairWalk \citep{rahman_fairwalk_2019} proposes to modify the transition matrix of the random walk
+so that the transition probabilities from each node to all groups become equal. 
+CrossWalk \citep{khajehnejad_crosswalk_2022} further refines this idea by considering 
+the local group structure and reweighting edges based on their distance from group boundaries. 
+Both FairWalk and CrossWalk adjust the transition matrix using heuristic-based methods.
 
-\citet{tsioutsiouliklis_fairness-aware_2021} introduce a novel fairness metric for \pagerank and propose two algorithm families: FSPR and LFPRs. FSPR retains the original graph structure and edge weights, while seeking an optimal jump vector to minimize the disparity between the fair \pagerank vector and the original \pagerank vector, subject to fairness constraints. Similar to FairWalk and CrossWalk, LFPRs aim to achieve fairness at the individual vertex level and include three variations: $LFPR_N$, $LFPR_U$, and $LFPR_P$. Each variation reweights the transition matrix in a distinct way while incorporating a fair jump vector. Although the authors suggest that FSPR and LFPRs could be extended to scenarios involving more than two groups, they do not provide details on the specific mechanisms for such extensions.
+\citet{tsioutsiouliklis_fairness-aware_2021} introduce a novel fairness metric for \pagerank 
+and propose two families of algorithms: $\mathrm{FSPR}$ and $\mathrm{LFPRs}$. 
+Methods in the first family, $\mathrm{FSPR}$, retain the original graph structure and edge weights, 
+while seeking an optimal jump vector to minimize the disparity between the fair \pagerank vector and 
+the original \pagerank vector, subject to fairness constraints. 
+On the other hand, similar to FairWalk and CrossWalk, methods in the second family, $\mathrm{LFPRs}$, 
+aim to achieve fairness at the individual vertex level and include three variants: 
+$\mathrm{LFPR}_N$, $\mathrm{LFPR}_U$, and $\mathrm{LFPR}_P$. 
+Each variant reweights the transition matrix in a different way while incorporating a fair jump vector. 
+Although the authors suggest that $\mathrm{FSPR}$ and $\mathrm{LFPRs}$ 
+can be extended to scenarios involving more than two groups, 
+they do not provide details on the specific mechanisms for such an extension. 
 
-Additionally, link recommendation has been explored as an alternative approach to promoting fairness in PageRank. In their study, \citet{tsioutsiouliklis_link_2022} present analytical formulas for calculating the impact of adding edges on fairness.
-In this paper, we propose an edge reweighting approach to enhance fairness in \pagerank.
-Our approach offers a clear and practical framework for effectively handling multiple groups.
+Additionally, link recommendation has been explored as an alternative approach to promoting fairness in \pagerank. 
+In one such paper, \citet{tsioutsiouliklis_link_2022} present analytical formulas 
+for calculating the impact of adding edges on fairness.
+In a different direction, 
+\citet{zeng_fair_2021} propose a set of de-biasing methods
+for fair network representation learning, using techniques based on 
+sampling, projections, and graph neural networks.
+
+Other papers consider the problem of infusing fairness into rankings
+without focusing specifically into the \pagerank algorithm.
+For instance, \citet{krasanakis_applying_2021} propose a model that 
+weights training samples to make classifiers fair and 
+adapt it to estimate an unbiased personalization that yields fairer node ranks. 
+
+In this paper, we propose an edge-reweighting approach to enhance fairness in \pagerank.
+Our method differs from previous studies in several ways: 
+First, we consider only edge reweighting, which can lead to more actionable operations to achieve fairness.
+Second, we focus on global fairness, 
+without enforcing the more rigid requirement of fair transitions from each node. 
+As a result, our method can lead to significantly smaller modification of the transition matrix.
+Finally, our approach offers a clear and practical framework for handling effectively
+fairness over multiple groups.
 
 
 % \textbf{Link Recommendations for \pagerank Fairness}. \citet{tsioutsiouliklis_link_2022} analyzes the effect of potentially new edges as well as existed edges on the fairness of \pagerank. They proposes a linear time link recommendation algorithm that maximizes fairness.
@@ -255,10 +296,6 @@ Our approach offers a clear and practical framework for effectively handling mul
 % \textbf{Fair representation learning for heterogeneous information networks}. \citet{zeng_fair_2021} chooses vertex in the disadvantaged groups with higher probability when generating meta-paths.
 
 % \textbf{Applying Fairness Constraints on Graph Node Ranks Under Personalization Bias}. \citet{krasanakis_applying_2021} mitigates disparate impact in ranking under personalization bias by a personalization editing mechanism.
-
-\todo{
-Related work: add more related papers. e.g. s\citep{zeng_fair_2021,krasanakis_applying_2021}.}
-
 
 \section{Definitions}
 In this section, we first present preliminaries, and then we
