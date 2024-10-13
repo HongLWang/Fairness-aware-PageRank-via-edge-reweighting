@@ -1175,7 +1175,7 @@ The \crosswalk algorithm is modified accordingly. These two algorithms do not ad
         \caption{\slashdot}
 \label{fig:loss_slashdot}
     \end{subfigure}
-    \caption{Fairness loss $\loss(\newtransmatrix,\gamma,\vectv)$ of each baseline on five datasets}
+    \caption{Fairness loss $\loss(\newtransmatrix,\gamma,\vectv)$ of each baseline on five datasets for the \phiPageRank problem}
     \label{fig:loss_all_dataset}
 \end{figure*}
 
@@ -1216,9 +1216,99 @@ The \crosswalk algorithm is modified accordingly. These two algorithms do not ad
         \caption{\slashdot}
 \label{fig:change_slashdot}
     \end{subfigure}
-    \caption{Transition matrix change $\Delta_\transmatrix$ of each baseline on five datasets}
+    \caption{Transition matrix change $\Delta_\transmatrix$ of each baseline on five datasets for the \phiPageRank problem}
     \label{fig:change_all_dataset}
 \end{figure*}
+
+\subsubsection{Group-Adapted loss and $\Delta_\transmatrix$}
+
+
+\begin{figure*}[htbp]
+  \centering
+\includegraphics[width=\textwidth]{fig/PhiFair/only_legend.pdf}
+\vspace{-5mm}
+\end{figure*}
+\begin{figure*}[htbp] % Use figure* for spanning across two columns
+    \centering
+    \begin{subfigure}[b]{0.21\textwidth}
+        \centering        \includegraphics[width=\textwidth]{fig/adaptedLoss/books_trade_Loss.pdf} 
+        \caption{\book}
+\label{fig:adaptloss_book}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.19\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/adaptedLoss/blogs_loss.pdf}
+        \caption{\blogs}
+\label{fig:adaptloss_blog}
+    \end{subfigure}
+    \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/adaptedLoss/mind_loss.pdf}
+        \caption{\mind}
+\label{fig:adaptloss_mind}
+    \end{subfigure}
+    \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/adaptedLoss/soc-political-retweet_loss.pdf}
+        \caption{\twitter}
+\label{fig:adaptloss_twitter}
+    \end{subfigure}
+    \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/adaptedLoss/slashdot_loss.pdf}
+        \caption{\slashdot}
+\label{fig:adaptloss_slashdot}
+    \end{subfigure}
+    \caption{Fairness loss $\groupAdapLoss(\newtransmatrix,\gamma)$ of each baseline on five datasets for the group-adapted \phiPageRank problem}
+    \label{fig:loss_all_dataset}
+\end{figure*}
+
+
+
+\begin{figure*}[htbp] % Use figure* for spanning across two columns
+    \centering
+    \begin{subfigure}[b]{0.21\textwidth}
+        \centering        \includegraphics[width=\textwidth]{fig/adaptedLoss/books_trade_change.pdf} 
+        \caption{\book}
+\label{fig:adapechange_book}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.19\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/adaptedLoss/blogs_trade_change.pdf}
+        \caption{\blogs}
+\label{fig:adaptchange_blog}
+    \end{subfigure}
+    \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/adaptedLoss/mind_trade_change.pdf}
+        \caption{\mind}
+\label{fig:adaptchange_mind}
+    \end{subfigure}
+    \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/adaptedLoss/soc-political-retweet_change.pdf}
+        \caption{\twitter}
+\label{fig:adaptchange_twitter}
+    \end{subfigure}
+    \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/adaptedLoss/slashdot_change.pdf}
+        \caption{\slashdot}
+\label{fig:adaptchange_slashdot}
+    \end{subfigure}
+    \caption{Transition matrix change $\Delta_\transmatrix$ of each baseline on five datasets for the group-adapted \phiPageRank problem}
+    \label{fig:change_all_dataset}
+\end{figure*}
+
+
 
 \begin{acks}
 \end{acks}
