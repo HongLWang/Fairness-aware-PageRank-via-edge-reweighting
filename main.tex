@@ -196,14 +196,15 @@ namely, achieving fair \pagerank by re\-weighting the graph edges.
 Our motivation is that such interventions are 
 \emph{intrinsic to the graph structure} and often can be implemented with actionable operations. 
 For example, edge re\-weighting can be achieved by appropriately prioritizing/demoting content from one's connections in a social network. Similarly, strategies of type ($iii$) involving edge additions or deletions are also intrinsic to the graph structure but tend to be less practical. These strategies rely on link recommendations and have to account for the likelihood of acceptance, making them more complex to implement.
-To illustrate this point, consider the context of ranking transportation routes. Adjusting edge weights to prioritize under\-served areas or to mitigate biases in ridership data (e.g., historical neglect of specific neighborhoods) is typically easier than adding new routes or removing existing ones. 
+To further compare the feasibility of the two types of strategies, consider the context of ranking Internet routes. Adjusting edge weights to prioritize under\-served areas is typically easier than adding new routes or removing existing ones. 
+Strategies of type ($i$) and ($ii$), i.e., modifying the \pagerank restart probability or restart vector are \emph{extrinsic to the graph structure} and rely on tuning hyper-parameters of the \pagerank algorithm. In many cases, it is not meaningful, nor actionable, to modify those hyper-parameters. For example, in the personalized \pagerank algorithm, the restart vector has a clear interpretation, which is to model the user interests and is not amenable to modification.
 
-\aris{The example with the transportation is nice, 
-but reviewers may complain about its relevance to the web conference.
-Can you think of a nice example in the context of the Web?
-Alternatively, it can be omitted, especially since introduction is long.}
 
-Compared to intervention strategies of type ($iv$) and ($iii$), type ($i$) and ($ii$) strategies, i.e., modifying the \pagerank restart probability or restart vector is \emph{extrinsic to the graph structure} and rely on tuning hyper-parameters of the \pagerank algorithm. In many cases, it is not meaningful, nor actionable, to modify those hyper-parameters. For example, in the personalized \pagerank algorithm, the restart vector has a clear interpretation, which is to model the user interests and is not amenable to modification.
+% \aris{The example with the transportation is nice, 
+% but reviewers may complain about its relevance to the web conference.
+% Can you think of a nice example in the context of the Web?
+% Alternatively, it can be omitted, especially since introduction is long.}
+
 
 
 % In this paper, we focus on intervention strategies of type ($iv$),
@@ -377,7 +378,8 @@ The \pagerank-score vector \prvector is the solution to the following equation:
     \prvector^T = (1 - \gamma) \prvector^T \transmatrix + \gamma \vectv^T.
 \end{equation}
 
-Here, the transition matrix \transmatrix is row stochastic, derived by normalizing each row of the adjacency matrix of $\graph$. The restart vector \vectv specifies a distribution over all vertices, indicating where a random walk might restart. The parameter $\gamma$ represents the probability that the random walk will restart at any given step. To handle ``sink'' vertices, which are vertices with no outgoing edges, we replace the corresponding zero rows of \transmatrix with the restart vector \vectv.
+Here, the transition matrix \transmatrix is row stochastic, derived by normalizing each row of the adjacency matrix of $\graph$. The restart vector \vectv specifies a distribution over all vertices, indicating where a random walk might restart. The parameter $\gamma$ represents the probability that the random walk will restart at any given step. In the case of directed graph, there may exist sink vertices that have no outgoing edges, so their rows in the transition matrix would normally be all zeros.
+To handle sink vertices, we replace the corresponding zero rows of \transmatrix with the restart vector \vectv.
 
 By solving \Cref{eq:pagerank}, we obtain the following expression for the \pagerank score vector: 
 \begin{equation} 
@@ -441,10 +443,10 @@ where \prvector is the \pagerank vector corresponding to parameters~$(\transmatr
 
 
 
-\begin{lemma}
+\begin{prop}
 The fairness-loss function $\loss(\transmatrix, \gamma, \vectv)$, 
 as defined in \Cref{eq:loss_function}, is not convex with respect to $\transmatrix$.
-\end{lemma}
+\end{prop}
 \begin{proof}
 To demonstrate the non-convexity, it suffices to provide a single counterexample. Consider a fully connected graph $\graph$ with three vertices: $a$, $b$, and $c$. Let the labels be $\labelof_a =\mathsf{blue}$, and $\labelof_b = \labelof_c = \mathsf{red}$. We also let 
 \[ 
@@ -723,9 +725,9 @@ We first derive the gradient of the fairness-loss function
 $\loss(\transmatrix, \gamma, \vectv)$ 
 with respect to the transition matrix \transmatrix.
 
-\honglian{I think it is not very appropriate to call this a theorem.}
-\aris{I agree. Maybe `proposition'.}
-\begin{theorem}
+% \honglian{I think it is not very appropriate to call this a theorem.}
+% \aris{I agree. Maybe `proposition'.}
+\begin{prop}
 \label{theorem:gradient-fairness-loss}
 The gradient of the fairness-loss function 
 $\loss(\transmatrix, \gamma, \vectv)$ 
@@ -745,7 +747,7 @@ where $\matrixU = \unitary - (1 - \gamma) \transmatrix^T$,
 \prvector is the \pagerank vector with respect to $(\transmatrix, \gamma, \vectv)$, and 
 $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup} = 
     \gamma (\unitary - (1 - \gamma) \transmatrix)^{-1} \indvect{\agroup}$.
-\end{theorem}
+\end{prop}
   
 \begin{proof}
 Recalling that $\prvector = \gamma \matrixU^{-1} \vectv$,
@@ -838,7 +840,7 @@ substituting \Cref{eq:neuman} into $\vecty_\agroup$ gives
 
 
 \spara{Gradient interpretation.}
-In Theorem~\ref{theorem:gradient-fairness-loss} we have defined
+In Proposition~\ref{theorem:gradient-fairness-loss} we have defined
 $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$.
 The $j$-th coordinate of~$\vecty_\agroup$ is given by
 $\vecty_{\agroup}[j] = \indvect{\agroup}^T (\gamma \matrixU^{-1} \mathbf{e}_j)$,
@@ -854,22 +856,19 @@ Therefore, the $\agroup$-th term of the summation reflects the weighted contribu
 to the overall \pagerank score of the group~$\vertices_\agroup$.
 The weight of the $\agroup$-th term is proportional to the difference between the total \pagerank scores 
 of group $\vertices_\agroup$ and the group-wise target score~$\grouppr_\agroup$.
-\honglian{what "the j-th term of the summation" refers to is not clear. Rewrite this.}
+\honglian{I stop here. what "the j-th term of the summation" refers to is not clear. Rewrite this.}
 
-\spara{Gradient projection.}
-Denoting by \newtransmatrix the transition matrix sought by the projected gradient-descent method, 
-after each gradient descent step, 
+\spara{Gradient projection.} We use \newtransmatrix to denote the transition matrix obtained by the projected gradient-descent method.
+After each gradient descent step, 
 \newtransmatrix is projected back to the feasible set 
 $\feasiblematrices(\transmatrix)$ by the following steps:
 \begin{enumerate}
-  \item For all entries $[i, j]$, if $\transmatrix[i, j] = 0$ then $\newtransmatrix[i, j] = 0$.
-  \item All negative entries in $\newtransmatrix$ are set to zero.
-  \item All rows of \newtransmatrix are normalized, so that \newtransmatrix is row-stochastic.
+  \item For all entries $[i, j]$, if $\transmatrix[i, j] = 0$ then set $\newtransmatrix[i, j] = 0$.
+  \item Set all negative entries in $\newtransmatrix$ to zero.
+  \item Normalize each row of \newtransmatrix, so that \newtransmatrix is row-stochastic.
 \end{enumerate}
 
-The first step of the projection is skipped 
-in the inplementation, 
-since we only store and update matrix entries where $\transmatrix[i, j] > 0$. 
+Since our optimization process uses element-wise updates for obtaining \newtransmatrix, the first step can be omitted. Details of the projection steps are given in Algorithm~\ref{alg:project}.
 
 % \haoyun{I am not sure if it is necessary to discuss how to handle sink vertices. \\
 % 1. It is not the emphasis of this paper, \\
@@ -890,13 +889,9 @@ since we only store and update matrix entries where $\transmatrix[i, j] > 0$.
 % I didn't think about the case where the gradient-descent creates a zero row.
 % It is too rare to happen, but if it happens, we can replace the zero row with a uniform vector.}
 
-
-Since rows in the transition matrix \transmatrix corresponding to sink vertices 
-are replaced by the restart vector \vectv, every sink vertices will contribute 
-$\bigO(\novertices)$ non-zero entries in the transition matrix \transmatrix. 
-To avoid a large number of non-zero entries in the transition matrix \transmatrix
-because of sink vertices in order to reduce the computational cost,
-we decompose the transition matrix \transmatrix into a matrix $\transmatrix_{0}$
+In the preliminaries, we mentioned that rows in the transition matrix \transmatrix corresponding to sink vertices are replaced by the restart vector \vectv. Each sink vertex contributes $\bigO(\novertices)$ (where \novertices is the total number of nodes) non-zero entries to the transition matrix \transmatrix. Note that in our algorithm, sparsity of \transmatrix is in favored for promoting efficiency. 
+To reduce the number of non-zero entries in \transmatrix,
+we decompose \transmatrix into a matrix $\transmatrix_{0}$
 considering transition only for non-sink vertices,
 and another matrix $\transmatrix_{s}$ considering transition only for sink vertices.
 That is,
@@ -904,8 +899,7 @@ That is,
   \transmatrix = \transmatrix_{0} + \transmatrix_{s} = \transmatrix_{0} + \indvect{s} \vectv^T, 
 \end{equation}
 with $\indvect{s}[i]=1$ if vertex $i$ is a sink vertex and otherwise $indvect{s}[i]=0$.
-Therefore we can store and update only $\bigO(m)$ non-zero entries of $\transmatrix_{0}$.
-
+In this way, we can store and update only $\bigO(m)$ non-zero entries of $\transmatrix_{0}$.
 Equation~\eqref{eq:pagerank} is then modified to
 \begin{equation}
     \prvector^T = (1 - \gamma) \prvector^T (\transmatrix_{0} + \indvect{s} \vectv^T) + \gamma \vectv^T,
@@ -932,12 +926,13 @@ where the transition matrix \newtransmatrix is projected back to the feasible se
   \caption{\label{alg:fairgd}\fairgd: \pagerank projected gradient descent}
   \begin{algorithmic}[1]
     \REQUIRE Transition matrix~\transmatrix, restart probability~$\gamma$, restart vector~\vectv, 
-    groups $\vertices_1, \ldots, \vertices_\nogroups$, target \pagerank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, learning rate~$\alpha$, power iteration exponent~$t$, convergence criterion $\epsilon$
+    groups $\vertices_1, \ldots, \vertices_\nogroups$, target \pagerank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, learning rate~$\alpha$, power iteration exponent~$t$, convergence criterion $\epsilon$, maximum number of iterations \textit{MaxIter}
     \ENSURE Optimized transition matrix $\newtransmatrix$
     \STATE $\newtransmatrix \gets \transmatrix$
-    \STATE ${\iter} \gets 0$ \aris{\iter is not used}
+    \STATE ${\iter} \gets 0$
     \STATE ${\lossprev} \gets \infty$
-    \WHILE {$|\loss(\newtransmatrix, \gamma, \vectv) - {\lossprev}| > \epsilon$}
+    \WHILE {$|\loss(\newtransmatrix, \gamma, \vectv) - {\lossprev}| > \epsilon$ and $\iter < \textit{MaxIter}$}
+      \STATE $\iter \gets \iter + 1$
       \STATE $\prvector \gets {\pralgo}(\newtransmatrix, \gamma, \vectv)$
       \STATE ${\lossprev} \gets \loss(\newtransmatrix, \gamma, \vectv)$
       \FOR {$\agroup = 1$ to $\nogroups$}
@@ -959,7 +954,7 @@ where the transition matrix \newtransmatrix is projected back to the feasible se
     \REQUIRE Transition matrix \transmatrix, restart probability $\gamma$, group indicator vector $\indvect{\agroup}$, power iteration exponent~$t$
     \ENSURE Approximation of $\gamma \indvect{\agroup}^T \matrixU^{-1}$
     \STATE $\vecty \gets \indvect{\agroup}$
-    \STATE $\matrixU \gets \indvect{\agroup}$ \aris{Is \matrixU a matrix or a vector?}
+    \STATE $\matrixU \gets \mathbf{I}_k$ \aris{Is \matrixU a matrix or a vector?}
     \STATE $\indvect{s} \gets \mathbf{1} - \transmatrix \mathbf{1}$
     \FOR {$i = 1$ to $t$}
       \STATE $\matrixU \gets (1 - \gamma) (\transmatrix \matrixU + \indvect{s} \vectv^T \matrixU)$
@@ -991,12 +986,13 @@ The algorithm, dubbed \crossgd, is presented in Algorithm~\ref{alg:crossgd}.
   
   \caption{\label{alg:crossgd}\crossgd: group-adpated \pagerank projected gradient descent}
   \begin{algorithmic}[1]
-    \REQUIRE Transition matrix \transmatrix, restart probability $\gamma$, groups $\vertices_1,\ldots, \vertices_\nogroups$, target \pagerank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, learning rate $\alpha$, power iteration exponent~$t$, convergence criterion $\epsilon$
+    \REQUIRE Transition matrix \transmatrix, restart probability $\gamma$, groups $\vertices_1,\ldots, \vertices_\nogroups$, target \pagerank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, learning rate $\alpha$, power iteration exponent~$t$, convergence criterion $\epsilon$, maximum number of iterations \textit{MaxIter}
     \ENSURE Optimized transition matrix $\newtransmatrix$
     \STATE $\newtransmatrix \gets \transmatrix$
-    \STATE ${\iter} \gets 0$ \aris{\iter is not used}
+    \STATE ${\iter} \gets 0$
     \STATE ${\lossprev} \gets \infty$
-    \WHILE {$|\groupAdapLoss(\newtransmatrix, \gamma, \vectv) - {\lossprev}| > \epsilon$}
+    \WHILE {$|\groupAdapLoss(\newtransmatrix, \gamma, \vectv) - {\lossprev}| > \epsilon$ and $\iter < \textit{MaxIter}$}
+      \STATE $\iter \gets \iter + 1$
       \STATE ${\lossprev} \gets \groupAdapLoss(\newtransmatrix, \gamma, \vectv)$
       \FOR {$\ell = 1$ to $\nogroups$}
         \STATE $\prvector_{\ell} \gets {\pralgo}(\newtransmatrix, \gamma,  \frac{1}{|\vertices_{\ell}|} \indvect{\ell})$
@@ -1035,7 +1031,7 @@ We evaluate the performance of our \fairgd and \crossgd algorithms on real-world
 \textbf{RQ2:} 
 % When $\groupDist$-fairness and group-adpated $\groupDist$-fairness are achieved, 
 How do the \fairgd and \crossgd algorithms compare to the baselines in terms of changes to the transition matrix? \\
-\textbf{RQ3:} What is the impact of the parameters $\boundfactor$ and $\absboundfactor$ on the performance of the \fairgd and \crossgd algorithms  ? \\
+% \textbf{RQ3:} What is the impact of the parameters $\boundfactor$ and $\absboundfactor$ on the performance of the \fairgd and \crossgd algorithms  ? \\
 
 The changes to the transition matrix are quantified by the relative change in its Frobenius norm, given by:
 \begin{equation}
@@ -1046,21 +1042,26 @@ The fairness and group-adapted fairness of the \pagerank scores are evaluated us
 
 \subsection{Datasets}
 
-\begin{table}
-  \caption{Datasets used in the experiments.}
+\begin{table}[!b]
+\centering
+  \caption{Datasets used in the experiments. $\groupDist_{O}$ denotes the original group-wise \pagerank scores of the datasets.}
   \label{table:datasets}
   \begin{tabular}{lrrrc}
     \toprule
-    Dataset & \#Vertices & \#Edges & \#Groups & Modularity \\
+    Dataset & \#Vertices & \#Edges  & Modularity & $\groupDist_{O}$\\
     \midrule
-    \book & 105 & 882 & 3 & 0.4149 \\
-    \blogs & 1224 & 19025 & 2 & 0.4111 \\
-    \mind & 2269 & 11345 &  2 & 0.075 \\
-    \twitter & 18470 & 48365 & 2 & 0.4755 \\
-    \slashdot & 82168 & 948464 & 4 & 0.2950 \\
+    \book & 105 & 882  & 0.4149 & (0.10, 0.48, 0.42) \\
+    \blogs & 1224 & 19025 & 0.4111& (0.48, 0.52) \\
+    \mind & 2269 & 11345  & 0.075 & (0.74, 0.26)\\
+    \twitter & 18470 & 48365  & 0.4755 & (0.42, 0.58)\\
+    \slashdot & 82168 & 948464 & 0.2950 & (0.30, 0.17 0.36 0.17)\\
     \bottomrule
   \end{tabular}
 \end{table}
+
+
+
+
 
 The datasets used in the experiments are as follows:
 
@@ -1126,6 +1127,14 @@ This algorithm extends \fairwalk by taking into account the distance of each ver
 
 \honglian{The new transition matrix for \crosswalk is too complicated to write down in this section.}
 
+\spara{Remarks.}
+Originally, \fairwalk and \crosswalk assign equal weights to each group in the random walk. In our experiments, as shown in \cref{eq:fairwalk}, we modify \fairwalk so that the probability of visiting each group during a random walk is proportional to the target group-wise \pagerank scores. 
+The \crosswalk algorithm is modified accordingly. These two algorithms do not add new edges to the graph.
+
+
+\lfprn and \lfpru are guaranteed to achieve perfect $\groupDist$-fairness in \pagerank scores, provided the restart vector is $\groupDist$-fair, i.e., $\indvect{\agroup}^T v = \grouppr_\agroup$. Both algorithms modify the graph to be fully connected.
+
+
 % \fairwalk and \crosswalk are two algorithms that rebalance the random walk 
 % to achieve fairness in learning graph embeddings, without adding new edges. 
 % Originally, FairWalk and CrossWalk assign equal weights to each group in the random walk. 
@@ -1135,25 +1144,42 @@ This algorithm extends \fairwalk by taking into account the distance of each ver
 
 \subsection{Experimental Settings}
 
-Originally, \fairwalk and \crosswalk assign equal weights to each group in the random walk. In our experiments, as shown in \cref{eq:fairwalk}, we modify \fairwalk so that the probability of visiting each group during a random walk is proportional to the target group-wise \pagerank scores. 
-The \crosswalk algorithm is modified accordingly. These two algorithms do not add new edges to the graph.
 
-\lfprn and \lfpru are guaranteed to achieve perfect $\groupDist$-fairness in \pagerank scores, provided the restart vector is $\groupDist$-fair, i.e., $\indvect{\agroup}^T v = \grouppr_\agroup$. Both algorithms modify the graph to be fully connected.
+\spara{$\gamma$ and \vectv}. Throughout the experimental section, we follow the general setting of the \pagerank algorithm and fix $\gamma = 0.15$. When evaluating the fairness loss function in \Cref{eq:loss_function}, we fix $\vectv$ to be the uniform vector.
+
+\spara{(Group-adapted) Fairness Loss Evaluation.} 
+We distinguish between datasets as follows: (1) For the \blogs and \mind datasets, we compare our approach with all baselines; (2) For the remaining datasets, we only compare with \fairwalk and \crosswalk. The reason is that both \lfpru and \lfprn produce a fully connected graph structure, making it infeasible to run the \pagerank algorithm on a laptop given the large scale of the \twitter dataset. Moreover, it is unclear how \lfpru and \lfprn can be extended to the multi-group scenario, so we do not compare against them on the \slashdot and \book datasets.
 
 
-\spara{Fairness loss evaluation.} For a fair comparison, we evaluate the fairness loss of \fairgd, \crossgd, \fairwalk, and \crosswalk using a uniform restart vector. For \lfpru and \lfprn, we make distinctions based on the dataset: (1) on the \blogs and \mind datasets, we evaluate fairness loss with a uniform restart vector, as defined in \Cref{eq:loss_function}; (2) on the \twitter dataset, we do not calculate fairness loss with a uniform restart vector, but instead show zero fairness loss. The reason is that since \lfpru and \lfprn produce a fully connected graph structure, calculating their \pagerank scores is computationally expensive, and we cannot run it on a laptop; (3) on the \book and \slashdot datasets, we do not evaluate \lfpru and \lfprn because it is unclear how these two algorithms can be extended to the multi-group scenario.
 
-\spara{Group-adapted fairness loss evaluation.} We evaluate the group-adapted fairness loss of \fairgd, \crossgd, \fairwalk, and \crosswalk as defined in \Cref{equation:cgfl}. For \lfpru and \lfprn, we evaluate them only on the \blogs and \mind datasets, for the same reasons stated above.
+\spara{Transition Matrix Change $\Delta_\transmatrix$ Evaluation.} 
+On the \twitter dataset, we compare our approach with \lfpru and \lfprn. The remaining experimental settings are consistent with those used in the fairness loss evaluation described above.
 
 \spara{$\fairgd(\boundfactor,\absboundfactor)$ and $\crossgd(\boundfactor, \absboundfactor)$.}
-In the experiments, we set $\boundfactor = 0.1$ and $\absboundfactor = \{0.05, 0.1\}$.\honglian{what is the reason for setting this two parameters to the current value?}
+In the experiments, we set $\boundfactor = 0.1$ and $\absboundfactor = \{0.05, 0.1\}$.\honglian{Explain for setting this two parameters to the current value?}
 
-% \todo{1. show the ranking coefficient before changing the transition matrix and after changing the matrix with different phi. Does the FairGD preserves the ranking?
-% }
+\spara{Group-wise target \pagerank score \groupDist.}
+For datasets containing only two groups, we define the \pagerank score distribution as 
+$ \groupDist = (\grouppr, 1-\grouppr). $ 
+For datasets with multiple groups, we set 
+$ \grouppr_1 = \grouppr, $ 
+and for the remaining groups, we distribute the scores as 
+$ \grouppr_\agroup = \frac{1-\grouppr}{\nogroups-1}, \forall \agroup \in \{2, \cdots, \nogroups\}$. 
+We vary \(\grouppr\) in the range 
+$ [0.1, 0.2, \dots, 0.9] $ 
+to evaluate the performance of our algorithm compared to all baselines.
 
-\subsection{Results}
 
-\subsubsection{Fairness loss and weight change $\Delta_\transmatrix$}
+
+\section{Results}
+
+\subsection{Fairness loss and weight change $\Delta_\transmatrix$}
+
+We evaluate the fairness loss $\loss(\newtransmatrix, \gamma, \vectv)$, as defined in \Cref{eq:loss_function}, on \fairgd, \fairgd~($\boundfactor=0.1$, $\absboundfactor=0.05$), \fairgd~($\boundfactor=0.1$, $\absboundfactor=0.1$), and all baselines across the five datasets. The results are shown in \Cref{fig:loss_all_dataset}. 
+We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original transition matrix for each method across the five datasets; the results are shown in \Cref{fig:change_all_dataset}.
+
+
+
 
 \begin{figure*}[htbp]
   \centering
@@ -1240,12 +1266,12 @@ In the experiments, we set $\boundfactor = 0.1$ and $\absboundfactor = \{0.05, 0
     \label{fig:change_all_dataset}
 \end{figure*}
 
-\subsubsection{Group-Adapted loss and $\Delta_\transmatrix$}
+\subsection{Group-Adapted loss and $\Delta_\transmatrix$}
 
 
 \begin{figure*}[htbp]
   \centering
-\includegraphics[width=\textwidth]{fig/PhiFair/only_legend.pdf}
+\includegraphics[width=\textwidth]{fig/adaptedLoss/adapt_only_legend.pdf}
 \vspace{-5mm}
 \end{figure*}
 \begin{figure*}[htbp] % Use figure* for spanning across two columns
@@ -1328,6 +1354,166 @@ In the experiments, we set $\boundfactor = 0.1$ and $\absboundfactor = \{0.05, 0
     \label{fig:change_all_dataset}
 \end{figure*}
 
+
+\subsection{Ranking Coefficient Evaluation}
+
+
+\begin{table*}[t]
+\centering
+\caption{Average Spearman coefficient of each method for the \book dataset.}
+\begin{tabular}{ccccccccc}
+\toprule
+\grouppr & \fairwalk & \crosswalk & \fairgd & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \crossgd & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\ 
+\midrule
+0.1 & -0.05 & -0.04 & \pmb{0.52} & \pmb{0.52} & \pmb{0.52} & 1.00 & 0.48 & 0.48 \\ 
+0.2 & -0.06 & -0.02 & \pmb{0.24} & -0.01 & \underline{0.03} & 1.00 & 0.56 & 0.56 \\ 
+0.3 & -0.03 & -0.02 & \pmb{0.24} & \underline{0.20} & 0.11 & 1.00 & 0.39 & 0.39 \\ 
+0.4 & -0.18 & -0.11 & 0.09 & \pmb{0.17} & \underline{0.15} & 1.00 & 0.26 & 0.26 \\ 
+0.5 & -0.02 & 0.01 & \pmb{0.18} & \underline{0.17} & 0.15 & 1.00 & 0.15 & 0.09 \\ 
+0.6 & 0.06 & 0.10 & \pmb{0.16} & \underline{0.13} & 0.10 & 1.00 & 0.10 & 0.04 \\ 
+0.7 & 0.17 & 0.13 & \pmb{1.00} & 0.15 & \underline{0.33} & 1.00 & 0.07 & 0.21 \\ 
+0.8 & 0.21 & 0.04 & \underline{0.23} & \pmb{1.00} & \pmb{1.00} & 1.00 & 0.12 & 0.30 \\ 
+0.9 & 0.02 & 0.04 & \underline{0.06} & \pmb{1.00} & \pmb{1.00} & 1.00 & 0.04 & 0.23 \\ 
+\bottomrule
+\end{tabular}
+\end{table*}
+
+
+
+
+\begin{table*}[t]
+    \centering
+    \caption{Average Spearman coefficient of each method for the \blogs dataset.}
+    \begin{tabular}{ccccccccccc}
+    \toprule
+\grouppr & \lfpru & \lfprn & \fairwalk & \crosswalk & \fairgd & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \crossgd & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\ 
+    \midrule
+    0.1 & 0.55 & \underline{0.58} & \pmb{0.58} & 0.53 & 0.56 & \pmb{0.61} & \pmb{0.61} & 1.00 & 0.62 & 0.60 \\ 
+    0.2 & 0.54 & \underline{0.59} & 0.58 & 0.51 & \pmb{0.60} & 0.59 & \pmb{0.60} & 1.00 & 0.62 & 0.61 \\ 
+    0.3 & {0.58} & 0.58 & \pmb{0.60} & 0.45 & 0.52 & \underline{0.59} & \underline{0.59} & 1.00 & 0.59 & 0.61 \\ 
+    0.4 & \underline{0.59} & \underline{0.59} & \underline{0.59} & 0.52 & \pmb{0.60} & \pmb{0.60} & \pmb{0.60} & 1.00 & 0.64 & 0.64 \\ 
+    0.5 & \underline{0.60} & 0.56 & \underline{0.60} & 0.50 & \pmb{0.63} & \pmb{0.63} & \pmb{0.63} & 1.00 & 0.76 & 0.76 \\ 
+    0.6 & \pmb{0.61} & \underline{0.59} & 0.57 & 0.50 & 0.58 & 0.56 & 0.57 & 1.00 & 0.60 & 0.59 \\ 
+    0.7 & \underline{0.59} & \pmb{0.60} & \underline{0.59} & 0.53 & 0.54 & 0.55 & 0.53 & 1.00 & 0.57 & 0.57 \\ 
+    0.8 & \underline{0.61} & \pmb{0.62} & \pmb{0.62} & 0.50 & 0.56 & 0.56 & 0.56 & 1.00 & 0.60 & 0.57 \\ 
+    0.9 & \pmb{0.60} & \pmb{0.61} & 0.59 & 0.46 & {0.58} & 0.56 & 0.55 & 1.00 & 0.58 & 0.56 \\ 
+    \bottomrule
+    \end{tabular}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\caption{Average Spearman coefficient of each method for the \mind dataset.}
+% \renewcommand{\arraystretch}{0.8} % Adjust this value to control row height
+\begin{tabular}{ccccccccccc}
+\toprule
+\grouppr & \lfpru & \lfprn & \fairwalk & \crosswalk & \fairgd & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \crossgd & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\ 
+\midrule
+0.1 & 0.80 & 0.80 & 0.81 & 0.81 & 0.82 & 1.00 & 1.00 & 1.00 & 0.99 & 0.99 \\ 
+0.2 & 0.81 & 0.81 & 0.83 & 0.82 & 0.86 & 0.99 & 0.99 & 1.00 & 0.99 & 0.99 \\ 
+0.3 & 0.81 & 0.80 & 0.82 & 0.80 & 0.89 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 \\ 
+0.4 & 0.81 & 0.80 & 0.83 & 0.81 & 0.99 & 0.92 & 0.99 & 1.00 & 0.99 & 0.99 \\ 
+0.5 & 0.80 & 0.80 & 0.82 & 0.81 & 0.92 & 1.00 & 0.90 & 1.00 & 0.97 & 0.97 \\ 
+0.6 & 0.79 & 0.80 & 0.82 & 0.82 & 0.99 & 1.00 & 1.00 & 1.00 & 0.97 & 0.97 \\ 
+0.7 & 0.80 & 0.78 & 0.82 & 0.81 & 0.81 & 1.00 & 0.94 & 1.00 & 0.97 & 0.97 \\ 
+0.8 & 0.80 & 0.79 & 0.80 & 0.81 & 0.81 & 0.83 & 0.99 & 1.00 & 0.97 & 0.97 \\ 
+0.9 & 0.80 & 0.79 & 0.82 & 0.80 & 0.78 & 0.88 & 0.82 & 1.00 & 0.97 & 0.97 \\ 
+\bottomrule
+\end{tabular}
+\end{table*}
+
+
+
+
+
+\begin{figure*}[htbp]
+  \centering
+\includegraphics[width=\textwidth]{fig/PhiFair/only_legend.pdf}
+\vspace{-5mm}
+\end{figure*}
+\begin{figure*}[htbp] % Use figure* for spanning across two columns
+    \centering
+    \begin{subfigure}[b]{0.195\textwidth}
+        \centering        \includegraphics[width=\textwidth]{fig/visual_graph/Left.pdf} 
+        \caption{Original}
+\label{fig:graph_original}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.195\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/visual_graph/Right.pdf}
+        \caption{\fairgd}
+\label{fig:graph_fairgd}
+    \end{subfigure}
+    \hfill
+     \begin{subfigure}[b]{0.195\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/visual_graph/cross_graph_right.pdf}
+        \caption{\crossgd}
+\label{fig:graph_adapted}
+    \end{subfigure}
+    \hfill
+        \begin{subfigure}[b]{0.195\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/visual_graph/fw_graph_right.pdf}
+        \caption{\fairwalk}
+\label{fig:graph_fw}
+    \end{subfigure}
+    \hfill
+        \begin{subfigure}[b]{0.195\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/visual_graph/cw_graph_right.pdf}
+        \caption{\crosswalk}
+\label{fig:graph_cw}
+    \end{subfigure}
+    \caption{Original Graph structure of the \book dataset, and the graph structure after edge-reweighted by each method when \grouppr is set to 0.5.}
+    \label{fig:loss_all_dataset}
+\end{figure*}
+
+
+
+
+% \begin{table*}[t]
+% \centering
+% \caption{Average spearman coefficient of each method for the \book dataset.}
+% \renewcommand{\arraystretch}{0.9} % Adjust this value to control row height
+% \begin{tabular}{cccccc}
+% \toprule
+% \grouppr & \fairwalk & \crosswalk & \fairgd & \fairgd ($0.1, 0.05$) & \fairgd ($0.1, 0.1$) \\ 
+% \midrule
+% 0.1 & -0.05 & -0.04 & \textbf{0.52} & \textbf{0.52} & \textbf{0.52} \\ 
+% 0.2 & -0.06 & -0.02 & \textbf{0.24} & -0.01 & \underline{0.03} \\ 
+% 0.3 & -0.03 & -0.02 & \textbf{0.24} & \underline{0.20} & 0.11 \\ 
+% 0.4 & -0.18 & -0.11 & 0.09 & \textbf{0.17} & \underline{0.15} \\ 
+% 0.5 & -0.02 & 0.01 & \textbf{0.18} &\underline{ 0.17} & 0.15 \\ 
+% 0.6 & 0.06 & 0.10 & \textbf{0.16} &\underline{ 0.13} & 0.10 \\ 
+% 0.7 & 0.17 & 0.13 & \textbf{1.00} & 0.15 & \underline{0.33} \\
+% 0.8 & 0.21 & 0.04 & \underline{0.23} & \textbf{1.00} &\textbf{1.00} \\ 
+% 0.9 & 0.02 & 0.04 & \underline{0.06} & \textbf{1.00} & \textbf{1.00} \\ 
+% \bottomrule
+% \end{tabular}
+% \end{table*}
+
+% \begin{table*}[t]
+% \centering
+% \caption{Average spearman coefficient of each method for the \blogs dataset.}
+% \renewcommand{\arraystretch}{0.9} % Adjust this value to control row height
+% \begin{tabular}{cccccccc}
+% \toprule
+% \grouppr & \lfpru & \lfprn & \fairwalk & \crosswalk & \fairgd & \fairgd ($0.1, 0.05$) & \fairgd ($0.1, 0.1$) \\ 
+% \midrule
+% 0.1 & 0.55 & \underline{0.58} & \textbf{0.58} & 0.53 & 0.56 & \textbf{0.61} & \textbf{0.61} \\ 
+% 0.2 & 0.54 & \underline{0.59} & 0.58 & 0.51 & \textbf{0.60} & 0.59 & \textbf{0.60} \\ 
+% 0.3 & {0.58} & 0.58 & \textbf{0.60} & 0.45 & 0.52 & \underline{0.59} & \underline{0.59} \\ 
+% 0.4 & \underline{0.59} & \underline{0.59} & \underline{0.59} & 0.52 & \textbf{0.60} & \textbf{0.60} & \textbf{0.60} \\ 
+% 0.5 & \underline{0.60} & 0.56 & \underline{0.60} & 0.50 & \textbf{0.63} & \textbf{0.63} & \textbf{0.63} \\ 
+% 0.6 & \textbf{0.61} & \underline{0.59} & 0.57 & 0.50 & 0.58 & 0.56 & 0.57 \\ 
+% 0.7 & \underline{0.59} & \textbf{0.60} & \underline{0.59} & 0.53 & 0.54 & 0.55 & 0.53 \\ 
+% 0.8 & \underline{0.61} & \textbf{0.62} & \textbf{0.62} & 0.50 & 0.56 & 0.56 & 0.56 \\ 
+% 0.9 & \textbf{0.60} & \textbf{0.61} & 0.59 & 0.46 & {0.58} & 0.56 & 0.55 \\ 
+% \bottomrule
+% \end{tabular}
+% \end{table*}
 
 
 \begin{acks}
