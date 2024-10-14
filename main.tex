@@ -386,13 +386,9 @@ By solving \Cref{eq:pagerank}, we obtain the following expression for the \pager
 
 \subsection{Fair \pagerank}
 
-Building on the earlier definition of fairness-aware PageRank \citep{tsioutsiouliklis_fairness-aware_2021, tsioutsiouliklis_link_2022}, we consider the vertices of a graph to be divided into distinct groups. These groups may represent social categories based on sensitive attributes such as gender, ethnicity, or sexual orientation. We begin by defining the fair PageRank problem, followed by a discussion of various approaches to achieving PageRank fairness, and conclude with a formal definition of the $\groupDist$-\pagerank (\fpr) problem and the Restricted $\groupDist$-\pagerank (\resfpr) problem.
+Building on the earlier definition of fairness-aware PageRank \citep{tsioutsiouliklis_fairness-aware_2021, tsioutsiouliklis_link_2022}, we consider the vertices of a graph to be partitioned into distinct groups. These groups may represent social categories based on sensitive attributes such as gender, ethnicity, or sexual orientation. We begin by defining the fair PageRank problem, followed by a discussion of various approaches to achieving PageRank fairness, and conclude with a formal definition of the $\groupDist$-\pagerank (\fpr) problem and the Restricted $\groupDist$-\pagerank (\resfpr) problem.
 
-
-
-\subsubsection{Group-wise Fair \pagerank}
-
-
+\subsubsection{Group-wise fair \pagerank}
 
 To establish the concept of \pagerank fairness, we assume a \emph{target \pagerank score}, $\grouppr_\agroup$ for each vertex group $\agroup = 1, \ldots, \nogroups$. This score represents the total \pagerank mass that the algorithm is expected to allocate to the vertices in group $\vertices_\agroup$. A common approach is to set $\grouppr_\agroup$ equal to the proportion of vertices in $\vertices_\agroup$ relative to the entire set $\vertices$, i.e., $\grouppr_\agroup = |\vertices_\agroup| / \novertices$. However, other choices may be more suitable depending on the specific application. In this work, as in prior studies, we assume that the target \pagerank score $\grouppr_\agroup$ for each group is provided as input to our problem formulation.
 
@@ -402,9 +398,10 @@ Let $\indvect{\agroup} \in \{0, 1\}^{\novertices}$ denote the indicator vector f
 
 Given an input graph \graph\ and its associated transition matrix \transmatrix, our goal is to find a new transition matrix $\newtransmatrix$, defined on the same input graph \graph, such that the group-wise \pagerank distribution computed over \newtransmatrix\ (defined shortly) closely matches the target group-wise \pagerank distribution $\groupDist = (\grouppr_1, \cdots, \grouppr_\nogroups)$.
 
-
-\paragraph{Remark.}  
-For any given $\transmatrix$, $\gamma$, and $\vectv$, the total PageRank score for group $\group_\agroup$ is lowered bounded by $\gamma \indvect{\agroup}^T \vectv$, which represents the probability that a random walk restarts from group $\agroup$. This can be seen from the equation $\indvect{\agroup}^T \prvector = (1 - \gamma)  \indvect{\agroup}^T  \transmatrix^T \prvector + \gamma \indvect{\agroup}^T \vectv \geq \gamma \indvect{\agroup}^T \vectv$. Hence, it is clear that it may not always be possible to find a $\newtransmatrixopt$ that exactly achieves the desired target distribution $\groupDist$.
+\vspace{1mm}
+\noindent
+\emph{Remark.}  
+For any given $\transmatrix$, $\gamma$, and $\vectv$, the total PageRank score for group $\group_\agroup$ is lowered bounded by $\gamma \indvect{\agroup}^T \vectv$, which represents the probability that a random walk restarts from group $\agroup$. This can be seen from the equation $\indvect{\agroup}^T \prvector = (1 - \gamma)  \indvect{\agroup}^T  \transmatrix^T \prvector + \gamma \indvect{\agroup}^T \vectv \geq \gamma \indvect{\agroup}^T \vectv$. Hence, for fixed $\gamma$ and \vectv, it is clear that it may not always be possible to find a $\newtransmatrixopt$ that exactly achieves the desired target distribution $\groupDist$.
 
 
 % ${\grouppr_\agroup}_{\{\agroup=1,\ldots,\nogroups\}}$.
@@ -413,11 +410,11 @@ For any given $\transmatrix$, $\gamma$, and $\vectv$, the total PageRank score f
 % modify the edge weights of a graph 
 % in order to nudge the PageRank scores into a more fair distribution. 
 
-\subsubsection{Rationale for \pagerank Fairness via Edge-Reweighting}
+\subsubsection{Rationale for \pagerank fairness via edge-re\-weighting}
 
-Consider the case where both $\vectv$ and $\gamma$ can be freely adjusted. In this scenario, achieving the target fair distribution $\groupDist$ is straightforward: we can simply set $\vectv[i] = \frac{\grouppr_{\labelof_i}}{|\group_{\labelof_i}|}$ and $\gamma = 1$. However, adjusting $\vectv$ and $\gamma$ is impractical in real-world applications because these parameters are not within our control in actual models. In contrast, modifying the transition matrix is feasible; this can be accomplished by appropriately prioritizing or demoting content from an individual's connections in a social network.
+Consider the case where both $\vectv$ and $\gamma$ can be freely adjusted. In this scenario, achieving the target fair distribution $\groupDist$ is straightforward: we can simply set $\vectv[i] = {\grouppr_{\labelof_i}}/{|\group_{\labelof_i}|}$ and $\gamma = 1$. However, adjusting $\vectv$ and $\gamma$ is impractical in real-world applications because these parameters are not within our control in actual models; they are merely parameters of the \pagerank algorithm and do not reflect the graph structure. In contrast, modifying the transition matrix is more meaningful; this can be accomplished, for example, by appropriately prioritizing or demoting content from an individual's connections in a social network.
 
-Therefore, in this paper, we focus solely on adjusting the transition matrix $\transmatrix$ to achieve the desired fairness distribution. To maintain the original structure of the input graph \graph defined by the original transition matrix $\transmatrix$, we impose the requirement that the new transition matrix $\newtransmatrix$ must satisfy $\newtransmatrix[i, j] = 0$ whenever $\transmatrix[i, j] = 0$. This condition ensures that no new edges are introduced into the graph.
+Therefore, in this paper, we focus solely on adjusting the transition matrix $\transmatrix$ to achieve the desired fairness distribution. To maintain the original structure of the input graph \graph reflected in the original transition matrix $\transmatrix$, we impose the constraint that the new transition matrix $\newtransmatrix$ must satisfy $\newtransmatrix[i, j] = 0$ whenever $\transmatrix[i, j] = 0$. This condition ensures that no new edges are introduced into the~graph.
 
 
 \iffalse
