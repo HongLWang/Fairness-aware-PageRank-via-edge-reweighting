@@ -565,12 +565,13 @@ In the absence of a preferred restart vector it is common to consider the unifor
 $\vectv_0 = \frac{1}{\novertices} [1,\ldots,1]$.
 \fi
 
-\subsection{Group-Adapted Fair \pagerank}
-
+\subsection{Group-adapted fair \pagerank}
 
 Real-world networks are mostly homophilic, 
-i.e., vertices in the same group are more likely to be connected to each other \citep{mcpherson2001birds,tarbush2012homophily,stoica2018homophily}. 
-Hence, the total \pagerank scores in group $\vertices_\agroup$ are largely contributed by random walks (re)\-starting at vertices in group $\vertices_\agroup$. 
+i.e., vertices in the same group are more likely to be connected to each other 
+\citep{mcpherson2001birds,tarbush2012homophily,stoica2018homophily}. 
+Hence, the total \pagerank scores in group $\vertices_\agroup$ are largely contributed by random walks 
+(re)\-starting at vertices in group $\vertices_\agroup$. 
 \iffalse
 To increase the diversity in the network, 
 it is desirable for the total \pagerank score $\indvect{\agroup}^T\prvector$  
@@ -578,14 +579,15 @@ in group~$\vertices_\agroup$ to be equal to~$\grouppr_\agroup$
 \emph{when random walks (re)\-start at any~group}. 
 \fi
 Thus, in this section, we propose the notion of \emph{group-adapted fairness}, 
-which enhances \pagerank by considering random walks that (re)\-start at each group and penalizing the fairness loss for each such (re)\-starting batch.
+which enhances \pagerank by considering random walks that (re)\-start at each group and 
+by penalizing the fairness loss for each such (re)\-starting~batch.
 
 More specifically, let $\vectv_\agroup = \frac{1}{|\vertices_\agroup|} \indvect{\agroup}$ be the normalized indicator vector of group $\vertices_\agroup$. 
 Here, $\vectv_\agroup$ indicates that the random walk restarts uniformly only from group $\agroup$. 
 We define the \emph{group-adapted fairness-loss function} as follows:
 
 
-\begin{definition}
+\begin{definition}[Group-adapted fairness loss]
 \label{definition:groupfairloss}
 Given a row-stochastic transition matrix \transmatrix, 
 a restart probability $0 < \gamma < 1$, 
@@ -611,7 +613,6 @@ leads to the group-adapted \phiPageRank (\gafpr) problem.
 
 \begin{problem}[Group-adapted \phiPageRank (\gafpr)]
 Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix \transmatrix of \graph, a restart probability $0 < \gamma < 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness-loss function
-
 % Given a graph $\graph = (\vertices, \edges)$ with  
 % row-stochastic transition matrix \transmatrix, 
 % a restart probability $0 < \gamma < 1$, 
@@ -623,6 +624,7 @@ Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots,
     \newtransmatrixopt = \arg\min_{\newtransmatrix \in \feasiblematrices(\transmatrix)} 
                             \groupAdapLoss(\newtransmatrix, \gamma),
 \end{equation}
+where $\feasiblematrices(\transmatrix)$ is defined as in Problem~\ref{problem:fair_problem}.
 \end{problem}
 
 Similarly, we define the restricted group-adapted \phiPageRank (\resgafpr) problem.
@@ -633,6 +635,8 @@ Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots,
     \newtransmatrixopt = \arg\min_{\newtransmatrix \in \resfeasiblematrices(\transmatrix) \cap \feasiblematrices(\transmatrix)} 
                          \groupAdapLoss(\newtransmatrix, \gamma),
 \end{equation*}
+where $\feasiblematrices(\transmatrix)$ is defined as in Problem~\ref{problem:fair_problem}
+and $\resfeasiblematrices(\transmatrix)$ as in Problem~\ref{problem:restricted-fair_problem}.
 \end{problem}
 
 
