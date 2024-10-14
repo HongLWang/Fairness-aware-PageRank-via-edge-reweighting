@@ -1261,7 +1261,15 @@ This refinement highlights the balance between fairness and weight change, empha
 \end{figure*}
 
 \subsection{Group-Adapted loss and $\Delta_\transmatrix$}
-We evaluate the performance of \crossgd as well as its restricted variants \crossgdrone, \crossgdrtwo on the group-adapted fairness loss (as defined in \Cref{equation:cgfl}) and their corresponding transition matrix weight change $\Delta_\transmatrix$
+
+We evaluate the performance of \crossgd and its restricted variants, \crossgdrone and \crossgdrtwo, on the group-adapted fairness loss, as defined in \Cref{equation:cgfl}, and analyze the corresponding changes in the transition matrix weights. The performance of these methods is compared against baseline models. The results of these comparisons are presented in \Cref{fig:loss_all_dataset_adapted} for the group-adapted fairness loss and in \Cref{fig:change_all_dataset_adapted} for the transition matrix weight changes.
+
+The \crossgd and its variants achieves significantly better weight change on all datasets, and excellent group-adpated loss on 3 out of 5 datasets.
+
+On the \twitter dataset, \crossgd and its variants outperforms \fairwalk and \crosswalk in all \grouppr settings.
+On the \book and \slashdot datasets, \crossgd and its variants outperforms \fairwalk and \crosswalk in both measures on 8 out of 9 \grouppr values.  
+
+
 
 \begin{figure*}[htbp]
   \centering
