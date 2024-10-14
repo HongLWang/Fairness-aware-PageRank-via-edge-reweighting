@@ -27,7 +27,6 @@
 
 \author{Anonymous Author(s)}
 
-
 \begin{abstract}
 Link-analysis algorithms, such as \pagerank, are instrumental in understanding the structural dynamics of networks by evaluating the importance and influence of individual vertices based on their connectivity patterns. Recently, with the rising importance of responsible AI, the question of fairness in link-analysis algorithms has gained traction.
 
@@ -715,8 +714,9 @@ that have non-negative entries, and for all $i, j$ satisfy the constraint
 \section{Algorithms}
 
 In this section, we propose a projected gradient-descent algorithm 
-for finding the optimal transition matrix $\newtransmatrix$ for the \phiPageRank problem. 
-We then extend the algorithm to solve the group-adapted \phiPageRank problem.
+for finding a locally-optimal transition matrix $\newtransmatrix$ for the 
+fair \pagerank problems we defined in the previous section, \fpr and \resfpr. 
+We then extend the method for solving the group-adapted versions of our problems, \gafpr and \resgafpr. 
 
 \subsection{Projected gradient descent for $\groupDist$-\pagerank}
 
@@ -768,6 +768,10 @@ substituting \Cref{eq:neuman} into $\vecty_\agroup$ gives
 \label{eq:yapprox}
     \vecty_\agroup = \gamma \sum_{i=0}^{\infty}(1-\gamma)^i \transmatrix^i \indvect{\agroup}. 
 \end{equation}
+As the terms of the summation are decreasing exponentially in magnitude, 
+due to factor $(1-\gamma)^i$, we can approximate efficiently the vector $\vecty_\agroup$
+by computing the first $t$ terms.
+The method is presented in Algorithm~\ref{alg:poweriteration}.
 
 
 % $\vecty_\agroup$ with a power iteration:
