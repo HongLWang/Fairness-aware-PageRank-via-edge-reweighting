@@ -170,3 +170,8 @@ In terms of the fairness loss, FairGD also outperforms FairWalk and CrossWalk.
     \label{tab:constraint_twitter_wdiff}
 \end{table*}
 
+
+
+
+Originally, \fairwalk and \crosswalk assign equal weights to each group in the random walk. In our experiments, as shown in \cref{eq:fairwalk}, we modify \fairwalk so that the probability of visiting each group during a random walk is proportional to the target group-wise \pagerank scores. 
+The \crosswalk algorithm is modified accordingly. These two algorithms do not add new edges to the graph.
