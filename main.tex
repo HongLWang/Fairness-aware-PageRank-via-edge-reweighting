@@ -730,17 +730,17 @@ The proof of the following proposition can be found in Appendix~\ref{appendix:om
 The gradient of the fairness-loss function 
 $\loss(\transmatrix, \gamma, \vectv)$ 
 with respect to the transition matrix \transmatrix is given by
-\begin{equation*}
-% \label{eq:thm_gradient_fairness_loss}
-\begin{aligned}
+\begin{eqnarray}
+% \begin{aligned}
     \frac{\partial}{\partial \transmatrix} \loss(\transmatrix, \gamma, \vectv) 
-        & = 2 \gamma (1 - \gamma) \sum_{k=1}^{\nogroups} 
+        & = & 2 \gamma (1 - \gamma) \sum_{k=1}^{\nogroups} 
             \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right) 
-            \matrixU^{-1} \vectv \indvect{\agroup}^T \matrixU^{-1} \\
-        & = \frac{2(1 - \gamma)}{\gamma} \sum_{k=1}^{\nogroups} 
+            \matrixU^{-1} \vectv \indvect{\agroup}^T \matrixU^{-1} \nonumber \\
+        & = & \frac{2(1 - \gamma)}{\gamma} \sum_{k=1}^{\nogroups} 
             \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right) \prvector \vecty_\agroup^T,
-\end{aligned}
-\end{equation*}
+        \label{equation:gradient}
+% \end{aligned}
+\end{eqnarray}
 where $\matrixU = \unitary - (1 - \gamma) \transmatrix^T$, 
 \prvector is the \pagerank vector with respect to $(\transmatrix, \gamma, \vectv)$, and 
 $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup} = 
@@ -851,11 +851,15 @@ $\prvector[i]$ and $\vecty_\agroup[j]$.
 The coordinate $\prvector[i]$ represents the frequency with which a random walk, restarting at \vectv, visits vertex~$i$, 
 while the coordinate $\vecty_\agroup[j]$ represents the frequency with which a random walk, restarting at vertex~$j$, 
 visits vertices in the group~$\vertices_\agroup$. 
-Therefore, the $\agroup$-th term of the summation reflects the weighted contribution of the edge $(i, j)$ 
+Therefore, the $\agroup$-th term of the summation in Eq.~(\ref{equation:gradient})
+reflects the weighted contribution of the edge $(i, j)$ 
 to the overall \pagerank score of the group~$\vertices_\agroup$.
-The weight of the $\agroup$-th term is proportional to the difference between the total \pagerank scores 
+The weight of the $\agroup$-th term  in Eq.~(\ref{equation:gradient}) 
+is proportional to the difference between the total \pagerank scores 
 of group $\vertices_\agroup$ and the group-wise target score~$\grouppr_\agroup$.
 \honglian{I stop here. what "the j-th term of the summation" refers to is not clear. Rewrite this.}
+\aris{I went thought and it is clear enough. Also, there is no j-th term, it is the k-th term, 
+referring to the k-th term in the equation of the gradient, in proposition 2. I added the reference.}
 
 \spara{Gradient projection.} We use \newtransmatrix to denote the transition matrix obtained by the projected gradient-descent method.
 After each gradient descent step, 
@@ -975,7 +979,7 @@ We evaluate the performance of our \fairgd and \crossgd algorithms on real-world
 \noindent \textbf{RQ1:} To what extent can the \fairgd and \crossgd algorithms improve the fairness and group-adapted fairness of the \pagerank scores? \\
 \textbf{RQ2:} 
 How do the \fairgd and \crossgd algorithms compare to the baselines in terms of changes to the transition matrix? \\
-\textbf{RQ3:} How does the ranking of the \pagearnk score within each group change? Do \fairgd and \crossgd preserve this ranking?
+\textbf{RQ3:} How does the ranking of the \pagerank score within each group change? Do \fairgd and \crossgd preserve this ranking?
 
 To answer the second reseach question, we quantify the changes to the transition matrix by the relative change in its Frobenius norm, given by:
 \begin{equation}
@@ -1002,10 +1006,6 @@ The fairness and group-adapted fairness of the \pagerank scores are evaluated us
     \bottomrule
   \end{tabular}
 \end{table}
-
-
-
-
 
 The datasets used in the experiments are as follows:
 
