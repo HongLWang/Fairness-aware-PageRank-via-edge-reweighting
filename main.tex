@@ -425,48 +425,61 @@ with entries $\newtransmatrix[u,v]=0.65$ and $\newtransmatrix[u,w]=0.35$,
 indicating a random walk with transition from $u$ to $v$ or $w$ with probabilities $0.65$ and $0.35$, respectively.
 \fi
 
-\subsubsection{Fairness Loss Function and The $\groupDist$-\pagerank (\fpr) Problem}
+\subsubsection{Fairness-loss function and the $\groupDist$-\pagerank (\fpr) problem}
 
-To formalize our problem, we first define the fairness loss function. It evaluates how much the actual fairness distribution deviates from the target distribution for a given transition matrix $\transmatrix$.
+To formalize our problem, we first define the fairness-loss function. It evaluates how much the actual fairness distribution deviates from the target distribution for a given transition matrix $\transmatrix$.
 
 
-\begin{definition} 
+\begin{definition}[Fairness-loss function] 
 \label{definition:fairloss} 
-Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, a row-stochastic transition matrix \transmatrix, a restart probability $0 < \gamma < 1$, a restart vector $\vectv \in \reals^{\novertices}$ satisfying $|\vectv|_1 = 1$, and group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, the \emph{fairness loss function} is defined as: 
+Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, a row-stochastic transition matrix \transmatrix, a restart probability $0 < \gamma < 1$, a restart vector $\vectv \in \reals^{\novertices}$ satisfying $\|\vectv\|_1 = 1$, and group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, the {fairness-loss function} is defined as: 
 \begin{equation} 
 \loss(\transmatrix, \gamma, \vectv) = \frac{1}{\nogroups} \sum_{\agroup=1}^\nogroups \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right)^2, 
 \label{eq:loss_function} 
 \end{equation} 
-where \prvector is the \pagerank vector corresponding to the parameters $(\transmatrix, \gamma, \vectv)$. \end{definition}
+where \prvector is the \pagerank vector corresponding to parameters~$(\transmatrix, \gamma, \vectv)$. \end{definition}
 
 
 
 \begin{lemma}
-The loss function $\loss(\transmatrix, \gamma, \vectv)$, as defined in \Cref{eq:loss_function}, is not convex with respect to $\transmatrix$.
+The fairness-loss function $\loss(\transmatrix, \gamma, \vectv)$, 
+as defined in \Cref{eq:loss_function}, is not convex with respect to $\transmatrix$.
 \end{lemma}
 \begin{proof}
-To demonstrate the non-convexity, it suffices to provide a single counterexample. Consider a fully connected graph $\graph$ with three vertices: $a$, $b$, and $c$. Let the labels be $\labelof_a =$ blue, and $\labelof_b = \labelof_c =$ red.
-
-Let $\newtransmatrix_1 =  \begin{pmatrix}
+To demonstrate the non-convexity, it suffices to provide a single counterexample. Consider a fully connected graph $\graph$ with three vertices: $a$, $b$, and $c$. Let the labels be $\labelof_a =\mathsf{blue}$, and $\labelof_b = \labelof_c = \mathsf{red}$. We also let 
+\[ 
+\newtransmatrix_1 =  \begin{pmatrix}
 0 & 1 & 0 \\
 1 & 0 & 0 \\
 0 & 1 & 0 \\
-\end{pmatrix}$ and $\newtransmatrix_2 =  \begin{pmatrix}
+\end{pmatrix} 
+~\mbox{ and }~ 
+\newtransmatrix_2 =  \begin{pmatrix}
 0 & 0 & 1 \\
 0 & 0 & 1 \\
 1 & 0 & 0 \\
-\end{pmatrix}$ be two row-stochastic transition matrices, and 
+\end{pmatrix}\] 
+be two row-stochastic transition matrices, and 
 % $\newtransmatrix_3 = \frac{1}{2}\newtransmatrix_1 + \frac{1}{2}\newtransmatrix_2 = \begin{pmatrix}
 % 0 & \frac{1}{2} & \frac{1}{2} \\
 % \frac{1}{2} & 0 & \frac{1}{2} \\
 % \frac{1}{2} & \frac{1}{2} & 0 \\
 % \end{pmatrix}$ 
- $\newtransmatrix_3 = \frac{1}{2}\newtransmatrix_1 + \frac{1}{2}\newtransmatrix_2 = \begin{pmatrix}
+\[
+\newtransmatrix_3 = \frac{1}{2}\newtransmatrix_1 + \frac{1}{2}\newtransmatrix_2 = \begin{pmatrix}
 0 & 1/2 & 1/2 \\
 1/2 & 0 & 1/2 \\
 1/2 & 1/2 & 0 \\
-\end{pmatrix}$.
-Given restart vector $\vectv = (1/3, 1/3, 1/3)$ and restart probability $\gamma$, one can calculate that the \pagerank vector $\prvector_1$, $\prvector_2$ and $\prvector_3$ for $\newtransmatrix_1$, $\newtransmatrix_2$ and $\newtransmatrix_3$ are $\prvector_1 = \left(\frac{\gamma^2-3\gamma+3}{3(2-\gamma)}, \frac{3-2\gamma}{3(2-\gamma)}, \frac{\gamma}{3}\right)$, $\prvector_2=\left(\frac{\gamma^2-3\gamma+3}{3(2-\gamma)},  \frac{\gamma}{3}, \frac{3-2\gamma}{3(2-\gamma)},\right)$ and $\prvector_3=\left( \frac{1}{3},\frac{1}{3},\frac{1}{3}\right)$ respectively. 
+\end{pmatrix}.
+\]
+
+Given restart vector $\vectv = (1/3, 1/3, 1/3)$ and restart probability $\gamma$, 
+we can calculate the \pagerank vectors $\prvector_1$, $\prvector_2$, and $\prvector_3$, 
+for $\newtransmatrix_1$, $\newtransmatrix_2$, and $\newtransmatrix_3$, 
+being 
+$\prvector_1 = \left(\frac{\gamma^2-3\gamma+3}{3(2-\gamma)}, \frac{3-2\gamma}{3(2-\gamma)}, \frac{\gamma}{3}\right)$, 
+$\prvector_2=\left(\frac{\gamma^2-3\gamma+3}{3(2-\gamma)},  \frac{\gamma}{3}, \frac{3-2\gamma}{3(2-\gamma)},\right)$, and 
+$\prvector_3=\left( \frac{1}{3},\frac{1}{3},\frac{1}{3}\right)$, respectively. 
 
 Now, consider the group-wise target \pagerank score, defined as $\grouppr_1 = \frac{\gamma^2-3\gamma+3}{3(2-\gamma)}$ and $\grouppr_2 = 1-\grouppr_1$. It holds that $\frac{1}{2}\loss(\newtransmatrix_1, \gamma, \vectv) + \frac{1}{2}\loss(\newtransmatrix_2, \gamma, \vectv) = 0 $. One can easily find a $\gamma$ such that that $\loss(\frac{1}{2}\newtransmatrix_1 + \frac{1}{2}\newtransmatrix_2, \gamma, \vectv) = \loss(\newtransmatrix_3, \gamma, \vectv) >0$, which contradicts the definition of convexity. This completes the proof.
 \end{proof}
@@ -487,7 +500,7 @@ Now, consider the group-wise target \pagerank score, defined as $\grouppr_1 = \f
 % group-wise target \pagerank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, 
 % for $\nogroups\ge 2$, 
 % find a new transition matrix $\newtransmatrixopt$
-% that minimizes the fairness loss function, i.e.,
+% that minimizes the fairness-loss function, i.e.,
 % \begin{equation}
 % \newtransmatrixopt = \arg \min_{\newtransmatrix \in \feasiblematrices(\transmatrix)} \loss(\newtransmatrix, \gamma, \vectv),
 % \end{equation}
@@ -498,11 +511,11 @@ Now, consider the group-wise target \pagerank score, defined as $\grouppr_1 = \f
 
 
 
-With the fairness loss function defined, we introduce two problems that aim to achieve fair \pagerank by minimizing this loss through edge reweighting.
+With the fairness-loss function defined, we introduce two problems that aim to achieve fair \pagerank by minimizing this loss through edge re\-weighting.
 
 
 \begin{problem}[$\groupDist$-\pagerank (\fpr)]
-Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix \transmatrix of \graph, a restart probability $0 < \gamma < 1$, and a restart vector $\vectv \in \reals^{\novertices}$ satisfying $|\vectv|_1 = 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, the goal is to find a new transition matrix $\newtransmatrixopt$ that minimizes the fairness loss function $\loss(\newtransmatrixopt, \gamma, \vectv)$, i.e.,
+Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix \transmatrix of \graph, a restart probability $0 < \gamma < 1$, and a restart vector $\vectv \in \reals^{\novertices}$ satisfying $|\vectv|_1 = 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, the goal is to find a new transition matrix $\newtransmatrixopt$ that minimizes the fairness-loss function $\loss(\newtransmatrixopt, \gamma, \vectv)$, i.e.,
 \begin{equation}
 \newtransmatrixopt = \arg \min_{\newtransmatrix \in \feasiblematrices(\transmatrix)} \loss(\newtransmatrix, \gamma, \vectv),
 \label{eq:fair_problem}
@@ -519,7 +532,7 @@ is the set of row-stochastic matrices that have non-negative entries, and the ed
 
 
 \begin{problem}[Restricted $\groupDist$-\pagerank (\resfpr)]
-Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix $\transmatrix$ of \graph, a restart probability $0 < \gamma < 1$, and a restart vector $\vectv \in \reals^{\novertices}$ satisfying $|\vectv|_1 = 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, a relative modification-bound factor $\boundfactor \ge 0$ and an absolute modification-bound factor $\absboundfactor \ge 0$, the goal is to find a new transition matrix $\newtransmatrixopt$ that minimizes the fairness loss function $\loss(\newtransmatrixopt, \gamma, \vectv)$, i.e.,
+Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix $\transmatrix$ of \graph, a restart probability $0 < \gamma < 1$, and a restart vector $\vectv \in \reals^{\novertices}$ satisfying $|\vectv|_1 = 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, a relative modification-bound factor $\boundfactor \ge 0$ and an absolute modification-bound factor $\absboundfactor \ge 0$, the goal is to find a new transition matrix $\newtransmatrixopt$ that minimizes the fairness-loss function $\loss(\newtransmatrixopt, \gamma, \vectv)$, i.e.,
 
 
 \begin{equation}
@@ -546,7 +559,7 @@ problem we require the total \pagerank score $\indvect{\agroup}^T\prvector$
 in each group $\vertices_\agroup$ to be equal to $\grouppr_\agroup$. 
 When it is not possible to satisfy the requirement $\indvect{\agroup}^T \prvector = \grouppr_\agroup$
 using only edge re\-weightings, 
-our formulation seeks to minimize the fairness loss function $\loss(\cdot, \gamma, \vectv)$,
+our formulation seeks to minimize the fairness-loss function $\loss(\cdot, \gamma, \vectv)$,
 so that the group-wise \pagerank scores $\indvect{\agroup}^T \prvector$
 are as close as possible to the corresponding target scores $\grouppr_\agroup$.
 
@@ -573,7 +586,7 @@ which enhances \pagerank by considering random walks that (re)\-start at each gr
 
 More specifically, let $\vectv_\agroup = \frac{1}{|\vertices_\agroup|} \indvect{\agroup}$ be the normalized indicator vector of group $\vertices_\agroup$. 
 Here, $\vectv_\agroup$ indicates that the random walk restarts uniformly only from group $\agroup$. 
-We define the \emph{group-adapted fairness loss function} as follows:
+We define the \emph{group-adapted fairness-loss function} as follows:
 
 
 \begin{definition}
@@ -582,7 +595,7 @@ Given a row-stochastic transition matrix \transmatrix,
 a restart probability $0 < \gamma < 1$, 
 groups $\vertices_1, \ldots, \vertices_\nogroups$, and 
 group-wise target \pagerank scores $\groupDist = \{\grouppr_1,\cdots, \grouppr_{\nogroups}\}$, 
-the group-adapted fairness loss function is defined as 
+the group-adapted fairness-loss function is defined as 
 \begin{equation}
 \label{equation:cgfl}
     \groupAdapLoss(\transmatrix, \gamma)  
@@ -597,11 +610,11 @@ $(\transmatrix, \gamma, \vectv_{\ell})$.
 In the group-adapted fairness loss, 
 we iterate through all groups and sum up the fairness loss 
 when restarting the random walk at each group. 
-Minimizing the group-adapted fairness loss function 
+Minimizing the group-adapted fairness-loss function 
 leads to the group-adapted \phiPageRank (\gafpr) problem.
 
 \begin{problem}[Group-adapted \phiPageRank (\gafpr)]
-Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix \transmatrix of \graph, a restart probability $0 < \gamma < 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness loss function
+Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix \transmatrix of \graph, a restart probability $0 < \gamma < 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness-loss function
 
 % Given a graph $\graph = (\vertices, \edges)$ with  
 % row-stochastic transition matrix \transmatrix, 
@@ -609,7 +622,7 @@ Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots,
 % groups $\vertices_1, \ldots, \vertices_\nogroups$, and 
 % group-wise target \pagerank scores $\grouppr_1,  \ldots, \grouppr_\nogroups$, 
 % for $\nogroups\ge 2$, 
-% find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness loss function, i.e.,
+% find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness-loss function, i.e.,
 \begin{equation}
     \newtransmatrixopt = \arg\min_{\newtransmatrix \in \feasiblematrices(\transmatrix)} 
                             \groupAdapLoss(\newtransmatrix, \gamma),
@@ -619,7 +632,7 @@ Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots,
 Similarly, we define the restricted group-adapted \phiPageRank (\resgafpr) problem.
 
 \begin{problem}[Restricted Group-adapted \phiPageRank \\ (\resgafpr)]
-Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix $\transmatrix$ of \graph, a restart probability $0 < \gamma < 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, a relative modification-bound factor $\boundfactor \ge 0$ and an absolute modification-bound factor $\absboundfactor \ge 0$, find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness loss function $\groupAdapLoss(\newtransmatrixopt, \gamma)$, i.e.,
+Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix $\transmatrix$ of \graph, a restart probability $0 < \gamma < 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, a relative modification-bound factor $\boundfactor \ge 0$ and an absolute modification-bound factor $\absboundfactor \ge 0$, find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness-loss function $\groupAdapLoss(\newtransmatrixopt, \gamma)$, i.e.,
 \begin{equation*}
     \newtransmatrixopt = \arg\min_{\newtransmatrix \in \resfeasiblematrices(\transmatrix) \cap \feasiblematrices(\transmatrix)} 
                          \groupAdapLoss(\newtransmatrix, \gamma),
@@ -653,7 +666,7 @@ group-wise target \pagerank scores $\grouppr_1, \ldots, \grouppr_\nogroups$,
 for $\nogroups\ge 2$, 
 and a modification-bound factor $\boundfactor \ge 0$,
 find a new transition matrix $\newtransmatrixopt$
-that minimizes the fairness loss function, i.e.,
+that minimizes the fairness-loss function, i.e.,
 \begin{equation*}
   \newtransmatrixopt = \arg \min_{\newtransmatrix \in \resfeasiblematrices(\transmatrix)} \loss(\newtransmatrix, \gamma, \vectv),
 \end{equation*}
@@ -686,7 +699,7 @@ groups $\vertices_1, \ldots, \vertices_\nogroups$,
 group-wise target \pagerank scores $\grouppr_1,  \ldots, \grouppr_\nogroups$, 
 for $\nogroups\ge 2$, 
 and a modification-bound factor $\boundfactor \ge 0$,
-find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness loss function, i.e.,
+find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness-loss function, i.e.,
 \begin{equation*}
     \newtransmatrixopt = \arg\min_{\newtransmatrix \in \resfeasiblematrices(\transmatrix)} 
                          \groupAdapLoss(\newtransmatrix, \gamma),
@@ -707,7 +720,7 @@ We then extend the algorithm to solve the group-adapted \phiPageRank problem.
 
 \subsection{Projected gradient descent for $\groupDist$-\pagerank}
 
-We first derive the gradient of the fairness loss function 
+We first derive the gradient of the fairness-loss function 
 $\loss(\transmatrix, \gamma, \vectv)$ 
 with respect to the transition matrix \transmatrix.
 
@@ -715,7 +728,7 @@ with respect to the transition matrix \transmatrix.
 \aris{I agree. Maybe `proposition'.}
 \begin{theorem}
 \label{theorem:gradient-fairness-loss}
-The gradient of the fairness loss function 
+The gradient of the fairness-loss function 
 $\loss(\transmatrix, \gamma, \vectv)$ 
 with respect to the transition matrix \transmatrix is given by
 \begin{equation*}
