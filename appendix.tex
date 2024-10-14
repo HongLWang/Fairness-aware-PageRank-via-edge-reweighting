@@ -60,6 +60,64 @@ completes the proof.
 % \end{proof}
 
 
+\section{Experimental Settings}
+\label{appendix:expSetting}
+\subsection{Baselines}
+
+We compare the proposed \fairgd and \crossgd algorithms against the following baselines. In our experiments, 
+\newtransmatrix represents the revised transition matrix, and 
+\newrestartvec represents the revised restart vector for both our algorithms and all the baselines.
+
+\honglian{I am not sure whether we need to give all the details of the revised transition matrix.}
+\aris{I agree that we do not have to give many details for the baselines. 
+I think that you already given too many details. 
+In fact, details of baselines can be moved to the appendix.}
+\honglian{Ok, I can move the details to the appendix.}
+
+\noindent $\fairgd(\boundfactor,\absboundfactor)$. This is the restricted version of our proposed \fairgd algorithm, with relative and absolute intervention bound $\boundfactor$ and $\absboundfactor$ respectively.
+\\
+\noindent 
+$\crossgd(\boundfactor,\absboundfactor)$. This is the restricted version of our proposed \crossgd algorithm, with relative and absolute intervention bound $\boundfactor$ and $\absboundfactor$ respectively.\\
+\noindent \lfpru\citep{tsioutsiouliklis_fairness-aware_2021}. 
+A residual-based algorithm that revises both the restart vector and the transition matrix to achieve perfect $\groupDist$-fairness in \pagerank scores. The intuition is that each node distributes a portion of its PageRank to the under-represented groups, and distributes the remaining portion to its neighbors uniformly. 
+
+The revised transition matrix is $\newtransmatrix = \transmatrix_L + \mathbf{R}$, where:
+\begin{equation}
+    \transmatrix_L =  
+    \left\{\begin{matrix}
+        \frac{1-\grouppr_1}{out_2(i)}, &  \text{if } (i,j)\in \edges \text{ and } i \in L_1\\
+         \frac{\grouppr_1}{out_1(i)}, &  \text{if } (i,j)\in \edges \text{ and } i \in L_2\\
+         0 & \text{otherwise} \\
+    \end{matrix}\right.
+    \end{equation}
+and $out_{\agroup}(i)$ represents the number of out-neighbors of vertex $i$ that belongs to group \agroup, and $L_\agroup$ denotes the set of vertices whose portion of neighbors that belong to group \agroup is smaller than the fairness target $\grouppr_\agroup$. $\mathbf{R}$ is given by
+\begin{equation}
+    \mathbf{R} = \delta_1 \mathbf{x}^T + \delta_2 \mathbf{y}^T
+\end{equation}
+where $\delta_1[i] = \grouppr_1 -\frac{(1-\grouppr_1)out_1(i)}{out_2(i)}$, $\delta_2[i] = (1-\grouppr_1) -\frac{\grouppr_1 out_2(i)}{out_1(i)}$. $\mathbf{x}$ and $\mathbf{y}$ are two indicator vectors where $\mathbf{x}(i) = 1 \text{ if }  i\in \group_1$ and $\mathbf{y}(i) = 1 \text{ if } i\in \group_2$.
+\\
+
+\noindent \lfprn \citep{tsioutsiouliklis_fairness-aware_2021}. 
+A neighborhood-based algorithm that achieves perfect $\groupDist$-fairness in \pagerank scores. The revised transition matrix is given by $\newtransmatrix = \sum_{\agroup =1}^{2}\grouppr_\agroup \transmatrix_\agroup$, where 
+\begin{equation}
+    \transmatrix_\agroup =  \left\{\begin{matrix}
+        \frac{1}{out_\agroup(i)}, &  \text{if } (i,j) \in E \text{ and } j \in \group_k \\
+         \frac{1}{|\group_k|}, & \text{if } out_\agroup(i) = 0 \text{ and } j \in \group_k \\
+         0 &  \text{otherwise} \\
+\end{matrix}\right.
+\end{equation}
+\\
+\noindent  \fairwalk \citep{rahman_fairwalk_2019}. 
+This algorithm reweights the edges such that a random walker has an equal probability of visiting each reachable group and an equal probability of visiting each vertex within each reachable group. \fairwalk does not change the restart vector, and the revised transition matrix is given by:
+\begin{equation}
+\label{eq:fairwalk}
+    \newtransmatrix[i,j] = \frac{\grouppr_{\labelof_j} \transmatrix[i,j]}{\sum_{m \in \group_{\labelof_j}}P[i,m] \sum_{\agroup =1}^{\nogroups} I_{\agroup}(i)\grouppr_\agroup} ,
+\end{equation}
+where $I_\agroup(i) = 1$ if vertex $i$ has a out-neighbor that belongs to group $\agroup$ and 0 otherwise.
+\\
+\noindent  \crosswalk \citep{khajehnejad_crosswalk_2022}. 
+This algorithm extends \fairwalk by taking into account the distance of each vertex to other groups in the random walk. \crosswalk upweights edges that (1) are closer to the group boundaries or (2) connect different groups in the graph. This algorithm does not change the restart vector, and we refer readers to Algorithm 1 in the paper for the revised transition matrix. 
+
 
 
 

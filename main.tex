@@ -977,7 +977,7 @@ where the transition matrix \newtransmatrix is projected back to the feasible se
 
 \spara{Time complexity analysis.} \todo{} \aris{can also be omitted.}
 
-\subsection{group-adapted \pagerank}
+\subsection{Group-adapted \pagerank}
 
 The \fairgd algorithm can be extended to solve the group-adapted \phiPageRank problem by adding an outer loop that iterates through all groups. 
 The algorithm, dubbed \crossgd, is presented in Algorithm~\ref{alg:crossgd}.
@@ -1050,14 +1050,18 @@ The datasets used in the experiments are as follows:
 
 \subsection{Baselines}
 
-We compare the proposed \fairgd and \crossgd algorithms against the following baselines. In our experiments, 
+We compare the proposed \fairgd and \crossgd algorithms against the following baselines. More details, including the revised transition matrix, can be found in \Cref{appendix:expSetting}.
+\iffalse
+In our experiments, 
 \newtransmatrix represents the revised transition matrix, and 
-\newrestartvec represents the revised restart vector for both our algorithms and all the baselines.
-
+\newrestartvec represents the revised restart vector for both our 
 \honglian{I am not sure whether we need to give all the details of the revised transition matrix.}
 \aris{I agree that we do not have to give many details for the baselines. 
 I think that you already given too many details. 
 In fact, details of baselines can be moved to the appendix.}
+\honglian{Ok, I can move the details to the appendix.}
+algorithms and all the baselines.
+\fi
 
 \noindent $\fairgd(\boundfactor,\absboundfactor)$. This is the restricted version of our proposed \fairgd algorithm, with relative and absolute intervention bound $\boundfactor$ and $\absboundfactor$ respectively.
 \\
@@ -1065,7 +1069,7 @@ In fact, details of baselines can be moved to the appendix.}
 $\crossgd(\boundfactor,\absboundfactor)$. This is the restricted version of our proposed \crossgd algorithm, with relative and absolute intervention bound $\boundfactor$ and $\absboundfactor$ respectively.\\
 \noindent \lfpru\citep{tsioutsiouliklis_fairness-aware_2021}. 
 A residual-based algorithm that revises both the restart vector and the transition matrix to achieve perfect $\groupDist$-fairness in \pagerank scores. The intuition is that each node distributes a portion of its PageRank to the under-represented groups, and distributes the remaining portion to its neighbors uniformly. 
-
+\iffalse
 The revised transition matrix is $\newtransmatrix = \transmatrix_L + \mathbf{R}$, where:
 \begin{equation}
     \transmatrix_L =  
@@ -1080,10 +1084,12 @@ and $out_{\agroup}(i)$ represents the number of out-neighbors of vertex $i$ that
     \mathbf{R} = \delta_1 \mathbf{x}^T + \delta_2 \mathbf{y}^T
 \end{equation}
 where $\delta_1[i] = \grouppr_1 -\frac{(1-\grouppr_1)out_1(i)}{out_2(i)}$, $\delta_2[i] = (1-\grouppr_1) -\frac{\grouppr_1 out_2(i)}{out_1(i)}$. $\mathbf{x}$ and $\mathbf{y}$ are two indicator vectors where $\mathbf{x}(i) = 1 \text{ if }  i\in \group_1$ and $\mathbf{y}(i) = 1 \text{ if } i\in \group_2$.
+\fi
 \\
-
 \noindent \lfprn \citep{tsioutsiouliklis_fairness-aware_2021}. 
-A neighborhood-based algorithm that achieves perfect $\groupDist$-fairness in \pagerank scores. The revised transition matrix is given by $\newtransmatrix = \sum_{\agroup =1}^{2}\grouppr_\agroup \transmatrix_\agroup$, where 
+This is a neighborhood-based algorithm that achieves perfect $\groupDist$-fairness in \pagerank scores. Each vertex allocates its \pagerank score fairly to its neighbors.
+\iffalse
+The revised transition matrix is given by $\newtransmatrix = \sum_{\agroup =1}^{2}\grouppr_\agroup \transmatrix_\agroup$, where 
 \begin{equation}
     \transmatrix_\agroup =  \left\{\begin{matrix}
         \frac{1}{out_\agroup(i)}, &  \text{if } (i,j) \in E \text{ and } j \in \group_k \\
@@ -1091,35 +1097,34 @@ A neighborhood-based algorithm that achieves perfect $\groupDist$-fairness in \p
          0 &  \text{otherwise} \\
 \end{matrix}\right.
 \end{equation}
+\fi
 \\
 \noindent  \fairwalk \citep{rahman_fairwalk_2019}. 
-This algorithm reweights the edges such that a random walker has an equal probability of visiting each reachable group and an equal probability of visiting each vertex within each reachable group. \fairwalk does not change the restart vector, and the revised transition matrix is given by:
+This algorithm reweighs the edges such that a random walker has an equal probability of visiting each reachable group and an equal probability of visiting each vertex within each reachable group. 
+\iffalse
+\fairwalk does not change the restart vector, and the revised transition matrix is given by:
 \begin{equation}
 \label{eq:fairwalk}
     \newtransmatrix[i,j] = \frac{\grouppr_{\labelof_j} \transmatrix[i,j]}{\sum_{m \in \group_{\labelof_j}}P[i,m] \sum_{\agroup =1}^{\nogroups} I_{\agroup}(i)\grouppr_\agroup} ,
 \end{equation}
 where $I_\agroup(i) = 1$ if vertex $i$ has a out-neighbor that belongs to group $\agroup$ and 0 otherwise.
+\fi
 \\
 \noindent  \crosswalk \citep{khajehnejad_crosswalk_2022}. 
-This algorithm extends \fairwalk by taking into account the distance of each vertex to other groups in the random walk. \crosswalk upweights edges that (1) are closer to the group boundaries or (2) connect different groups in the graph. This algorithm does not change the restart vector, and we refer readers to Algorithm 1 in the paper for the revised transition matrix. 
+This algorithm extends \fairwalk by taking into account the distance of each vertex to other groups in the random walk. \crosswalk upweights edges that (1) are closer to the group boundaries or (2) connect different groups in the graph. 
+\iffalse
+This algorithm does not change the restart vector, and we refer readers to Algorithm 1 in the paper for the revised transition matrix. 
 
 \honglian{The new transition matrix for \crosswalk is too complicated to write down in this section.}
 \aris{Better to omit it.}
+\fi
 
 \spara{Remarks.}
-Originally, \fairwalk and \crosswalk assign equal weights to each group in the random walk. In our experiments, as shown in \cref{eq:fairwalk}, we modify \fairwalk so that the probability of visiting each group during a random walk is proportional to the target group-wise \pagerank scores. 
-The \crosswalk algorithm is modified accordingly. These two algorithms do not add new edges to the graph.
+Originally, \fairwalk and \crosswalk assign equal weights to each group in the random walk. In our experiments, we modify them so that the probability of visiting each group during a random walk is proportional to the target group-wise \pagerank scores. 
+These two algorithms do not add new edges to the graph, they do not change the restart vector neither.
 
 
 \lfprn and \lfpru are guaranteed to achieve perfect $\groupDist$-fairness in \pagerank scores, provided the restart vector is $\groupDist$-fair, i.e., $\indvect{\agroup}^T v = \grouppr_\agroup$. Both algorithms modify the graph to be fully connected.
-
-
-% \fairwalk and \crosswalk are two algorithms that rebalance the random walk 
-% to achieve fairness in learning graph embeddings, without adding new edges. 
-% Originally, FairWalk and CrossWalk assign equal weights to each group in the random walk. 
-% In our experiments, we modify FairWalk and CrossWalk that the probability of 
-% visiting each group for a random walk is proportional to the target group-wise PageRank scores.
-
 
 \subsection{Experimental Settings}
 
@@ -1156,9 +1161,18 @@ to evaluate the performance of our algorithm compared to all baselines.
 
 We evaluate the fairness loss $\loss(\newtransmatrix, \gamma, \vectv)$, as defined in \Cref{eq:loss_function}, on \fairgd, \fairgd~($\boundfactor=0.1$, $\absboundfactor=0.05$), \fairgd~($\boundfactor=0.1$, $\absboundfactor=0.1$), and all baselines across the five datasets. The results are shown in \Cref{fig:loss_all_dataset}. 
 We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original transition matrix for each method across the five datasets; the results are shown in \Cref{fig:change_all_dataset}.
+The results demonstrate that \fairgd and its restricted variants generally achieve better or comparable fairness loss compared to the baselines, while maintaining significantly smaller changes in the transition matrix weights.
 
-The results show that \fairgd and its restricted variants generally obtains better or comparable fairness loss than the baselines, while the corresponding transition matrix weight change are much smaller. 
-On the \mind dataset, \fairgd and its two variants \\ $\fairgdrone$ and $\fairgdrtwo$ achieve both smaller fairness loss and weight change.
+On the \mind dataset, both \fairgd and the baselines attain near-perfect fairness across all values of $\phi$. However, \fairgd results in substantially smaller changes in $\Delta_\transmatrix$ compared to all baselines. The restricted variants, \fairgdrone and \fairgdrtwo, impose bounds on edge weight modifications, leading to even smaller weight changes, but they fail to achieve perfect fairness when $\grouppr$ exceeds 0.5.
+
+In the \blogs dataset, \lfpru and \lfprn deliver the best fairness outcomes, with \fairgd ranking as the third-best algorithm. Despite this, \fairgd consistently yields the smallest weight changes across all values of \grouppr, except when \grouppr reaches 0.9.
+
+On the \book and \slashdot datasets, \fairgd and its variants outperform \fairwalk and \crosswalk in both fairness loss and weight change when \grouppr is below 0.7. However, for \grouppr greater than 0.7, \fairgd faces a trade-off: it must sacrifice performance on either fairness loss or weight change to improve the other metric.
+
+In the \twitter dataset, \fairgd surpasses the baselines in 8 out of 9 \grouppr values, indicating its robust performance across a range of fairness targets.
+
+Overall, \fairgd delivers superior results in terms of fairness loss and weight change when \grouppr is close to the original PageRank score, $\grouppr_1$. As \grouppr diverges from $\grouppr_1$, both the fairness loss and weight change increase. The restricted variants, \fairgdrone and \fairgdrtwo, exemplify the trade-off between fairness loss and weight change by achieving smaller weight changes at the cost of higher fairness loss compared to \fairgd.
+This refinement highlights the balance between fairness and weight change, emphasizing the flexibility of \fairgd in adapting to various fairness goals.
 
 
 \begin{figure*}[htbp]
