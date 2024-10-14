@@ -1555,6 +1555,22 @@ We evaluate the performance of \crossgd as well as its restricted variants \cros
 % \end{tabular}
 % \end{table*}
 
+\section{Conclusion}
+
+We presented a novel approach for incorporating group
+fairness into the PageRank algorithm by re\-weighting the entries of the underlying transition matrix. 
+We focus on matrix re\-weighting intervention strategies, 
+as we argue that those are more actionable
+and reflect the structure of the network, rather than the hyper-parameters of the \pagerank algorithm.
+Our goal is to achieve small fairness loss (measured as the distance to a target fairness vector)
+while at the same time making small changes to the transition matrix. 
+We achieve our objective, by foregoing the idea of ensuring fairness locally, at every vertex, 
+and instead aim to ensure fairness only at a global level, which is a more relaxed notion.
+Technically, our proposed method is an efficient projected gradient-descent algorithm for
+finding locally-optimal edge weights.
+We presented a comprehensive empirical evaluation, 
+demonstrating that our method offers significant advantages compared to strong baselines.
+
 
 \begin{acks}
 \end{acks}
