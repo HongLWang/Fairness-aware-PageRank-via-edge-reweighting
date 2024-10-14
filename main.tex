@@ -549,7 +549,7 @@ is to consider only solutions that make small modifications in the transition ma
 Without loss of generality, in this paper, we study both \fpr and \resfpr with a uniform restart vector $\vectv = \frac{\uniformvect}{\novertices}$.
 
 \iffalse
-\subsection{group-adpated Fair \pagerank}
+\subsection{group-adapted Fair \pagerank}
 In the \fpr % 
 problem we require the total \pagerank score $\indvect{\agroup}^T\prvector$ 
 in each group $\vertices_\agroup$ to be equal to $\grouppr_\agroup$. 
@@ -688,9 +688,9 @@ Notice that Inequalities~(\ref{inequalities:change-constraint})
 imply also the constraint ``if $\transmatrix[i, j] = 0$ then $\newtransmatrix[i, j] = 0$,''
 so it is not necessary to specify that constraint separately. 
 
-Similarly, we define the restricted group-adpated \phiPageRank (\resgafpr) problem.
+Similarly, we define the restricted group-adapted \phiPageRank (\resgafpr) problem.
 
-\begin{problem}[Restricted group-adpated \phiPageRank \\ (\resgafpr)]
+\begin{problem}[Restricted group-adapted \phiPageRank \\ (\resgafpr)]
 Given a graph $\graph = (\vertices, \edges)$ with  
 row-stochastic transition matrix \transmatrix, 
 a restart probability $0 < \gamma < 1$, 
@@ -757,6 +757,60 @@ To avoid a matrix inversion,
 we approximate $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$ with a power iteration:
 \fi
 
+\begin{algorithm}[t]
+  \caption{\label{alg:fairgd}\fairgd: \pagerank projected gradient descent}
+  \begin{algorithmic}[1]
+    \REQUIRE Transition matrix~\transmatrix, restart probability~$\gamma$, restart vector~\vectv, 
+    groups $\vertices_1, \ldots, \vertices_\nogroups$, target \pagerank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, learning rate~$\alpha$, power iteration exponent~$t$, convergence criterion $\epsilon$, maximum number of iterations \textit{MaxIter}
+    \ENSURE Optimized transition matrix $\newtransmatrix$
+    \STATE $\newtransmatrix \gets \transmatrix$
+    \STATE ${\iter} \gets 0$
+    \STATE ${\lossprev} \gets \infty$
+    \WHILE {$|\loss(\newtransmatrix, \gamma, \vectv) - {\lossprev}| > \epsilon$ and $\iter < \textit{MaxIter}$}
+      \STATE $\iter \gets \iter + 1$
+      \STATE $\prvector \gets {\pralgo}(\newtransmatrix, \gamma, \vectv)$
+      \STATE ${\lossprev} \gets \loss(\newtransmatrix, \gamma, \vectv)$
+      \FOR {$\agroup = 1$ to $\nogroups$}
+        \STATE $\theta_\agroup \gets \indvect{\agroup}^T \prvector$
+        \STATE $\vecty_{\agroup} \gets$ ${\yapprox}(\newtransmatrix, \gamma, \indvect{\agroup}, t)$
+        \FOR {$(i, j)$ where $\transmatrix[i, j] > 0$}
+          \STATE $\newtransmatrix[i, j] \gets \newtransmatrix[i, j] - \alpha \frac{2(1 - \gamma)}{\gamma} (\theta_\agroup - \grouppr_\agroup) \prvector[i] \vecty_{\agroup}[j]$
+        \ENDFOR
+        \ENDFOR
+        \STATE $\newtransmatrix \gets {\project}(\newtransmatrix)$
+    \ENDWHILE
+    \RETURN $\newtransmatrix$
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[t]
+  \caption{\label{alg:poweriteration}\yapprox: power iteration approximation of $\vecty_\agroup$}
+  \begin{algorithmic}[1]
+    \REQUIRE Transition matrix \transmatrix, restart probability $\gamma$, group indicator vector $\indvect{\agroup}$, power iteration exponent~$t$
+    \ENSURE Approximation of $\gamma \indvect{\agroup}^T \matrixU^{-1}$
+    \STATE $\vecty \gets \indvect{\agroup}$
+    \STATE $\matrixU \gets \mathbf{I}_k$
+    \STATE $\indvect{s} \gets \mathbf{1} - \transmatrix \mathbf{1}$
+    \FOR {$i = 1$ to $t$}
+      \STATE $\matrixU \gets (1 - \gamma) (\transmatrix \matrixU + \indvect{s} \vectv^T \matrixU)$
+      \STATE $\vecty \gets \vecty + \matrixU$
+    \ENDFOR
+    \RETURN $\gamma \vecty$
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[t]
+  \caption{\label{alg:project}\project: projection to feasible set}
+  \begin{algorithmic}[1]
+    \REQUIRE Transition matrix $\newtransmatrix$
+    \ENSURE Projected transition matrix $\newtransmatrix$
+    \STATE $\newtransmatrix[i, j] \gets 0$ for $(i, j)$ where $\newtransmatrix[i, j] < 0$
+    \STATE $\vects = \newtransmatrix \mathbf{1}$
+    \STATE $\newtransmatrix[i, j] \gets \newtransmatrix[i, j] / \vects[i]$ for $(i, j)$ where $\newtransmatrix[i, j] > 0$
+  \end{algorithmic}
+\end{algorithm}
+
+
 \spara{Matrix inversion acceleration.}
 The calculation of $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$ involves the inverse of the matrix $\matrixU^T = \unitary - (1 - \gamma) \transmatrix$, which is computationally expensive. To avoid computing matrix inversion, we approximation $\matrixU^{-T}$ with the Neumann series
 \begin{equation}
@@ -768,11 +822,11 @@ substituting \Cref{eq:neuman} into $\vecty_\agroup$ gives
 \label{eq:yapprox}
     \vecty_\agroup = \gamma \sum_{i=0}^{\infty}(1-\gamma)^i \transmatrix^i \indvect{\agroup}. 
 \end{equation}
-As the terms of the summation are decreasing exponentially in magnitude, 
-due to factor $(1-\gamma)^i$, we can approximate efficiently the vector $\vecty_\agroup$
-by computing the first $t$ terms.
+As the terms of the summation are decreasing exponentially in mag\-ni\-tude, 
+due to the decaying factor $(1-\gamma)$, 
+we can approximate efficiently the vector $\vecty_\agroup$
+by computing and summing the first $t$~terms.
 The method is presented in Algorithm~\ref{alg:poweriteration}.
-
 
 % $\vecty_\agroup$ with a power iteration:
 % \begin{equation}\label{eq:power_iteration}
@@ -867,69 +921,8 @@ using power iterations.
 Algorithm~\ref{alg:project} (\project) is the projection function, 
 where the transition matrix \newtransmatrix is projected back to the feasible set after each iteration.
 
-\begin{algorithm}[t]
-  \caption{\label{alg:fairgd}\fairgd: \pagerank projected gradient descent}
-  \begin{algorithmic}[1]
-    \REQUIRE Transition matrix~\transmatrix, restart probability~$\gamma$, restart vector~\vectv, 
-    groups $\vertices_1, \ldots, \vertices_\nogroups$, target \pagerank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, learning rate~$\alpha$, power iteration exponent~$t$, convergence criterion $\epsilon$, maximum number of iterations \textit{MaxIter}
-    \ENSURE Optimized transition matrix $\newtransmatrix$
-    \STATE $\newtransmatrix \gets \transmatrix$
-    \STATE ${\iter} \gets 0$
-    \STATE ${\lossprev} \gets \infty$
-    \WHILE {$|\loss(\newtransmatrix, \gamma, \vectv) - {\lossprev}| > \epsilon$ and $\iter < \textit{MaxIter}$}
-      \STATE $\iter \gets \iter + 1$
-      \STATE $\prvector \gets {\pralgo}(\newtransmatrix, \gamma, \vectv)$
-      \STATE ${\lossprev} \gets \loss(\newtransmatrix, \gamma, \vectv)$
-      \FOR {$\agroup = 1$ to $\nogroups$}
-        \STATE $\theta_\agroup \gets \indvect{\agroup}^T \prvector$
-        \STATE $\vecty_{\agroup} \gets$ ${\yapprox}(\newtransmatrix, \gamma, \indvect{\agroup}, t)$
-        \FOR {$(i, j)$ where $\transmatrix[i, j] > 0$}
-          \STATE $\newtransmatrix[i, j] \gets \newtransmatrix[i, j] - \alpha \frac{2(1 - \gamma)}{\gamma} (\theta_\agroup - \grouppr_\agroup) \prvector[i] \vecty_{\agroup}[j]$
-        \ENDFOR
-        \ENDFOR
-        \STATE $\newtransmatrix \gets {\project}(\newtransmatrix)$
-    \ENDWHILE
-    \RETURN $\newtransmatrix$
-  \end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}[t]
-  \caption{\label{alg:poweriteration}\yapprox: power iteration approximation of $\vecty_\agroup$}
-  \begin{algorithmic}[1]
-    \REQUIRE Transition matrix \transmatrix, restart probability $\gamma$, group indicator vector $\indvect{\agroup}$, power iteration exponent~$t$
-    \ENSURE Approximation of $\gamma \indvect{\agroup}^T \matrixU^{-1}$
-    \STATE $\vecty \gets \indvect{\agroup}$
-    \STATE $\matrixU \gets \mathbf{I}_k$ \aris{Is \matrixU a matrix or a vector?}
-    \STATE $\indvect{s} \gets \mathbf{1} - \transmatrix \mathbf{1}$
-    \FOR {$i = 1$ to $t$}
-      \STATE $\matrixU \gets (1 - \gamma) (\transmatrix \matrixU + \indvect{s} \vectv^T \matrixU)$
-      \STATE $\vecty \gets \vecty + \matrixU$
-    \ENDFOR
-    \RETURN $\gamma \vecty$
-  \end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}[t]
-  \caption{\label{alg:project}\project: projection to feasible set}
-  \begin{algorithmic}[1]
-    \REQUIRE Transition matrix $\newtransmatrix$
-    \ENSURE Projected transition matrix $\newtransmatrix$
-    \STATE $\newtransmatrix[i, j] \gets 0$ for $(i, j)$ where $\newtransmatrix[i, j] < 0$
-    \STATE $\vects = \newtransmatrix \mathbf{1}$
-    \STATE $\newtransmatrix[i, j] \gets \newtransmatrix[i, j] / \vects[i]$ for $(i, j)$ where $\newtransmatrix[i, j] > 0$
-  \end{algorithmic}
-\end{algorithm}
-
-\spara{Time complexity analysis.} \todo{}
-
-\subsection{group-adpated \pagerank}
-
-The \fairgd algorithm can be extended to solve the group-adpated \phiPageRank problem by adding an outer loop that iterates through all groups. 
-The algorithm, dubbed \crossgd, is presented in Algorithm~\ref{alg:crossgd}.
-
 \begin{algorithm}
-  
-  \caption{\label{alg:crossgd}\crossgd: group-adpated \pagerank projected gradient descent}
+  \caption{\label{alg:crossgd}\crossgd: group-adapted \pagerank projected gradient descent}
   \begin{algorithmic}[1]
     \REQUIRE Transition matrix \transmatrix, restart probability $\gamma$, groups $\vertices_1,\ldots, \vertices_\nogroups$, target \pagerank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, learning rate $\alpha$, power iteration exponent~$t$, convergence criterion $\epsilon$, maximum number of iterations \textit{MaxIter}
     \ENSURE Optimized transition matrix $\newtransmatrix$
@@ -955,6 +948,13 @@ The algorithm, dubbed \crossgd, is presented in Algorithm~\ref{alg:crossgd}.
   \end{algorithmic}
 \end{algorithm}
 
+\spara{Time complexity analysis.} \todo{}
+
+\subsection{group-adapted \pagerank}
+
+The \fairgd algorithm can be extended to solve the group-adapted \phiPageRank problem by adding an outer loop that iterates through all groups. 
+The algorithm, dubbed \crossgd, is presented in Algorithm~\ref{alg:crossgd}.
+
 \section{Experimental evaluation}
 
 % \aris{Algorithms for community detection: (1) Louvain (2) METIS}
@@ -974,7 +974,7 @@ We evaluate the performance of our \fairgd and \crossgd algorithms on real-world
 
 \noindent \textbf{RQ1:} To what extent can the \fairgd and \crossgd algorithms improve the fairness and group-adapted fairness of the \pagerank scores? \\
 \textbf{RQ2:} 
-% When $\groupDist$-fairness and group-adpated $\groupDist$-fairness are achieved, 
+% When $\groupDist$-fairness and group-adapted $\groupDist$-fairness are achieved, 
 How do the \fairgd and \crossgd algorithms compare to the baselines in terms of changes to the transition matrix? \\
 % \textbf{RQ3:} What is the impact of the parameters $\boundfactor$ and $\absboundfactor$ on the performance of the \fairgd and \crossgd algorithms  ? \\
 
