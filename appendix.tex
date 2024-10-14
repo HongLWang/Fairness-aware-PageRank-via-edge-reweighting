@@ -1,0 +1,68 @@
+\section{Proof of Proposition~\ref{theorem:gradient-fairness-loss}}
+\label{appendix:omitted-proposition-proof}
+
+
+% \begin{proof}
+Recalling that $\prvector = \gamma \matrixU^{-1} \vectv$,
+we have the following:
+\begin{equation}
+\begin{aligned}
+\label{eq:gradient_fairness_loss}
+    \frac{\partial}{\partial \transmatrix} \loss(\transmatrix, \gamma, \vectv) 
+        & = \frac{\partial}{\partial \transmatrix} 
+                \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right)^2 \\
+        & = 2 \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right) 
+                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right) \\
+        & = 2 \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right) 
+                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^T \prvector\right)  \\ 
+        & = 2 \gamma \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right) 
+                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^T \matrixU^{-1} \vectv\right). 
+\end{aligned}
+\end{equation}
+By the chain rule of matrix calculus \citep[Equation~(126)]{petersen_matrix_2008}, 
+we obtain:
+\begin{equation}
+\label{eq:chain_rule}
+\begin{aligned}
+\frac{\partial}{\partial \transmatrix[i, j]} \left(\indvect{\agroup}^T \matrixU^{-1} \vectv\right) 
+    & = \mathrm{Tr} 
+        \left[ 
+            \left( \frac{\partial (\indvect{\agroup}^T \matrixU^{-1} \vectv)}{\partial \matrixU} \right)^T 
+            \frac{\partial \matrixU}{\partial \transmatrix[i, j]} 
+        \right]
+\end{aligned}
+\end{equation}
+By considering the derivative of the inverse~\cite[Equation~(55)]{petersen_matrix_2008}, we have:
+
+\begin{equation*}
+    \frac{\partial (\indvect{\agroup}^T \matrixU^{-1} \vectv)}{\partial \matrixU} 
+        = -\matrixU^{-T} \indvect{\agroup} \vectv^T \matrixU^{-T}.
+\end{equation*}
+The gradient of $\matrixU$ with respect to $\transmatrix[i, j]$ is:
+\begin{equation*}
+    \frac{\partial \matrixU}{\partial \transmatrix[i, j]} 
+        = - (1 - \gamma) \frac{\partial \transmatrix^T}{\partial \transmatrix[i, j]} = - (1 - \gamma) \matrixE_{ij},
+\end{equation*}
+where $\matrixE_{ij}$ is the matrix whose $[i,j]$ entry is 1 and all other entries are 0.
+From Equation~\eqref{eq:chain_rule}, we get:
+\begin{equation}
+\label{eq:gradient_onek_Uinv_v}
+\begin{aligned}
+\frac{\partial}{\partial \transmatrix[i, j]} \left(\indvect{\agroup}^T \matrixU^{-1} \vectv\right) 
+    & = (1 - \gamma) \mathrm{Tr} 
+            \left[ \left( \matrixU^{-T} \indvect{\agroup} \vectv^T \matrixU^{-T} \right)^T \matrixE_{ij} \right] \\ 
+    & = (1 - \gamma) \left( \matrixU^{-1} \vectv \indvect{\agroup}^T \matrixU^{-1} \right)[i, j] \\
+    & = \frac{1 - \gamma}{\gamma^2} \left( \prvector \vecty_\agroup^T \right)[i, j].
+\end{aligned}
+\end{equation}
+Substituting~\eqref{eq:gradient_onek_Uinv_v} into Equation~\eqref{eq:gradient_fairness_loss} 
+completes the proof.
+% \end{proof}
+
+
+
+
+
+
+\section{Additional experimental results} 
+\label{appendix:more-experiments}
