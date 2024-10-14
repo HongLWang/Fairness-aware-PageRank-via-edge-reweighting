@@ -509,38 +509,31 @@ Now, consider the group-wise target \pagerank score, defined as $\grouppr_1 = \f
 % $\newtransmatrix[i, j] = 0$ if $\transmatrix[i, j] = 0$.
 % \end{problem}
 
-
-
-With the fairness-loss function defined, we introduce two problems that aim to achieve fair \pagerank by minimizing this loss through edge re\-weighting.
-
+With the fairness-loss function defined, we introduce two problems that aim to achieve fair \pagerank by minimizing this loss function through edge re\-weighting.
 
 \begin{problem}[$\groupDist$-\pagerank (\fpr)]
-Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix \transmatrix of \graph, a restart probability $0 < \gamma < 1$, and a restart vector $\vectv \in \reals^{\novertices}$ satisfying $|\vectv|_1 = 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, the goal is to find a new transition matrix $\newtransmatrixopt$ that minimizes the fairness-loss function $\loss(\newtransmatrixopt, \gamma, \vectv)$, i.e.,
+\label{problem:fair_problem}
+Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix \transmatrix of \graph, a restart probability $0 < \gamma < 1$, and a restart vector $\vectv \in \reals^{\novertices}$ satisfying $\|\vectv\|_1 = 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, the goal is to find a new transition matrix $\newtransmatrixopt$ that minimizes the fairness-loss function $\loss(\newtransmatrixopt, \gamma, \vectv)$, i.e.,
 \begin{equation}
 \newtransmatrixopt = \arg \min_{\newtransmatrix \in \feasiblematrices(\transmatrix)} \loss(\newtransmatrix, \gamma, \vectv),
 \label{eq:fair_problem}
 \end{equation}
 where 
 \begin{equation*}
-\feasiblematrices(\transmatrix) = \{ \newtransmatrix \in \mathbb{R}_{\geq 0}^{\novertices \times \novertices} \mid \newtransmatrix \uniformvect = \uniformvect, \, \newtransmatrix_{ij} = 0 \text{ if } \transmatrix_{ij} = 0 \}
+\feasiblematrices(\transmatrix) = \{ \newtransmatrix \in \mathbb{R}_{\geq 0}^{\novertices \times \novertices} \mid \newtransmatrix \uniformvect = \uniformvect, \, \newtransmatrix_{ij} = 0 \text{ if }~ \transmatrix_{ij} = 0 \}
 \end{equation*}
 is the set of row-stochastic matrices that have non-negative entries, and the edge-reweighting of \graph can take place only on existing edges.
 \end{problem}
 
 
-
-
-
 \begin{problem}[Restricted $\groupDist$-\pagerank (\resfpr)]
-Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix $\transmatrix$ of \graph, a restart probability $0 < \gamma < 1$, and a restart vector $\vectv \in \reals^{\novertices}$ satisfying $|\vectv|_1 = 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, a relative modification-bound factor $\boundfactor \ge 0$ and an absolute modification-bound factor $\absboundfactor \ge 0$, the goal is to find a new transition matrix $\newtransmatrixopt$ that minimizes the fairness-loss function $\loss(\newtransmatrixopt, \gamma, \vectv)$, i.e.,
-
-
+\label{problem:restricted-fair_problem}
+Given a graph~\graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix $\transmatrix$ of \graph, a restart probability $0 < \gamma < 1$, and a restart vector $\vectv \in \reals^{\novertices}$ satisfying $\|\vectv\|_1 = 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, a relative modification-bound factor $\boundfactor \ge 0$ and an absolute modification-bound factor $\absboundfactor \ge 0$, the goal is to find a new transition matrix $\newtransmatrixopt$ that minimizes the fairness-loss function $\loss(\newtransmatrixopt, \gamma, \vectv)$, i.e.,
 \begin{equation}
 \newtransmatrixopt = \arg \min_{\newtransmatrix \in \resfeasiblematrices(\transmatrix) \cap \feasiblematrices(\transmatrix)} \loss(\newtransmatrix, \gamma, \vectv),
 \label{eq:restrict_fair_problem}
 \end{equation}
-where 
-
+where $\feasiblematrices(\transmatrix)$ is defined as in Problem~\ref{problem:fair_problem}, and
 \begin{equation*}
     \resfeasiblematrices(\transmatrix)
     =
@@ -548,7 +541,10 @@ where
 \end{equation*}
 \end{problem}
 
-In other words, $\resfeasiblematrices(\transmatrix)$ restricts the entries of the new transition matrix $\newtransmatrix$ to be within the range $(1 - \boundfactor)$ and $(1 + \boundfactor)$ of the corresponding entries in the original transition matrix $\transmatrix$, while also imposing an absolute modification bound $\absboundfactor$. The absolute bound is crucial because, for very small values in $\transmatrix$, even slight absolute changes can result in large relative variations. By applying both a relative and an absolute bound, we ensure that small absolute changes do not cause disproportionately large relative fluctuations.
+In other words, $\resfeasiblematrices(\transmatrix)$ restricts the entries of the new transition matrix $\newtransmatrix$ to be within the range $(1 - \boundfactor)$ and $(1 + \boundfactor)$ of the corresponding entries in the original transition matrix $\transmatrix$, while also imposing an absolute modification bound $\absboundfactor$. The absolute bound is necessary because, for very small values in $\transmatrix$, even slight absolute changes can result in large relative variations. By applying both a relative and an absolute bound, we ensure that small absolute changes do not cause disproportionately large relative fluctuations.
+
+The motivation for defining the restricted $\groupDist$-\pagerank problem (Problem~\ref{problem:restricted-fair_problem})
+is to consider only solutions that make small modifications in the transition matrix $\transmatrix$.
 
 Without loss of generality, in this paper, we study both \fpr and \resfpr with a uniform restart vector $\vectv = \frac{\uniformvect}{\novertices}$.
 
