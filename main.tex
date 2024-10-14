@@ -295,7 +295,6 @@ We empirically compare our approach with state-of-the-art baselines and demonstr
 where very small changes in the transition matrix lead to significant improvement in the fairness of the \pagerank algorithm.
 \end{itemize}
 
-
 \section{Related Work}
 
 In recent years, algorithmic fairness in graph mining has emerged as a prominent area of research --- for a comprehensive survey, see the recent paper by \citet{saxena2024fairsna}. This paper focuses on enhancing fairness in the content of the well-known \pagerank algorithm, which has been widely utilized for tasks such as vertex ranking, classification, and community detection. The objective in accounting for a fairness notion in the context of \pagerank, is to enable allocating \pagerank scores to vertices in a manner that considers both the vertices' group affiliations and the overall structure of the network~\citep{tsioutsiouliklis_fairness-aware_2021,saxena2024fairsna}.
@@ -330,8 +329,7 @@ they do not provide details on the specific mechanisms for such an extension.
 Additionally, link recommendation has been explored as an alternative approach to promoting fairness in \pagerank. 
 In one such paper, \citet{tsioutsiouliklis_link_2022} present analytical formulas 
 for calculating the impact of adding edges on fairness.
-In a different direction, 
-\citet{zeng_fair_2021} propose a set of de-biasing methods
+In a different direction, \citet{zeng_fair_2021} propose a set of de-biasing methods
 for fair network representation learning, using techniques based on 
 sampling, projections, and graph neural networks.
 
