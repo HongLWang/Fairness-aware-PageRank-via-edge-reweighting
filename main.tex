@@ -1130,7 +1130,8 @@ to evaluate the performance of our algorithm compared to all baselines.
 We evaluate the fairness loss $\loss(\newtransmatrix, \gamma, \vectv)$, as defined in \Cref{eq:loss_function}, on \fairgd, \fairgd~($\boundfactor=0.1$, $\absboundfactor=0.05$), \fairgd~($\boundfactor=0.1$, $\absboundfactor=0.1$), and all baselines across the five datasets. The results are shown in \Cref{fig:loss_all_dataset}. 
 We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original transition matrix for each method across the five datasets; the results are shown in \Cref{fig:change_all_dataset}.
 
-
+The results show that \fairgd and its restricted variants generally obtains better or comparable fairness loss than the baselines, while the corresponding transition matrix change are much smaller. 
+On the \mind dataset, \fairgd and the two varients $\fairgdrone$ and $\fairgdrtwo$ 
 
 
 \begin{figure*}[htbp]
@@ -1262,7 +1263,7 @@ We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original 
 \label{fig:adaptloss_slashdot}
     \end{subfigure}
     \caption{Fairness loss $\groupAdapLoss(\newtransmatrix,\gamma)$ of each baseline on five datasets for the group-adapted \phiPageRank problem}
-    \label{fig:loss_all_dataset}
+    \label{fig:loss_all_dataset_adapted}
 \end{figure*}
 
 
@@ -1303,7 +1304,7 @@ We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original 
 \label{fig:adaptchange_slashdot}
     \end{subfigure}
     \caption{Transition matrix change $\Delta_\transmatrix$ of each baseline on five datasets for the group-adapted \phiPageRank problem}
-    \label{fig:change_all_dataset}
+    \label{fig:change_all_dataset_adapted}
 \end{figure*}
 
 
@@ -1327,6 +1328,7 @@ We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original 
 0.9 & 0.02 & 0.04 & 0.04 & \textbf{0.19} & 0.17 & \underline{0.18} & 0.07 & 0.12 \\
 \bottomrule
 \end{tabular}
+\label{table:ranking_book}
 \end{table*}
 
 
@@ -1349,6 +1351,7 @@ We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original 
 0.9 & 0.60 & \underline{0.61} & 0.59 & 0.46 & 0.52 & 0.53 & 0.55 & \textbf{0.65} & 0.53 & 0.52 \\
 \bottomrule
 \end{tabular}
+\label{table:ranking_blog}
 \end{table*}
 
 
@@ -1373,6 +1376,7 @@ We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original 
 0.9 & \textbf{0.997} & \textbf{0.997} & \textbf{0.997} & \underline{0.996} & \textbf{0.997} & 0.946 & 0.946 & 0.996 \\
 \bottomrule
 \end{tabular}
+\label{table:ranking_mind}
 \end{table*}
 
 
@@ -1397,6 +1401,7 @@ We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original 
 0.9 & -1.26 & 6.22  & -11.69 & 5.56 & 5.56 & \underline{19.39} & \textbf{35.04} & \textbf{35.04} \\
 \bottomrule
 \end{tabular}
+\label{table:ranking_twitter}
 \end{table*}
 
 
@@ -1419,6 +1424,7 @@ We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original 
 0.9 & 0.15 & 0.15 & 0.21 & 0.19 & 0.20 & \underline{0.23} & \textbf{0.24} & \textbf{0.24} \\
 \bottomrule
 \end{tabular}
+\label{table:ranking_slashdot}
 \end{table*}
 
 
@@ -1460,7 +1466,7 @@ We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original 
 \label{fig:graph_cw}
     \end{subfigure}
     \caption{Original Graph structure of the \book dataset, and the graph structure after edge-reweighted by each method when \grouppr is set to 0.5.}
-    \label{fig:loss_all_dataset}
+    \label{fig:graph_visualization}
 \end{figure*}
 
 
