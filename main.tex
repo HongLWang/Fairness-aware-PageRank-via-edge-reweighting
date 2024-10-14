@@ -128,16 +128,15 @@ so does the concern for fairness in algorithms.
 Ensuring that machine-learning algorithms are reliable
 and satisfy strong notions of fairness
 has become an issue of societal concern and, 
-justifiably, has received significant attention in the computer-science literature \citep{fu2022fair,kearns2017fair}.
-To date, algorithmic fairness has been studied for
-many different tasks of primarily supervised~\citep{hardt2016equality,joseph2016fairness,pedreshi2008discrimination,zemel2013learning},
+justifiably, has received significant attention in the literature \citep{fu2022fair,kearns2017fair}.
+To date, algorithmic fairness has been studied for primarily supervised~\citep{hardt2016equality,joseph2016fairness,pedreshi2008discrimination,zemel2013learning},
 but also unsupervised learning~\citep{bera2019fair,chen2019proportionally,chierichetti2017fair}.
 In the context of network algorithms, 
 which is the focus of this paper, 
 a few different approaches for fairness-aware link analysis 
 have been proposed \citep{khajehnejad_crosswalk_2022,rahman_fairwalk_2019,tsioutsiouliklis_fairness-aware_2021,tsioutsiouliklis_link_2022,zeng_fair_2021}.
 However, the topic has received significantly less attention
-than the study of fairness in other machine-learning problems. 
+than the study of fairness in other settings. 
 
 Link-analysis algorithms, such as the \pagerank family of methods, 
 are fundamental tools for analyzing large-scale network data 
@@ -196,7 +195,8 @@ namely, achieving fair \pagerank by re\-weighting the graph edges.
 Our motivation is that such interventions are 
 \emph{intrinsic to the graph structure} and often can be implemented with actionable operations. 
 For example, edge re\-weighting can be achieved by appropriately prioritizing/demoting content from one's connections in a social network. Similarly, strategies of type ($iii$) involving edge additions or deletions are also intrinsic to the graph structure but tend to be less practical. These strategies rely on link recommendations and have to account for the likelihood of acceptance, making them more complex to implement.
-To further compare the feasibility of the two types of strategies, consider the context of ranking Internet routes. Adjusting edge weights to prioritize under\-served areas is typically easier than adding new routes or removing existing ones. 
+% To further compare the feasibility of the two types of strategies, consider the context of ranking Internet routes. Adjusting edge weights to prioritize under\-served areas is typically easier than adding new routes or removing existing ones. 
+
 Strategies of type ($i$) and ($ii$), i.e., modifying the \pagerank restart probability or restart vector are \emph{extrinsic to the graph structure} and rely on tuning hyper-parameters of the \pagerank algorithm. In many cases, it is not meaningful, nor actionable, to modify those hyper-parameters. For example, in the personalized \pagerank algorithm, the restart vector has a clear interpretation, which is to model the user interests and is not amenable to modification.
 
 
@@ -228,8 +228,7 @@ Strategies of type ($i$) and ($ii$), i.e., modifying the \pagerank restart proba
 Existing papers 
 \citep{khajehnejad_crosswalk_2022,rahman_fairwalk_2019,tsioutsiouliklis_fairness-aware_2021} 
 make the observation 
-that if fairness is ensured at each step of the random walk 
-that underlies the \pagerank computation,
+that if fairness is ensured at each step of the \pagerank random walk,
 then fairness is guaranteed for the final \pagerank distribution.
 Ensuring fairness at each step (which we call locally-fair \pagerank)
 translates to having equal probability of visiting all groups from each vertex. 
@@ -275,7 +274,6 @@ in the fairness of the \pagerank algorithm.
 \para{Contributions.}
 In concrete, we make the following contributions.
 
-\vspace{-2mm}
 \begin{itemize}[leftmargin=*]
 \item 
 We present a new approach for incorporating group fairness into the \pagerank algorithm 
@@ -725,7 +723,7 @@ We then extend the algorithm to solve the group-adapted \phiPageRank problem.
 We first derive the gradient of the fairness-loss function 
 $\loss(\transmatrix, \gamma, \vectv)$ 
 with respect to the transition matrix \transmatrix.
-The proof of the Proposition can be found in Appendix~\ref{appendix:omitted-proposition-proof}.
+The proof of the following proposition can be found in Appendix~\ref{appendix:omitted-proposition-proof}.
 
 \begin{prop}
 \label{theorem:gradient-fairness-loss}
@@ -1343,6 +1341,28 @@ We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original 
 \end{table*}
 
 
+
+
+
+\begin{table*}[ht]
+\centering
+\caption{Average Spearman coefficient of each method for the \mind dataset}
+\begin{tabular}{ccccccccc}
+\toprule
+\makecell{Row} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
+\midrule
+0.1 & 0.797 & 0.813 & 0.814 & 0.806 & 0.803 & \underline{0.993} & \textbf{0.998} & \textbf{0.998} \\
+0.2 & 0.803 & 0.805 & 0.799 & 0.799 & 0.803 & 0.993 & \textbf{0.999} & \underline{0.998} \\
+0.3 & 0.809 & 0.827 & 0.821 & 0.831 & 0.817 & \textbf{0.998} & \textbf{0.998} & \underline{0.997} \\
+0.4 & 0.814 & \underline{0.823} & 0.804 & 0.808 & 0.808 & \textbf{0.997} & \textbf{0.997} & \textbf{0.997} \\
+0.5 & 0.816 & 0.857 & 0.888 & 0.987 & 0.917 & \underline{0.993} & 0.986 & \textbf{0.994} \\
+0.6 & \textbf{0.999} & 0.993 & 0.997 & 0.934 & 0.938 & 0.987 & \underline{0.997} & \underline{0.997} \\
+0.7 & 0.999 & 0.993 & 0.997 & 0.997 & 0.996 & 0.997 & 0.997 & 0.997 \\
+0.8 & 0.998 & 0.994 & 0.997 & 0.973 & 0.973 & 0.997 & 0.996 & 0.996 \\
+0.9 & 0.997 & 0.997 & 0.997 & 0.996 & 0.997 & 0.946 & 0.946 & 0.996 \\
+\bottomrule
+\end{tabular}
+\end{table*}
 
 
 
