@@ -974,9 +974,8 @@ We evaluate the performance of our \fairgd and \crossgd algorithms on real-world
 
 \noindent \textbf{RQ1:} To what extent can the \fairgd and \crossgd algorithms improve the fairness and group-adapted fairness of the \pagerank scores? \\
 \textbf{RQ2:} 
-% When $\groupDist$-fairness and group-adpated $\groupDist$-fairness are achieved, 
 How do the \fairgd and \crossgd algorithms compare to the baselines in terms of changes to the transition matrix? \\
-% \textbf{RQ3:} What is the impact of the parameters $\boundfactor$ and $\absboundfactor$ on the performance of the \fairgd and \crossgd algorithms  ? \\
+\textbf{RQ3:} How do the ranking of the \pagerank score within each group changes? Does the \fairgd and \crossgd preserves this ranking? \\
 
 The changes to the transition matrix are quantified by the relative change in its Frobenius norm, given by:
 \begin{equation}
@@ -1396,20 +1395,20 @@ We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original 
 
 \begin{table*}[ht]
 \centering
-\caption{Average Spearman coefficient of each method for the \twitter dataset. Each element in the matrix is scaled by $10^{-2}$ to reflect the actual values.}
+\caption{Average Spearman coefficient of each method for the \slashdot dataset}
 \begin{tabular}{ccccccccc}
 \toprule
 \makecell{\grouppr} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
 \midrule
 0.1 & 0.16 & 0.16 & \underline{0.69} & \textbf{0.84} & \textbf{0.84} & 0.22 & 0.22 & 0.22 \\
-0.2 & 0.18 & 0.18 & \underline{}0.69 & \textbf{}0.88 & 0.88 & 0.22 & 0.22 & 0.22 \\
-0.3 & 0.18 & 0.18 & \underline{}0.68 & \textbf{}0.96 & \textbf{}0.96 & 0.22 & 0.22 & 0.22 \\
-0.4 & 0.18 & 0.19 & 0.18 & \textbf{}0.81 & \textbf{}0.81 & 0.22 & 0.22 & 0.22 \\
-0.5 & 0.19 & 0.18 & 0.63 & 0.23 & 0.23 & 0.22 & 0.22 & 0.22 \\
-0.6 & 0.18 & 0.19 & 0.23 & 0.23 & 0.23 & 0.23 & 0.23 & 0.23 \\
-0.7 & 0.18 & 0.19 & 0.21 & 0.21 & 0.21 & 0.23 & 0.23 & 0.23 \\
-0.8 & 0.17 & 0.18 & 0.21 & 0.20 & 0.20 & 0.18 & 0.24 & 0.24 \\
-0.9 & 0.15 & 0.15 & 0.21 & 0.19 & 0.20 & 0.23 & 0.24 & 0.24 \\
+0.2 & 0.18 & 0.18 & \underline{0.69} & \textbf{0.88} & 0.88 & 0.22 & 0.22 & 0.22 \\
+0.3 & 0.18 & 0.18 & \underline{0.68} & \textbf{0.96} & \textbf{0.96} & 0.22 & 0.22 & 0.22 \\
+0.4 & 0.18 & 0.19 & 0.18 & \textbf{0.81} & \textbf{0.81} & \underline{0.22} & \underline{0.22} & \underline{0.22} \\
+0.5 & 0.19 & 0.18 & \textbf{0.63} &\underline{ 0.23} & \underline{0.23} & 0.22 & 0.22 & 0.22 \\
+0.6 & 0.18 & \underline{ 0.19} & \textbf{0.23} & \textbf{0.23}& \textbf{0.23} & \textbf{0.23} & \textbf{0.23} &\textbf{0.23} \\
+0.7 & 0.18 & 0.19 & \underline{0.21} &\underline{0.21} & \underline{0.21} & \textbf{0.23} &\textbf{0.23} & \textbf{0.23} \\
+0.8 & 0.17 & 0.18 & \underline{0.21} & 0.20 & 0.20 & 0.18 & \textbf{0.24} & \textbf{0.24} \\
+0.9 & 0.15 & 0.15 & 0.21 & 0.19 & 0.20 & \underline{0.23} & \textbf{0.24} & \textbf{0.24} \\
 \bottomrule
 \end{tabular}
 \end{table*}
