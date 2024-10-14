@@ -861,17 +861,37 @@ of group $\vertices_\agroup$ and the group-wise target score~$\grouppr_\agroup$.
 \aris{I went thought and it is clear enough. Also, there is no j-th term, it is the k-th term, 
 referring to the k-th term in the equation of the gradient, in proposition 2. I added the reference.}
 
-\spara{Gradient projection.} We use \newtransmatrix to denote the transition matrix obtained by the projected gradient-descent method.
+\aris{
+{\color{magenta}
+I added with red color below the additional operations we need
+to solve the  \resfpr problem, with $\epsilon$ and $\delta$.
+Please check if it is correct.
+We also need to update the pseudocode in Algorithm 3.
+}}
+\aris{
+{\color{olive}
+What is colored with green below, is not so important, 
+and can be omitted, if we need space.
+}}
+
+
+\spara{Gradient projection.} 
+We use \newtransmatrix to denote the transition matrix obtained by the projected gradient-descent method.
 After each gradient descent step, 
 \newtransmatrix is projected back to the feasible set 
-$\feasiblematrices(\transmatrix)$ by the following steps:
+$\feasiblematrices(\transmatrix) {\color{magenta}\cap \resfeasiblematrices(\transmatrix)}$ 
+by the following steps:
 \begin{enumerate}
   \item For all entries $[i, j]$, if $\transmatrix[i, j] = 0$ then set $\newtransmatrix[i, j] = 0$.
   \item Set all negative entries in $\newtransmatrix$ to zero.
+  \item {\color{magenta} 
+  For the restricted problem \resfpr, truncate all entries in $\newtransmatrix$ in the interval defined by 
+  the modification factors $\absboundfactor$ and $\boundfactor$.}
   \item Normalize each row of \newtransmatrix, so that \newtransmatrix is row-stochastic.
 \end{enumerate}
 
-Since our optimization process uses element-wise updates for obtaining \newtransmatrix, the first step can be omitted. Details of the projection steps are given in Algorithm~\ref{alg:project}.
+% Since our optimization process uses element-wise updates for obtaining \newtransmatrix, the first step can be omitted. 
+Details of the projection steps are given in Algorithm~\ref{alg:project}.
 
 % \haoyun{I am not sure if it is necessary to discuss how to handle sink vertices. \\
 % 1. It is not the emphasis of this paper, \\
@@ -892,7 +912,9 @@ Since our optimization process uses element-wise updates for obtaining \newtrans
 % I didn't think about the case where the gradient-descent creates a zero row.
 % It is too rare to happen, but if it happens, we can replace the zero row with a uniform vector.}
 
-In the preliminaries, we mentioned that rows in the transition matrix \transmatrix corresponding to sink vertices are replaced by the restart vector \vectv. Each sink vertex contributes $\bigO(\novertices)$ (where \novertices is the total number of nodes) non-zero entries to the transition matrix \transmatrix. Note that in our algorithm, sparsity of \transmatrix is in favored for promoting efficiency. 
+{\color{olive}
+In the preliminaries, we mentioned that rows in the transition matrix \transmatrix corresponding to sink vertices are replaced by the restart vector \vectv. Each sink vertex contributes $\bigO(\novertices)$ (where \novertices is the total number of nodes) non-zero entries to the transition matrix \transmatrix. 
+Note that in our algorithm, sparsity of \transmatrix is aiding efficiency. 
 To reduce the number of non-zero entries in \transmatrix,
 we decompose \transmatrix into a matrix $\transmatrix_{0}$
 considering transition only for non-sink vertices,
@@ -901,7 +923,7 @@ That is,
 \begin{equation}
   \transmatrix = \transmatrix_{0} + \transmatrix_{s} = \transmatrix_{0} + \indvect{s} \vectv^T, 
 \end{equation}
-with $\indvect{s}[i]=1$ if vertex $i$ is a sink vertex and otherwise $indvect{s}[i]=0$.
+with $\indvect{s}[i]=1$ if vertex $i$ is a sink vertex and otherwise $\indvect{s}[i]=0$.
 In this way, we can store and update only $\bigO(m)$ non-zero entries of $\transmatrix_{0}$.
 Equation~\eqref{eq:pagerank} is then modified to
 \begin{equation}
@@ -914,6 +936,7 @@ and Equation~\eqref{eq:yapprox} is modified to
 %         & = \gamma (\indvect{\agroup} + (1 - \gamma) \transmatrix_{\text{{true}}} \indvect{\agroup} + (1 - \gamma)^2 \transmatrix_{\text{true}} (\transmatrix_{\text{true}} \indvect{\agroup}) + \ldots).
 %  \end{aligned}
 \end{equation}
+}%olive
 
 To sum up, our method is presented in Algorithms~\ref{alg:fairgd},~\ref{alg:poweriteration}, and~\ref{alg:project}.
 Algorithm~\ref{alg:fairgd} (\fairgd) 
@@ -952,7 +975,7 @@ where the transition matrix \newtransmatrix is projected back to the feasible se
   \end{algorithmic}
 \end{algorithm}
 
-\spara{Time complexity analysis.} \todo{}
+\spara{Time complexity analysis.} \todo{} \aris{can also be omitted.}
 
 \subsection{group-adapted \pagerank}
 
