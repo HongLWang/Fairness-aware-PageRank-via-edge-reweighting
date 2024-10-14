@@ -1349,7 +1349,7 @@ We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original 
 \caption{Average Spearman coefficient of each method for the \mind dataset}
 \begin{tabular}{ccccccccc}
 \toprule
-\makecell{Row} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
+\makecell{\grouppr} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
 \midrule
 0.1 & 0.797 & 0.813 & 0.814 & 0.806 & 0.803 & \underline{0.993} & \textbf{0.998} & \textbf{0.998} \\
 0.2 & 0.803 & 0.805 & 0.799 & 0.799 & 0.803 & 0.993 & \textbf{0.999} & \underline{0.998} \\
@@ -1357,13 +1357,36 @@ We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original 
 0.4 & 0.814 & \underline{0.823} & 0.804 & 0.808 & 0.808 & \textbf{0.997} & \textbf{0.997} & \textbf{0.997} \\
 0.5 & 0.816 & 0.857 & 0.888 & 0.987 & 0.917 & \underline{0.993} & 0.986 & \textbf{0.994} \\
 0.6 & \textbf{0.999} & 0.993 & 0.997 & 0.934 & 0.938 & 0.987 & \underline{0.997} & \underline{0.997} \\
-0.7 & 0.999 & 0.993 & 0.997 & 0.997 & 0.996 & 0.997 & 0.997 & 0.997 \\
-0.8 & 0.998 & 0.994 & 0.997 & 0.973 & 0.973 & 0.997 & 0.996 & 0.996 \\
-0.9 & 0.997 & 0.997 & 0.997 & 0.996 & 0.997 & 0.946 & 0.946 & 0.996 \\
+0.7 & \textbf{0.999} & 0.993 & 0.997 & 0.997 & 0.996 & \underline{0.997} & \underline{0.997} & \underline{0.997} \\
+0.8 & \textbf{0.998} & 0.994 & 0.997 & 0.973 & 0.973 & \underline{0.997} & 0.996 & 0.996 \\
+0.9 & \textbf{0.997} & \textbf{0.997} & \textbf{0.997} & \underline{0.996} & \textbf{0.997} & 0.946 & 0.946 & 0.996 \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
+
+
+
+\begin{table*}[ht]
+\centering
+\caption{Average Spearman coefficient of each method for the \twitter dataset. Each element in the matrix is scaled by $10^{-2}$ to reflect the actual values.}
+\begin{tabular}{ccccccccc}
+\toprule
+\makecell{\grouppr} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
+\midrule
+0.1 & 0.43  & -1.60 & -2.05 & \underline{1.60} & \underline{1.60} & \textbf{10.41} & \textbf{10.41} & \textbf{10.41} \\
+0.2 & 2.06  & 0.45  & 0.72  & \underline{2.87} & \underline{2.87} & \textbf{10.88} & \textbf{10.88} & \textbf{10.88} \\
+0.3 & 1.52  & -0.64 & -0.66 & 3.56 & 3.56 & \textbf{8.86}  & \underline{8.18}  & 7.38  \\
+0.4 & 2.16  & 0.60  & 1.32  & \underline{9.00} & \underline{9.00} & \textbf{11.68} & 0.46  & 2.04  \\
+0.5 & -0.04 & 0.04  & 1.17  & \textbf{24.81} & \textbf{24.81} & \underline{10.54} & 3.21  & 2.89  \\
+0.6 & 1.40  & -1.30 & 0.64  & 1.99  & \underline{2.18}  & \textbf{9.96}   &\textbf{9.96}   & \textbf{9.96}  \\
+0.7 & 5.00  & -9.34 & 5.83  & 9.46  & 0.96  & \underline{13.88} & \textbf{15.86} & \textbf{15.86} \\
+0.8 & 10.09 & -1.30 & -3.44 & 6.53  & 6.53  & \underline{12.94} & 
+\textbf{25.55} & \textbf{25.55} \\
+0.9 & -1.26 & 6.22  & -11.69 & 5.56 & 5.56 & \underline{19.39} & \textbf{35.04} & \textbf{35.04} \\
+\bottomrule
+\end{tabular}
+\end{table*}
 
 
 
