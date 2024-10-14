@@ -981,12 +981,20 @@ We evaluate the performance of our \fairgd and \crossgd algorithms on real-world
 How do the \fairgd and \crossgd algorithms compare to the baselines in terms of changes to the transition matrix? \\
 \textbf{RQ3:} How does the ranking of the \pagerank score within each group change? Do \fairgd and \crossgd preserve this ranking?
 
-To answer the second reseach question, we quantify the changes to the transition matrix by the relative change in its Frobenius norm, given by:
+To answer the first question, we report the fairness loss and group-adapted fairness loss as defined in Definitions~\ref{definition:fairloss} and \ref{definition:groupfairloss}.
+
+To answer the second question, we quantify the changes to the transition matrix by the relative change in its Frobenius norm, given by:
 \begin{equation}
   \Delta_\transmatrix = \frac{||\newtransmatrix - \transmatrix||_F}{||\transmatrix||_F}.
 \end{equation}
 
-The fairness and group-adapted fairness of the \pagerank scores are evaluated using the fairness loss and group-adapted fairness loss, as defined in Definitions~\ref{definition:fairloss} and \ref{definition:groupfairloss}.
+For the third question, we compute the Spearman's rank correlation coefficient \citep{spearman1961proof} between the original PageRank ranking and the ranking after re-weighting the transition matrix for each group, reporting the weighted average across all groups. Specifically, let $\ranking_\agroup$ be the original PageRank ranking for group $\group_\agroup$, and $\hat{\ranking}_\agroup$ be the ranking after re-weighting. The average Spearman's rank, $\overline{\rho}$, is calculated as:
+
+\[
+\overline{\rho} = \sum_{\agroup=1}^{\nogroups} \rho(\ranking_\agroup, \hat{\ranking}_\agroup),
+\]
+where $\rho(.,.)$ is the Spearman's rank correlation coefficient of two rankings. A larger $\overline{\rho} $ indicates fewer changes in the PageRank score's ranking.
+
 
 \subsection{Datasets}
 
