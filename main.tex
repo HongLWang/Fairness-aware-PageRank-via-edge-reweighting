@@ -1081,6 +1081,10 @@ We compare the proposed \fairgd and \crossgd algorithms against the following ba
 
 \honglian{I am not sure whether we need to give all the details of the revised transition matrix.}
 
+\noindent $\fairgd(\boundfactor,\absboundfactor)$. This is the restricted version of our proposed \fairgd algorithm, with relative and absolute intervention bound $\boundfactor$ and $\absboundfactor$ respectively.
+\\
+\noindent 
+$\crossgd(\boundfactor,\absboundfactor)$. This is the restricted version of our proposed \crossgd algorithm, with relative and absolute intervention bound $\boundfactor$ and $\absboundfactor$ respectively.\\
 \noindent \lfpru\citep{tsioutsiouliklis_fairness-aware_2021}. 
 A residual-based algorithm that revises both the restart vector and the transition matrix to achieve perfect $\groupDist$-fairness in \pagerank scores. The intuition is that each node distributes a portion of its PageRank to the under-represented groups, and distributes the remaining portion to its neighbors uniformly. 
 
@@ -1141,6 +1145,9 @@ The \crosswalk algorithm is modified accordingly. These two algorithms do not ad
 \spara{Fairness loss evaluation.} For a fair comparison, we evaluate the fairness loss of \fairgd, \crossgd, \fairwalk, and \crosswalk using a uniform restart vector. For \lfpru and \lfprn, we make distinctions based on the dataset: (1) on the \blogs and \mind datasets, we evaluate fairness loss with a uniform restart vector, as defined in \Cref{eq:loss_function}; (2) on the \twitter dataset, we do not calculate fairness loss with a uniform restart vector, but instead show zero fairness loss. The reason is that since \lfpru and \lfprn produce a fully connected graph structure, calculating their \pagerank scores is computationally expensive, and we cannot run it on a laptop; (3) on the \book and \slashdot datasets, we do not evaluate \lfpru and \lfprn because it is unclear how these two algorithms can be extended to the multi-group scenario.
 
 \spara{Group-adapted fairness loss evaluation.} We evaluate the group-adapted fairness loss of \fairgd, \crossgd, \fairwalk, and \crosswalk as defined in \Cref{equation:cgfl}. For \lfpru and \lfprn, we evaluate them only on the \blogs and \mind datasets, for the same reasons stated above.
+
+\spara{$\fairgd(\boundfactor,\absboundfactor)$ and $\crossgd(\boundfactor, \absboundfactor)$.}
+In the experiments, we set $\boundfactor = 0.1$ and $\absboundfactor = \{0.05, 0.1\}$.\honglian{what is the reason for setting this two parameters to the current value?}
 
 % \todo{1. show the ranking coefficient before changing the transition matrix and after changing the matrix with different phi. Does the FairGD preserves the ranking?
 % }
