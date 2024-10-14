@@ -356,24 +356,28 @@ fairness over multiple groups.
 % \textbf{Applying Fairness Constraints on Graph Node Ranks Under Personalization Bias}. \citet{krasanakis_applying_2021} mitigates disparate impact in ranking under personalization bias by a personalization editing mechanism.
 
 \section{Definitions}
-In this section, we first present preliminaries, and then we
-define \pagerank fairness.
+
+In this section, we first present the necessary preliminaries, and then we define \pagerank fairness.
+
 \subsection{Preliminaries}
 
-Consider a directed graph $\graph = (\vertices, \edges)$ with a set $\vertices$ of vertices and a set $\edges$ edges. Let $\novertices = |\vertices|$ represent the number of vertices and $\noedges = |\edges|$ represent the number of edges.   
-Assume the vertices are partitioned to \nogroups groups $\{\group_1 \cdots \group_{\nogroups}\}$. 
+We consider a directed graph $\graph = (\vertices, \edges)$ with a set $\vertices$ of vertices and a set $\edges$ edges. We let $\novertices = |\vertices|$ represent the number of vertices and $\noedges = |\edges|$ represent the number of edges.   
+We assume that the set of  vertices is partitioned into \nogroups groups $\{\group_1 \cdots \group_{\nogroups}\}$. 
 Let $\labelof_{v}$ indicate the group that a vertex $\vertexv \in \vertices$ belongs to.
 
-The \pagerank algorithm takes \graph as input, and produces a \pagerank score vector \prvector that indicates the relative importance of each vertex in the graph ~\citep{brin_anatomy_1998}.
-Despite the existence of multiple equivalent formulations, the \pagerank algorithm is fully characterized by three parameters: the transition matrix \transmatrix, the restart (or jump) vector \vectv, and the restart probability $\gamma$. This paper follows the notation established by \citet{tsioutsiouliklis_fairness-aware_2021}, who first introduced the concept of fairness-aware \pagerank.
-
-The \pagerank score vector \prvector is the solution to the following equation:
+The \pagerank algorithm takes \graph as input, and produces a \pagerank-score vector \prvector that indicates the relative importance of each vertex in the graph ~\citep{brin_anatomy_1998}.
+Despite the existence of multiple equivalent formulations, the \pagerank algorithm is fully characterized by three parameters: the transition matrix~\transmatrix, the restart (or jump) vector~\vectv, and 
+the restart probability~$\gamma$. 
+This paper follows the notation established by \citet{tsioutsiouliklis_fairness-aware_2021}, 
+who first introduced the concept of fairness-aware \pagerank.
+%
+The \pagerank-score vector \prvector is the solution to the following equation:
 \begin{equation}
 \label{eq:pagerank}
     \prvector^T = (1 - \gamma) \prvector^T \transmatrix + \gamma \vectv^T.
 \end{equation}
 
-Here, the transition matrix \transmatrix is row stochastic, derived by normalizing each row of the adjacency matrix of $\graph$. The restart vector \vectv specifies a distribution over all vertices, indicating where a random walk might restart. The parameter $\gamma$ represents the probability that the random walk will restart at any given step. To handle sinking vertices, which are vertices with no outgoing edges, we replace the corresponding zero rows of \transmatrix with the restart vector \vectv.
+Here, the transition matrix \transmatrix is row stochastic, derived by normalizing each row of the adjacency matrix of $\graph$. The restart vector \vectv specifies a distribution over all vertices, indicating where a random walk might restart. The parameter $\gamma$ represents the probability that the random walk will restart at any given step. To handle ``sink'' vertices, which are vertices with no outgoing edges, we replace the corresponding zero rows of \transmatrix with the restart vector \vectv.
 
 By solving \Cref{eq:pagerank}, we obtain the following expression for the \pagerank score vector: 
 \begin{equation} 
@@ -381,7 +385,6 @@ By solving \Cref{eq:pagerank}, we obtain the following expression for the \pager
 \end{equation}
 
 \subsection{Fair \pagerank}
-
 
 Building on the earlier definition of fairness-aware PageRank \citep{tsioutsiouliklis_fairness-aware_2021, tsioutsiouliklis_link_2022}, we consider the vertices of a graph to be divided into distinct groups. These groups may represent social categories based on sensitive attributes such as gender, ethnicity, or sexual orientation. We begin by defining the fair PageRank problem, followed by a discussion of various approaches to achieving PageRank fairness, and conclude with a formal definition of the $\groupDist$-\pagerank (\fpr) problem and the Restricted $\groupDist$-\pagerank (\resfpr) problem.
 
