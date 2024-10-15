@@ -1573,7 +1573,7 @@ On the \twitter dataset, \crossgd and its variants outperform both \fairwalk and
 
 \subsection{Ranking coefficient evaluation}
 
-We report the average Spearman's rank correlation coefficient, $\overline{\rho}$, computed for each method across different datasets. The results for the \book dataset are shown in \Cref{table:ranking_book}, while results for other datasets are provided in \Cref{appendix:more-experiments}.
+We report the average Spearman's rank correlation coefficient, $\overline{\rho}$, computed for each method across different datasets. The results for the \book dataset are shown in \Cref{table:ranking_book}, while results for other datasets are provided in \Cref{appendix:more-experiments}.  For each table, we bold the largest value and underline the second largest.
 
 For the (restricted) \phiPageRank problem, \fairgd and its variants consistently achieve the best or second-best $\overline{\rho}$, demonstrating that the \fairgd algorithm better preserves the relative \pagerank score rankings within each group compared to \fairwalk and \crosswalk. This finding also holds true for the  (restricted) group-adapted \phiPageRank problem and the \crossgd algorithms. These results suggest that, in practical applications, when adjusting the content displayed to users based on items' \pagerank scores to enhance fairness, fewer changes are required within each group. Instead, greater focus should be placed on adjusting the frequency or weighting of content across different groups.
 
