@@ -1206,23 +1206,41 @@ These two algorithms do not add new edges to the graph, neither do they change t
 \subsection{Experimental Settings}
 
 
-\spara{$\gamma$ and \vectv}. Throughout the experimental section, we follow the general setting of the \pagerank algorithm and fix $\gamma = 0.15$. When evaluating the fairness loss function in \Cref{eq:loss_function}, we fix $\vectv$ to be the uniform vector.
+\textbf{Parameters $\gamma$ and \vectv}. 
+We follow the common assumption of \pagerank algorithm and fix $\gamma = 0.15$. 
+% When evaluating the fairness loss function in \Cref{eq:loss_function}, 
+We fix $\vectv$ to be the uniform vector.
 
-\spara{(Group-adapted) Fairness Loss Evaluation.} 
-We distinguish between datasets as follows: (1) For the \blogs and \mind datasets, we compare our approach with all baselines; (2) For the remaining datasets, we only compare with \fairwalk and \crosswalk. The reason is that both \lfpru and \lfprn produce a fully connected graph structure, making it infeasible to run the \pagerank algorithm on a laptop given the large scale of the \twitter dataset. Moreover, it is unclear how \lfpru and \lfprn can be extended to the multi-group scenario, so we do not compare against them on the \slashdot and \book datasets.
+\vspace{1mm}
+\noindent
+\textbf{(Group-adapted) fairness loss evaluation.} 
+% We distinguish between datasets as follows: (1) 
+For the \blogs and \mind datasets, we compare our approach with all baselines; 
+% (2) 
+For the remaining datasets, we only compare with \fairwalk and \crosswalk. 
+The reason is that both \lfpru and \lfprn produce a fully connected graph structure, 
+making it infeasible to run the \pagerank algorithm on % a laptop given the large scale of 
+the \twitter dataset. 
+Moreover, it is unclear how \lfpru and \lfprn can be extended to the multi-group scenario.
+%  so we do not compare against them on the \slashdot and \book datasets.
 
 
-
-\spara{Transition Matrix Change $\Delta_\transmatrix$ Evaluation.} 
+\vspace{1mm}
+\noindent
+\textbf{Transition matrix change $\Delta_\transmatrix$ evaluation.} 
 On the \twitter dataset, we compare our approach with \lfpru and \lfprn. The remaining experimental settings are consistent with those used in the fairness loss evaluation described above.
 
-\spara{$\fairgd(\boundfactor,\absboundfactor)$ and $\crossgd(\boundfactor, \absboundfactor)$.}
+\vspace{1mm}
+\noindent
+\textbf{$\fairgd(\boundfactor,\absboundfactor)$ and $\crossgd(\boundfactor, \absboundfactor)$.}
 In the experiments, we set $\boundfactor = 0.1$ and $\absboundfactor = \{0.05, 0.1\}$. for the \resfpr and \resgafpr problem.
 % \honglian{Explain for setting this two parameters to the current value?}
 We perform a grid search over a logarithmically spaced range of values between $10^-3$ and $10^3$
 , selecting 20 values evenly distributed on a logarithmic scale to find the best learning rate of our proposed algorithms.
 
-\spara{Group-wise target \pagerank score \groupDist.}
+\vspace{1mm}
+\noindent
+\textbf{Group-wise target \pagerank score \groupDist.}
 For datasets containing only two groups, we define the \pagerank score distribution as 
 $ \groupDist = (\grouppr, 1-\grouppr). $ 
 For datasets with multiple groups, we set 
@@ -1233,6 +1251,7 @@ We vary \(\grouppr\) in the range
 $ [0.1, 0.2, \dots, 0.9] $ 
 to evaluate the performance of our algorithm compared to all baselines.
 
+\vspace{1mm}
 The code and dataset used in this paper are available.%
 \footnote{\url{https://anonymous.4open.science/r/Fair-Pagerank-via-Edge-Rewighting-6BB3}}
 
