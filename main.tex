@@ -439,12 +439,14 @@ Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots,
 \end{equation} 
 where \prvector is the \pagerank vector corresponding to parameters~$(\transmatrix, \gamma, \vectv)$. \end{definition}
 
-
-
+The proof of the following claim can be found in Appendix~\ref{appendix:omitted-proposition-non-convexity}.
 \begin{prop}
+\label{proposition:non-convexity}
 The fairness-loss function $\loss(\transmatrix, \gamma, \vectv)$, 
 as defined in \Cref{eq:loss_function}, is not convex with respect to $\transmatrix$.
 \end{prop}
+
+\iffalse
 \begin{proof}
 To demonstrate the non-convexity, it suffices to provide a single counterexample. Consider a fully connected graph $\graph$ with three vertices: $a$, $b$, and $c$. Let the labels be $\labelof_a =\mathsf{blue}$, and $\labelof_b = \labelof_c = \mathsf{red}$. We also let 
 \[ 
@@ -483,7 +485,7 @@ $\prvector_3=\left( \frac{1}{3},\frac{1}{3},\frac{1}{3}\right)$, respectively.
 
 Now, consider the group-wise target \pagerank score, defined as $\grouppr_1 = \frac{\gamma^2-3\gamma+3}{3(2-\gamma)}$ and $\grouppr_2 = 1-\grouppr_1$. It holds that $\frac{1}{2}\loss(\newtransmatrix_1, \gamma, \vectv) + \frac{1}{2}\loss(\newtransmatrix_2, \gamma, \vectv) = 0 $. One can easily find a $\gamma$ such that that $\loss(\frac{1}{2}\newtransmatrix_1 + \frac{1}{2}\newtransmatrix_2, \gamma, \vectv) = \loss(\newtransmatrix_3, \gamma, \vectv) >0$, which contradicts the definition of convexity. This completes the proof.
 \end{proof}
-
+\fi
 
 
 % We consider that a \pagerank vector \prvector is closer to $\grouppr$-fairness 
@@ -803,6 +805,7 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
   \end{algorithmic}
 \end{algorithm}
 
+\iffalse
 \begin{algorithm}[t]
 \caption{\label{alg:project}\project: projection to feasible set}
   \begin{algorithmic}[1]
@@ -823,6 +826,7 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
     \ENDIF
   \end{algorithmic}
 \end{algorithm}
+\fi
 
 
 \spara{Matrix inversion acceleration.}
@@ -909,7 +913,8 @@ by the following steps:
 \end{enumerate}
 
 % Since our optimization process uses element-wise updates for obtaining \newtransmatrix, the first step can be omitted. 
-Details of the projection steps are given in Algorithm~\ref{alg:project}.
+Details of the projection are given in Algorithm~\ref{alg:project} in 
+Appendix~\ref{appendix:pseudocode}.
 
 % \haoyun{I am not sure if it is necessary to discuss how to handle sink vertices. \\
 % 1. It is not the emphasis of this paper, \\
@@ -1019,12 +1024,15 @@ The \fairgd algorithm can be extended to address both the \gafpr and \resgafpr p
 
 We evaluate the performance of \fairgd and \crossgd on real-world networks. In particular, we study the following research questions:
 
-
-\noindent \textbf{RQ1:} To what extent can the \fairgd and \crossgd algorithms improve the fairness and group-adapted fairness of \pagerank? \\
+\vspace{1mm}
+\noindent \textbf{RQ1:} To what extent can the \fairgd and \crossgd algorithms improve the fairness and group-adapted fairness of \pagerank? 
+\vspace{1mm}\\ 
 \textbf{RQ2:} 
-How do the \fairgd and \crossgd algorithms compare to the baselines in terms of changes to the transition matrix? \\
+How do the \fairgd and \crossgd algorithms compare to the baselines in terms of changes to the transition matrix? 
+\vspace{1mm}\\ 
 \textbf{RQ3:} How does the ranking of the \pagerank score within each group change? Do \fairgd and \crossgd preserve this ranking?
 
+\vspace{1mm}
 To answer the first question, we report the fairness loss and group-adapted fairness loss as defined in Equations
 % Definitions~\ref{definition:fairloss} and \ref{definition:groupfairloss}.
 (\ref{eq:loss_function}) and (\ref{equation:cgfl}). 
@@ -1032,15 +1040,18 @@ For the second question, we quantify the changes to the transition matrix by the
 %\begin{equation}
 $  \Delta_\transmatrix = {||\newtransmatrix - \transmatrix||_F}/{||\transmatrix||_F}.$
 %\end{equation}
-For the third question, we compute the Spearman's rank correlation coefficient \citep{spearman1961proof} between the original PageRank ranking and the ranking after re-weighting the transition matrix for each group, and report the weighted average across all groups. Specifically, let $\ranking_\agroup$ be the original PageRank ranking for group $\group_\agroup$, and $\hat{\ranking}_\agroup$ be the ranking after re-weighting. The average Spearman's rank correlation coefficient, $\overline{\rho}$, is calculated as:
+For the third question, we compute the Spearman's rank correlation coefficient 
+\citep{spearman1961proof} between the original PageRank ranking and the ranking after re-weighting the transition matrix, 
+and report the weighted average $\overline{\rho}$ across all groups 
+(weighted by the group size).
+\iffalse
+Specifically, let $\ranking_\agroup$ be the original PageRank ranking for group $\group_\agroup$, and $\hat{\ranking}_\agroup$ be the ranking after re-weighting. The average Spearman's rank correlation coefficient, $\overline{\rho}$, is calculated as:
 \[
 \overline{\rho} = \sum_{\agroup=1}^{\nogroups} \frac{|\group_\agroup|}{n}\rho(\ranking_\agroup, \hat{\ranking}_\agroup),
 \]
-where $\rho(.,.)$ is the Spearman's rank correlation coefficient of two rankings. A larger $\overline{\rho} $ indicates fewer changes in the PageRank score's ranking.
-
-% \aris{you mention ``weighted average across all groups'', but the Equation is unweighted.}
-% \honglian{Addressed}
-
+where $\rho(.,.)$ is the Spearman's rank correlation coefficient of two rankings. 
+\fi
+A larger $\overline{\rho}$ indicates fewer changes in the PageRank score's ranking.
 
 \subsection{Datasets}
 
@@ -1551,13 +1562,14 @@ demonstrating that our method offers significant advantages compared to strong b
 %%
 %% The next two lines define the bibliography style to be used, and
 %% the bibliography file.
+\newpage
 \bibliographystyle{ACM-Reference-Format}
-
 \bibliography{refs.bib}
 
 
 %%
 %% If your work has an appendix, this is the place to put it.
+\newpage
 \appendix
 \input{appendix}
 

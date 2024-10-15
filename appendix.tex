@@ -1,6 +1,48 @@
+\section{Proof of Proposition~\ref{proposition:non-convexity}}
+\label{appendix:omitted-proposition-non-convexity}
+
+% \begin{proof}
+To demonstrate the non-convexity, it suffices to provide a single counterexample. Consider a fully connected graph $\graph$ with three vertices: $a$, $b$, and $c$. Let the labels be $\labelof_a =\mathsf{blue}$, and $\labelof_b = \labelof_c = \mathsf{red}$. We also let 
+\[ 
+\newtransmatrix_1 =  \begin{pmatrix}
+0 & 1 & 0 \\
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+\end{pmatrix} 
+~\mbox{ and }~ 
+\newtransmatrix_2 =  \begin{pmatrix}
+0 & 0 & 1 \\
+0 & 0 & 1 \\
+1 & 0 & 0 \\
+\end{pmatrix}\] 
+be two row-stochastic transition matrices, and 
+% $\newtransmatrix_3 = \frac{1}{2}\newtransmatrix_1 + \frac{1}{2}\newtransmatrix_2 = \begin{pmatrix}
+% 0 & \frac{1}{2} & \frac{1}{2} \\
+% \frac{1}{2} & 0 & \frac{1}{2} \\
+% \frac{1}{2} & \frac{1}{2} & 0 \\
+% \end{pmatrix}$ 
+\[
+\newtransmatrix_3 = \frac{1}{2}\newtransmatrix_1 + \frac{1}{2}\newtransmatrix_2 = \begin{pmatrix}
+0 & 1/2 & 1/2 \\
+1/2 & 0 & 1/2 \\
+1/2 & 1/2 & 0 \\
+\end{pmatrix}.
+\]
+
+Given restart vector $\vectv = (1/3, 1/3, 1/3)$ and restart probability $\gamma$, 
+we can calculate the \pagerank vectors $\prvector_1$, $\prvector_2$, and $\prvector_3$, 
+for $\newtransmatrix_1$, $\newtransmatrix_2$, and $\newtransmatrix_3$, 
+being 
+$\prvector_1 = \left(\frac{\gamma^2-3\gamma+3}{3(2-\gamma)}, \frac{3-2\gamma}{3(2-\gamma)}, \frac{\gamma}{3}\right)$, 
+$\prvector_2=\left(\frac{\gamma^2-3\gamma+3}{3(2-\gamma)},  \frac{\gamma}{3}, \frac{3-2\gamma}{3(2-\gamma)},\right)$, and 
+$\prvector_3=\left( \frac{1}{3},\frac{1}{3},\frac{1}{3}\right)$, respectively. 
+
+Now, consider the group-wise target \pagerank score, defined as $\grouppr_1 = \frac{\gamma^2-3\gamma+3}{3(2-\gamma)}$ and $\grouppr_2 = 1-\grouppr_1$. It holds that $\frac{1}{2}\loss(\newtransmatrix_1, \gamma, \vectv) + \frac{1}{2}\loss(\newtransmatrix_2, \gamma, \vectv) = 0 $. One can easily find a $\gamma$ such that that $\loss(\frac{1}{2}\newtransmatrix_1 + \frac{1}{2}\newtransmatrix_2, \gamma, \vectv) = \loss(\newtransmatrix_3, \gamma, \vectv) >0$, which contradicts the definition of convexity. This completes the proof.
+% \end{proof}
+
+
 \section{Proof of Proposition~\ref{theorem:gradient-fairness-loss}}
 \label{appendix:omitted-proposition-proof}
-
 
 % \begin{proof}
 Recalling that $\prvector = \gamma \matrixU^{-1} \vectv$,
@@ -60,9 +102,31 @@ completes the proof.
 % \end{proof}
 
 
-\section{Omitted Algorithms}
+\section{Omitted algorithms}
 \label{appendix:pseudocode}
 
+We provide pseudocode for Algorithms \ref{alg:project} and \ref{alg:crossgd}.
+
+\begin{algorithm}[t]
+\caption{\label{alg:project}\project: projection to feasible set}
+  \begin{algorithmic}[1]
+    \REQUIRE Transition matrix $\newtransmatrix$, original transition matrix \transmatrix, modification bound \boundfactor and \absboundfactor (optional).
+    \ENSURE Projected transition matrix $\newtransmatrix$
+     \STATE $\newtransmatrix[i, j] \gets 0$ for $(i, j)$ where $\transmatrix[i, j] = 0$
+    \STATE $\newtransmatrix[i, j] \gets 0$ for $(i, j)$ where $\newtransmatrix[i, j] < 0$
+    \IF{\boundfactor and \absboundfactor are provided}   
+    \WHILE{$\newtransmatrix \notin \resfeasiblematrices(\transmatrix)$}
+    \STATE $\newtransmatrix[i,j] = \max ((1-\boundfactor) \transmatrix[i,j] - \absboundfactor, \newtransmatrix[i,j] )$
+    \STATE $\newtransmatrix[i,j] = \min ((1+\boundfactor) \transmatrix[i,j] + \absboundfactor, \newtransmatrix[i,j])$
+    \STATE $\vects = \newtransmatrix \mathbf{1}$
+    \STATE $\newtransmatrix[i, j] \gets \newtransmatrix[i, j] / \vects[i]$ for $(i, j)$ where $\newtransmatrix[i, j] > 0$
+    \ENDWHILE
+    \ELSE
+    \STATE $\vects = \newtransmatrix \mathbf{1}$
+    \STATE $\newtransmatrix[i, j] \gets \newtransmatrix[i, j] / \vects[i]$ for $(i, j)$ where $\newtransmatrix[i, j] > 0$
+    \ENDIF
+  \end{algorithmic}
+\end{algorithm}
 
 \begin{algorithm}
 \caption{\label{alg:crossgd}\crossgd: Projected gradient descent for \gafpr and \resgafpr}
