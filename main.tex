@@ -1311,7 +1311,6 @@ The code and dataset used in this paper are available.%
 \end{figure*}
 
 
-
 \begin{figure*}[t] % Use figure* for spanning across two columns
     \centering
     \begin{subfigure}[b]{0.21\textwidth}
@@ -1397,7 +1396,6 @@ The code and dataset used in this paper are available.%
 \end{figure*}
 
 
-
 \begin{figure*}[t] % Use figure* for spanning across two columns
     \centering
     \begin{subfigure}[b]{0.21\textwidth}
@@ -1438,80 +1436,7 @@ The code and dataset used in this paper are available.%
 \end{figure*}
 
 
-
-\subsection{Fairness loss and weight change $\Delta_\transmatrix$}
-
-We evaluate the fairness loss $\loss(\newtransmatrix, \gamma, \vectv)$, 
-as defined in \Cref{eq:loss_function}, 
-on \fairgd, \fairgd~($\boundfactor=0.1$, $\absboundfactor=0.05$), \fairgd~($\boundfactor=0.1$, $\absboundfactor=0.1$), and all baselines across the five datasets. 
-The results are shown in \Cref{fig:loss_all_dataset}. 
-We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original transition matrix; 
-% for each method across the five datasets; 
-the results are shown in \Cref{fig:change_all_dataset}.
-The results demonstrate that \fairgd and its restricted variants generally achieve better or comparable fairness loss compared to the baselines, while maintaining significantly smaller changes in the transition matrix weights.
-
-On the \mind dataset, both \fairgd and the baselines attain near-perfect fairness across all values of $\phi$. However, \fairgd results in substantially smaller changes in $\Delta_\transmatrix$ compared to all baselines. The restricted variants, \fairgdrone and \fairgdrtwo, 
-% impose bounds on edge weight modifications, leading to 
-achieve even smaller weight changes, but fail to achieve perfect fairness when $\grouppr$ exceeds 0.5.
-
-In the \blogs dataset, \lfpru and \lfprn deliver the best fairness outcomes, with \fairgd ranking as the third-best algorithm. Despite this, \fairgd consistently yields the smallest weight changes across all values of \grouppr, except when \grouppr reaches 0.9.
-
-On the \book and \slashdot datasets, \fairgd and its variants outperform \fairwalk and \crosswalk in both fairness loss and weight change when \grouppr is below 0.7. However, for \grouppr greater than 0.7, \fairgd faces a trade-off: it must sacrifice performance on either fairness loss or weight change to improve the other metric.
-
-In the \twitter dataset, \fairgd surpasses the baselines in 8 out of 9 \grouppr values, indicating its robust performance across a range of fairness targets.
-
-Overall, \fairgd delivers superior results in terms of fairness loss and weight change when \grouppr is close to the original PageRank score, $\grouppr_1$. As \grouppr diverges from $\grouppr_1$, both the fairness loss and weight change increase. The restricted variants, \fairgdrone and \fairgdrtwo, exemplify the trade-off between fairness loss and weight change by achieving smaller weight changes at the cost of higher fairness loss compared to \fairgd.
-This refinement highlights the balance between fairness and weight change, 
-emphasizing the flexibility of \fairgd in adapting to various fairness~goals.
-
-
-\subsection{Group-adapted loss and $\Delta_\transmatrix$}
-
-We evaluate \crossgd and its restricted variants, \crossgdrone and \crossgdrtwo, on the group-adapted fairness loss, as defined in \Cref{equation:cgfl}, and analyze the corresponding changes in the transition matrix weights. The performance of these methods is compared against baseline models. The results of these comparisons are presented in \Cref{fig:loss_all_dataset_adapted} for the group-adapted fairness loss and in \Cref{fig:change_all_dataset_adapted} for the transition matrix weight changes.
-
-\crossgd and its variants demonstrate significantly better weight changes across all datasets, while achieving excellent group-adapted loss performance in 3 out of the 5 datasets.
-
-On the \twitter dataset, \crossgd and its variants outperform both \fairwalk and \crosswalk across all \grouppr settings. Similarly, on the \book and \slashdot datasets, \crossgd and its variants surpass \fairwalk and \crosswalk in both metrics for 8 out of 9 \grouppr values.
-
-\honglian{What is the reason that On the \blogs and \mind dataset, the \fairgd algorithm does not perform well?}
-
-
-\subsection{Ranking coefficient evaluation}
-
-We report the average Spearman's rank correlation coefficient, $\overline{\rho}$, computed for each method across different datasets. The results for the \book dataset are shown in \Cref{table:ranking_book}, while results for other datasets are provided in \Cref{appendix:more-experiments}.
-
-
-
-
-For the (restricted) \phiPageRank problem, \fairgd and its variants consistently achieve the best or second-best $\overline{\rho}$, demonstrating that the \fairgd algorithm better preserves the relative \pagerank score rankings within each group compared to \fairwalk and \crosswalk. This finding also holds true for the  (restricted) group-adapted \phiPageRank problem and the \crossgd algorithms. These results suggest that, in practical applications, when adjusting the content displayed to users based on items' \pagerank scores to enhance fairness, fewer changes are required within each group. Instead, greater focus should be placed on adjusting the frequency or weighting of content across different groups.
-
-
-
-\iffalse
-\begin{table*}[h!]
-\centering
-\caption{Average Spearman's coefficient of each method for the \book dataset}
-\begin{tabular}{ccccccccc}
-\toprule
-\makecell{\grouppr} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
-\midrule
-0.1 & -0.05 & -0.04 & \textbf{0.52} & \textbf{0.52} & \textbf{0.52} & \underline{0.16} & 0.09 & 0.11 \\
-0.2 & -0.06 & -0.02 & \textbf{0.24} & -0.00 & 0.10 & 0.14 & 0.18 & \underline{0.20} \\
-0.3 & -0.03 & -0.02 & \textbf{0.24} & \underline{0.20} & 0.11 & 0.10 & 0.04 & 0.02 \\
-0.4 & -0.18 & -0.11 & 0.09 & \underline{0.17} & 0.04 & 0.09 & 0.02 & \textbf{0.18} \\
-0.5 & -0.02 & 0.01 & 0.14 & \textbf{0.27} & 0.08 & 0.11 & \underline{0.16} & 0.11 \\
-0.6 & 0.06 & 0.10 & \underline{0.20} & 0.16 & 0.16 & 0.09 & 0.15 & \textbf{0.22} \\
-0.7 & \underline{0.17} & 0.13 & \textbf{0.20} & 0.15 & 0.11 & 0.13 & 0.10 & 0.09 \\
-0.8 & 0.21 & 0.04 & \textbf{0.31} & 0.09 & 0.17 & 0.17 & 0.02 & \underline{0.23} \\
-0.9 & 0.02 & 0.04 & 0.04 & \textbf{0.19} & 0.17 & \underline{0.18} & 0.07 & 0.12 \\
-\bottomrule
-\end{tabular}
-\label{table:ranking_book}
-\end{table*}
-\fi
-
-
-\begin{table*}[h!]
+\begin{table*}[t]
 \centering
 \caption{Average Spearman's coefficient of each method for the \book dataset}
 \vspace{-3mm}
@@ -1538,7 +1463,7 @@ For the (restricted) \phiPageRank problem, \fairgd and its variants consistently
 
 
 
-\begin{figure*}[htbp] % Use figure* for spanning across two columns
+\begin{figure*}[t] % Use figure* for spanning across two columns
     \centering
     \begin{subfigure}[b]{0.195\textwidth}
         \centering        \includegraphics[width=\textwidth]{fig/visual_graph/Left.pdf} 
@@ -1578,6 +1503,78 @@ For the (restricted) \phiPageRank problem, \fairgd and its variants consistently
 \end{figure*}
 
 
+
+\subsection{Fairness loss and weight change $\Delta_\transmatrix$}
+
+We evaluate the fairness loss $\loss(\newtransmatrix, \gamma, \vectv)$, 
+as defined in \Cref{eq:loss_function}, 
+on \fairgd, \fairgd~($\boundfactor=0.1$, $\absboundfactor=0.05$), \fairgd~($\boundfactor=0.1$, $\absboundfactor=0.1$), and all baselines across the five datasets. 
+The results are shown in \Cref{fig:loss_all_dataset}. 
+We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original transition matrix; 
+% for each method across the five datasets; 
+the results are shown in \Cref{fig:change_all_dataset}.
+The results demonstrate that \fairgd and its restricted variants generally achieve better or comparable fairness loss compared to the baselines, while maintaining significantly smaller changes in the transition matrix weights.
+
+On the \mind dataset, both \fairgd and the baselines attain near-perfect fairness across all values of $\phi$. However, \fairgd results in substantially smaller changes in $\Delta_\transmatrix$ compared to all baselines. The restricted variants, \fairgdrone and \fairgdrtwo, 
+% impose bounds on edge weight modifications, leading to 
+achieve even smaller weight changes, but fail to achieve perfect fairness when $\grouppr$ exceeds 0.5.
+
+In the \blogs dataset, \lfpru and \lfprn deliver the best fairness outcomes, with \fairgd ranking as the third-best algorithm. Despite this, \fairgd consistently yields the smallest weight changes across all values of \grouppr, except when \grouppr reaches 0.9.
+
+On the \book and \slashdot datasets, \fairgd and its variants outperform \fairwalk and \crosswalk in both fairness loss and weight change when \grouppr is below 0.7. However, for \grouppr greater than 0.7, \fairgd faces a trade-off: it must sacrifice performance on either fairness loss or weight change to improve the other metric.
+
+In the \twitter dataset, \fairgd surpasses the baselines in 8 out of 9 \grouppr values, indicating its robust performance across a range of fairness targets.
+
+Overall, \fairgd delivers superior results in terms of fairness loss and weight change when \grouppr is close to the original PageRank score, $\grouppr_1$. As \grouppr diverges from $\grouppr_1$, both the fairness loss and weight change increase. The restricted variants, \fairgdrone and \fairgdrtwo, exemplify the trade-off between fairness loss and weight change by achieving smaller weight changes at the cost of higher fairness loss compared to \fairgd.
+This refinement highlights the balance between fairness and weight change, 
+emphasizing the flexibility of \fairgd in adapting to various fairness~goals.
+
+
+\subsection{Group-adapted fairness loss and $\Delta_\transmatrix$}
+
+We evaluate \crossgd and its restricted variants, \crossgdrone and \crossgdrtwo, on the group-adapted fairness loss, as defined in \Cref{equation:cgfl}, and analyze the corresponding changes in the transition matrix weights. 
+% The performance of these methods is compared against baseline models. 
+The results % of these comparisons 
+are presented in \Cref{fig:loss_all_dataset_adapted} for the group-adapted fairness loss 
+and in \Cref{fig:change_all_dataset_adapted} for the transition matrix weight changes.
+
+\crossgd and its variants demonstrate significantly better weight changes across all datasets, while achieving excellent group-adapted fairness loss performance in 3 out of the 5 datasets.
+
+On the \twitter dataset, \crossgd and its variants outperform both \fairwalk and \crosswalk across all \grouppr settings. Similarly, on the \book and \slashdot datasets, \crossgd and its variants surpass \fairwalk and \crosswalk in both metrics for 8 out of 9 \grouppr values.
+
+% \honglian{What is the reason that On the \blogs and \mind dataset, the \fairgd algorithm does not perform well?}
+
+\subsection{Ranking coefficient evaluation}
+
+We report the average Spearman's rank correlation coefficient, $\overline{\rho}$, computed for each method across different datasets. The results for the \book dataset are shown in \Cref{table:ranking_book}, while results for other datasets are provided in \Cref{appendix:more-experiments}.
+
+For the (restricted) \phiPageRank problem, \fairgd and its variants consistently achieve the best or second-best $\overline{\rho}$, demonstrating that the \fairgd algorithm better preserves the relative \pagerank score rankings within each group compared to \fairwalk and \crosswalk. This finding also holds true for the  (restricted) group-adapted \phiPageRank problem and the \crossgd algorithms. These results suggest that, in practical applications, when adjusting the content displayed to users based on items' \pagerank scores to enhance fairness, fewer changes are required within each group. Instead, greater focus should be placed on adjusting the frequency or weighting of content across different groups.
+
+\aris{Say something about \Cref{fig:graph_visualization}}
+
+
+\iffalse
+\begin{table*}[h!]
+\centering
+\caption{Average Spearman's coefficient of each method for the \book dataset}
+\begin{tabular}{ccccccccc}
+\toprule
+\makecell{\grouppr} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
+\midrule
+0.1 & -0.05 & -0.04 & \textbf{0.52} & \textbf{0.52} & \textbf{0.52} & \underline{0.16} & 0.09 & 0.11 \\
+0.2 & -0.06 & -0.02 & \textbf{0.24} & -0.00 & 0.10 & 0.14 & 0.18 & \underline{0.20} \\
+0.3 & -0.03 & -0.02 & \textbf{0.24} & \underline{0.20} & 0.11 & 0.10 & 0.04 & 0.02 \\
+0.4 & -0.18 & -0.11 & 0.09 & \underline{0.17} & 0.04 & 0.09 & 0.02 & \textbf{0.18} \\
+0.5 & -0.02 & 0.01 & 0.14 & \textbf{0.27} & 0.08 & 0.11 & \underline{0.16} & 0.11 \\
+0.6 & 0.06 & 0.10 & \underline{0.20} & 0.16 & 0.16 & 0.09 & 0.15 & \textbf{0.22} \\
+0.7 & \underline{0.17} & 0.13 & \textbf{0.20} & 0.15 & 0.11 & 0.13 & 0.10 & 0.09 \\
+0.8 & 0.21 & 0.04 & \textbf{0.31} & 0.09 & 0.17 & 0.17 & 0.02 & \underline{0.23} \\
+0.9 & 0.02 & 0.04 & 0.04 & \textbf{0.19} & 0.17 & \underline{0.18} & 0.07 & 0.12 \\
+\bottomrule
+\end{tabular}
+\label{table:ranking_book}
+\end{table*}
+\fi
 
 
 % \begin{table*}[t]
