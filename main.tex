@@ -1241,8 +1241,8 @@ as described above.
 % In the experiments, 
 For \resfpr and \resgafpr, we set $\boundfactor = 0.1$ and $\absboundfactor = \{0.05, 0.1\}$. 
 % \honglian{Explain for setting this two parameters to the current value?}
-For all gradient-descent methods, 
-we perform a grid search over a logarithmically-spaced range of values between $10^-3$ and $10^3$
+% For all gradient-descent methods, 
+We perform a grid search over a logarithmically-spaced range of values between $10^{-3}$ and~$10^3$
 % , selecting 20 values evenly distributed on a logarithmic scale 
 to find the best learning rate.
 %  of our proposed algorithms.
@@ -1441,11 +1441,18 @@ The code and dataset used in this paper are available.%
 
 \subsection{Fairness loss and weight change $\Delta_\transmatrix$}
 
-We evaluate the fairness loss $\loss(\newtransmatrix, \gamma, \vectv)$, as defined in \Cref{eq:loss_function}, on \fairgd, \fairgd~($\boundfactor=0.1$, $\absboundfactor=0.05$), \fairgd~($\boundfactor=0.1$, $\absboundfactor=0.1$), and all baselines across the five datasets. The results are shown in \Cref{fig:loss_all_dataset}. 
-We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original transition matrix for each method across the five datasets; the results are shown in \Cref{fig:change_all_dataset}.
+We evaluate the fairness loss $\loss(\newtransmatrix, \gamma, \vectv)$, 
+as defined in \Cref{eq:loss_function}, 
+on \fairgd, \fairgd~($\boundfactor=0.1$, $\absboundfactor=0.05$), \fairgd~($\boundfactor=0.1$, $\absboundfactor=0.1$), and all baselines across the five datasets. 
+The results are shown in \Cref{fig:loss_all_dataset}. 
+We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original transition matrix; 
+% for each method across the five datasets; 
+the results are shown in \Cref{fig:change_all_dataset}.
 The results demonstrate that \fairgd and its restricted variants generally achieve better or comparable fairness loss compared to the baselines, while maintaining significantly smaller changes in the transition matrix weights.
 
-On the \mind dataset, both \fairgd and the baselines attain near-perfect fairness across all values of $\phi$. However, \fairgd results in substantially smaller changes in $\Delta_\transmatrix$ compared to all baselines. The restricted variants, \fairgdrone and \fairgdrtwo, impose bounds on edge weight modifications, leading to even smaller weight changes, but they fail to achieve perfect fairness when $\grouppr$ exceeds 0.5.
+On the \mind dataset, both \fairgd and the baselines attain near-perfect fairness across all values of $\phi$. However, \fairgd results in substantially smaller changes in $\Delta_\transmatrix$ compared to all baselines. The restricted variants, \fairgdrone and \fairgdrtwo, 
+% impose bounds on edge weight modifications, leading to 
+achieve even smaller weight changes, but fail to achieve perfect fairness when $\grouppr$ exceeds 0.5.
 
 In the \blogs dataset, \lfpru and \lfprn deliver the best fairness outcomes, with \fairgd ranking as the third-best algorithm. Despite this, \fairgd consistently yields the smallest weight changes across all values of \grouppr, except when \grouppr reaches 0.9.
 
@@ -1454,12 +1461,13 @@ On the \book and \slashdot datasets, \fairgd and its variants outperform \fairwa
 In the \twitter dataset, \fairgd surpasses the baselines in 8 out of 9 \grouppr values, indicating its robust performance across a range of fairness targets.
 
 Overall, \fairgd delivers superior results in terms of fairness loss and weight change when \grouppr is close to the original PageRank score, $\grouppr_1$. As \grouppr diverges from $\grouppr_1$, both the fairness loss and weight change increase. The restricted variants, \fairgdrone and \fairgdrtwo, exemplify the trade-off between fairness loss and weight change by achieving smaller weight changes at the cost of higher fairness loss compared to \fairgd.
-This refinement highlights the balance between fairness and weight change, emphasizing the flexibility of \fairgd in adapting to various fairness goals.
+This refinement highlights the balance between fairness and weight change, 
+emphasizing the flexibility of \fairgd in adapting to various fairness~goals.
 
 
-\subsection{Group-Adapted loss and $\Delta_\transmatrix$}
+\subsection{Group-adapted loss and $\Delta_\transmatrix$}
 
-We evaluate the performance of \crossgd and its restricted variants, \crossgdrone and \crossgdrtwo, on the group-adapted fairness loss, as defined in \Cref{equation:cgfl}, and analyze the corresponding changes in the transition matrix weights. The performance of these methods is compared against baseline models. The results of these comparisons are presented in \Cref{fig:loss_all_dataset_adapted} for the group-adapted fairness loss and in \Cref{fig:change_all_dataset_adapted} for the transition matrix weight changes.
+We evaluate \crossgd and its restricted variants, \crossgdrone and \crossgdrtwo, on the group-adapted fairness loss, as defined in \Cref{equation:cgfl}, and analyze the corresponding changes in the transition matrix weights. The performance of these methods is compared against baseline models. The results of these comparisons are presented in \Cref{fig:loss_all_dataset_adapted} for the group-adapted fairness loss and in \Cref{fig:change_all_dataset_adapted} for the transition matrix weight changes.
 
 \crossgd and its variants demonstrate significantly better weight changes across all datasets, while achieving excellent group-adapted loss performance in 3 out of the 5 datasets.
 
@@ -1468,7 +1476,7 @@ On the \twitter dataset, \crossgd and its variants outperform both \fairwalk and
 \honglian{What is the reason that On the \blogs and \mind dataset, the \fairgd algorithm does not perform well?}
 
 
-\subsection{Ranking Coefficient Evaluation}
+\subsection{Ranking coefficient evaluation}
 
 We report the average Spearman's rank correlation coefficient, $\overline{\rho}$, computed for each method across different datasets. The results for the \book dataset are shown in \Cref{table:ranking_book}, while results for other datasets are provided in \Cref{appendix:more-experiments}.
 
