@@ -1125,7 +1125,7 @@ with relative and absolute intervention bound $\boundfactor$ and $\absboundfacto
 
 \vspace{1mm}
 \noindent 
-We compare our methods with the following strong baselines: 
+We compare our methods with the following strong baselines: \\
 \lfpru~\citep{tsioutsiouliklis_fairness-aware_2021},
 \lfprn~\citep{tsioutsiouliklis_fairness-aware_2021},
 \fairwalk~\citep{rahman_fairwalk_2019}, and
@@ -1196,7 +1196,9 @@ This algorithm does not change the restart vector, and we refer readers to Algor
 \aris{Better to omit it.}
 \fi
 
-\spara{Remarks.}
+\vspace{1mm}
+\noindent
+\textbf{Remarks.}
 Originally, \fairwalk and \crosswalk assign equal weights to each group in the random walk. In our experiments, we modify them so that the probability of visiting each group during a random walk is proportional to the target group-wise \pagerank scores. 
 These two algorithms do not add new edges to the graph, neither do they change the restart vector.
 
@@ -1504,6 +1506,7 @@ For the (restricted) \phiPageRank problem, \fairgd and its variants consistently
 \begin{table*}[h!]
 \centering
 \caption{Average Spearman's coefficient of each method for the \book dataset}
+\vspace{-3mm}
 \begin{tabular}{c|ccccc|ccccc}
 \toprule
 & \multicolumn{5}{c|}{({\sc\small R-})\fpr
