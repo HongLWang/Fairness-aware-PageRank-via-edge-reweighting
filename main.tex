@@ -354,9 +354,9 @@ fairness over multiple groups.
 
 % \textbf{Applying Fairness Constraints on Graph Node Ranks Under Personalization Bias}. \citet{krasanakis_applying_2021} mitigates disparate impact in ranking under personalization bias by a personalization editing mechanism.
 
-\section{Definitions}
+\section{Problem definition}
 
-In this section, we first present the necessary preliminaries, and then we define \pagerank fairness.
+% In this section, we first present the necessary preliminaries, and then we define \pagerank fairness.
 
 \subsection{Preliminaries}
 
@@ -828,7 +828,6 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
 \end{algorithm}
 \fi
 
-
 \spara{Matrix inversion acceleration.}
 The calculation of $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$ involves the inverse of the matrix $\matrixU^T = \unitary - (1 - \gamma) \transmatrix$, which is computationally expensive. To avoid computing matrix inversion, we approximation $\matrixU^{-T}$ with the series
 % \begin{equation}
@@ -966,8 +965,8 @@ Algorithm~\ref{alg:fairgd} (\fairgd)
 is the overall projected gradient-descent scheme that 
 iteratively updates the transition matrix \newtransmatrix until convergence.
 Algorithm~\ref{alg:poweriteration} (\yapprox)
-presents the approximation of vector $\vecty_\agroup$
-using power iterations.
+presents the approximation of vector $\vecty_\agroup$.
+% using power iterations.
 Algorithm~\ref{alg:project} (\project) is the projection function, 
 where the transition matrix \newtransmatrix is projected back to the feasible set after each iteration.
 
