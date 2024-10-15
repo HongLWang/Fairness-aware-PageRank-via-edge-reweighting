@@ -830,20 +830,20 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
 
 
 \spara{Matrix inversion acceleration.}
-The calculation of $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$ involves the inverse of the matrix $\matrixU^T = \unitary - (1 - \gamma) \transmatrix$, which is computationally expensive. To avoid computing matrix inversion, we approximation $\matrixU^{-T}$ with the Neumann series
-\begin{equation}
-\label{eq:neuman}
-    \matrixU^{-T} = \sum_{i=0}^{\infty} (1-\gamma)^i \transmatrix^i,
-\end{equation}
-substituting \Cref{eq:neuman} into $\vecty_\agroup$ gives
-\begin{equation}
-\label{eq:yapprox}
-    \vecty_\agroup = \gamma \sum_{i=0}^{\infty}(1-\gamma)^i \transmatrix^i \indvect{\agroup}. 
-\end{equation}
-As the terms of the summation are decreasing exponentially in mag\-ni\-tude, 
+The calculation of $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$ involves the inverse of the matrix $\matrixU^T = \unitary - (1 - \gamma) \transmatrix$, which is computationally expensive. To avoid computing matrix inversion, we approximation $\matrixU^{-T}$ with the series
+% \begin{equation}
+% \label{eq:neuman}
+$    \matrixU^{-T} = \sum_{i=0}^{\infty} (1-\gamma)^i \transmatrix^i,$
+% \end{equation}
+and substituting into $\vecty_\agroup$ gives
+% \begin{equation}
+% \label{eq:yapprox}
+$    \vecty_\agroup = \gamma \sum_{i=0}^{\infty}(1-\gamma)^i \transmatrix^i \indvect{\agroup}. $
+% \end{equation}
+As the series terms decrease exponentially in mag\-ni\-tude, 
 due to the decaying factor $(1-\gamma)$, 
-we can approximate efficiently the vector $\vecty_\agroup$
-by computing and summing the first $t$~terms.
+we can approximate $\vecty_\agroup$ efficiently 
+by computing only the first $t$~series terms.
 The method is presented in Algorithm~\ref{alg:poweriteration}.
 
 % $\vecty_\agroup$ with a power iteration:
@@ -901,7 +901,7 @@ After each gradient descent step,
 \newtransmatrix is projected back to the feasible set 
 $\feasiblematrices(\transmatrix) {\color{black}\cap \resfeasiblematrices(\transmatrix)}$ 
 by the following steps:
-\begin{enumerate}
+\begin{enumerate}[leftmargin=*]
   \item For all entries $[i, j]$, if $\transmatrix[i, j] = 0$ then set $\newtransmatrix[i, j] = 0$.
   \item Set all negative entries in $\newtransmatrix$ to zero.
   \item For the \fpr problem, normalize each row of \newtransmatrix, so that \newtransmatrix is row-stochastic. 
@@ -1263,8 +1263,7 @@ We vary \(\grouppr\) in the range  $ [0.1, 0.2, \dots, 0.9] $.
 The code and dataset used in this paper are available.%
 \footnote{\url{https://anonymous.4open.science/r/Fair-Pagerank-via-Edge-Rewighting-6BB3}}
 
-\section{Results}
-
+% \section{Results}
 
 \begin{figure*}[t]
   \centering
@@ -1624,16 +1623,17 @@ For the (restricted) \phiPageRank problem, \fairgd and its variants consistently
 We presented a novel approach for incorporating group
 fairness into the PageRank algorithm by re\-weighting the entries of the underlying transition matrix. 
 We focus on matrix re\-weighting intervention strategies, 
-as we argue that those are more actionable
-and reflect the structure of the network, rather than the hyper-parameters of the \pagerank algorithm.
-Our goal is to achieve small fairness loss (measured as the distance to a target fairness vector)
-while at the same time making small changes to the transition matrix. 
-We achieve our objective, by foregoing the idea of ensuring fairness locally, at every vertex, 
-and instead aim to ensure fairness only at a global level, which is a more relaxed notion.
-Technically, our proposed method is an efficient projected gradient-descent algorithm for
+as we argue that those are more actionable strategies,
+and reflect the network structure, rather than the hyper-parameters of the \pagerank algorithm.
+Our goal is to minimize fairness loss (with respect to a target group-fairness distribution)
+while also minimizing the changes to the transition matrix. 
+We achieve our objective by foregoing the idea of ensuring fairness locally, at every vertex, 
+and instead aim to ensure fairness at a global level.
+% which is a more relaxed notion.
+Technically, our method is an efficient projected gradient-descent algorithm for
 finding locally-optimal edge weights.
 We presented a comprehensive empirical evaluation, 
-demonstrating that our method offers significant advantages compared to strong baselines.
+demonstrating that our method offers significant advantages compared to strong~baselines.
 
 
 \begin{acks}
