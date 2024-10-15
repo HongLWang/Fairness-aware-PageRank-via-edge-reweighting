@@ -1075,12 +1075,12 @@ A larger $\overline{\rho}$ indicates fewer changes in the PageRank score's ranki
   \end{small}
 \end{table}
 
-We evaluate our methods and baselines on the following publicly available datasets:
+We evaluate our methods and the baselines on the following publicly-available datasets:
 \book,\footnote{\url{http://www-personal.umich.edu/~mejn/netdata/}}
-\blogs \citep{adamic_political_2005},
-\mind \citep{wu2020mind},
-\twitter \citep{nr-sigkdd16},
-\slashdot \citep{leskovec_community_2009}.
+\blogs~\citep{adamic_political_2005},
+\mind~\citep{wu2020mind},
+\twitter~\citep{nr-sigkdd16}, and
+\slashdot~\citep{leskovec_community_2009}.
 %
 Statistics of these datasets are given in \Cref{table:datasets}, 
 whereas more information is presented in \Cref{appendix:datasets}.
@@ -1097,7 +1097,8 @@ whereas more information is presented in \Cref{appendix:datasets}.
 
 \subsection{Baselines}
 
-We compare the proposed \fairgd and \crossgd algorithms against the following baselines. More details, including the revised transition matrix, can be found in \Cref{appendix:baselines}.
+
+
 \iffalse
 In our experiments, 
 \newtransmatrix represents the revised transition matrix, and 
@@ -1110,12 +1111,34 @@ In fact, details of baselines can be moved to the appendix.}
 algorithms and all the baselines.
 \fi
 
-\noindent $\fairgd(\boundfactor,\absboundfactor)$. This is the restricted version of our proposed \fairgd algorithm, with relative and absolute intervention bound $\boundfactor$ and $\absboundfactor$ respectively.
-\\
+The proposed methods are \fairgd and \crossgd. Additionally:
+
+\vspace{1mm}
 \noindent 
-$\crossgd(\boundfactor,\absboundfactor)$. This is the restricted version of our proposed \crossgd algorithm, with relative and absolute intervention bound $\boundfactor$ and $\absboundfactor$ respectively.\\
-\noindent \lfpru\citep{tsioutsiouliklis_fairness-aware_2021}. 
+$\fairgd(\boundfactor,\absboundfactor)$  is the restricted version of \fairgd, 
+with relative and absolute intervention bound $\boundfactor$ and $\absboundfactor$ respectively.
+
+\vspace{1mm}
+\noindent 
+$\crossgd(\boundfactor,\absboundfactor)$ is the restricted version of our \crossgd, 
+with relative and absolute intervention bound $\boundfactor$ and $\absboundfactor$ respectively.
+
+\vspace{1mm}
+\noindent 
+We compare our methods with the following strong baselines: 
+\lfpru~\citep{tsioutsiouliklis_fairness-aware_2021},
+\lfprn~\citep{tsioutsiouliklis_fairness-aware_2021},
+\fairwalk~\citep{rahman_fairwalk_2019}, and
+\crosswalk~\citep{khajehnejad_crosswalk_2022}.
+More details on the baselines, 
+including the revised transition matrix, can be found in \Cref{appendix:baselines}.
+
+\iffalse
+\noindent 
+\lfpru\citep{tsioutsiouliklis_fairness-aware_2021}. 
 A residual-based algorithm that revises both the restart vector and the transition matrix to achieve perfect $\groupDist$-fairness in \pagerank scores. The intuition is that each node distributes a portion of its PageRank to the under-represented groups, and distributes the remaining portion to its neighbors uniformly. 
+\fi
+
 \iffalse
 The revised transition matrix is $\newtransmatrix = \transmatrix_L + \mathbf{R}$, where:
 \begin{equation}
@@ -1130,11 +1153,11 @@ and $out_{\agroup}(i)$ represents the number of out-neighbors of vertex $i$ that
 \begin{equation}
     \mathbf{R} = \delta_1 \mathbf{x}^T + \delta_2 \mathbf{y}^T
 \end{equation}
-where $\delta_1[i] = \grouppr_1 -\frac{(1-\grouppr_1)out_1(i)}{out_2(i)}$, $\delta_2[i] = (1-\grouppr_1) -\frac{\grouppr_1 out_2(i)}{out_1(i)}$. $\mathbf{x}$ and $\mathbf{y}$ are two indicator vectors where $\mathbf{x}(i) = 1 \text{ if }  i\in \group_1$ and $\mathbf{y}(i) = 1 \text{ if } i\in \group_2$.
-\fi
-\\
+where $\delta_1[i] = \grouppr_1 -\frac{(1-\grouppr_1)out_1(i)}{out_2(i)}$, $\delta_2[i] = (1-\grouppr_1) -\frac{\grouppr_1 out_2(i)}{out_1(i)}$. $\mathbf{x}$ and $\mathbf{y}$ are two indicator vectors where $\mathbf{x}(i) = 1 \text{ if }  i\in \group_1$ and $\mathbf{y}(i) = 1 \text{ if } i\in \group_2$.\\
 \noindent \lfprn \citep{tsioutsiouliklis_fairness-aware_2021}. 
 This is a neighborhood-based algorithm that achieves perfect $\groupDist$-fairness in \pagerank scores. Each vertex allocates its \pagerank score fairly to its neighbors.
+\fi
+
 \iffalse
 The revised transition matrix is given by $\newtransmatrix = \sum_{\agroup =1}^{2}\grouppr_\agroup \transmatrix_\agroup$, where 
 \begin{equation}
@@ -1145,9 +1168,13 @@ The revised transition matrix is given by $\newtransmatrix = \sum_{\agroup =1}^{
 \end{matrix}\right.
 \end{equation}
 \fi
-\\
-\noindent  \fairwalk \citep{rahman_fairwalk_2019}. 
+
+\iffalse
+\noindent  
+\fairwalk \citep{rahman_fairwalk_2019}. 
 This algorithm reweighs the edges such that a random walker has an equal probability of visiting each reachable group and an equal probability of visiting each vertex within each reachable group. 
+\fi
+
 \iffalse
 \fairwalk does not change the restart vector, and the revised transition matrix is given by:
 \begin{equation}
@@ -1156,9 +1183,12 @@ This algorithm reweighs the edges such that a random walker has an equal probabi
 \end{equation}
 where $I_\agroup(i) = 1$ if vertex $i$ has a out-neighbor that belongs to group $\agroup$ and 0 otherwise.
 \fi
-\\
+
+\iffalse
 \noindent  \crosswalk \citep{khajehnejad_crosswalk_2022}. 
 This algorithm extends \fairwalk by taking into account the distance of each vertex to other groups in the random walk. \crosswalk upweights edges that (1) are closer to the group boundaries or (2) connect different groups in the graph. 
+
+\fi
 \iffalse
 This algorithm does not change the restart vector, and we refer readers to Algorithm 1 in the paper for the revised transition matrix. 
 
