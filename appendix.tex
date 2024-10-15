@@ -262,7 +262,11 @@ This algorithm extends \fairwalk by taking into account the distance of each ver
 \label{appendix:more-experiments}
 
 % \aris{say something about the tables below}
-In \Cref{table:ranking_blog} to \ref{table:ranking_slashdot}, we report the weighted average Spearman's rank correlation coefficient obtained from all methods for dataset \blogs, \mind, \twitter and \slashdot, respectively. On the 
+In \Cref{table:ranking_blog} to \ref{table:ranking_slashdot}, we report the weighted average Spearman's rank correlation coefficient $\overline{\rho}$ obtained from all methods for dataset \blogs, \mind, \twitter and \slashdot, respectively. 
+
+On the \mind dataset, \fairgd, \crossgd as well as their variants almost perfectly preserve the original \pagerank score ranking, as $\overline{\rho}$'s values are very close to one over all \grouppr values. 
+
+On the \twitter and \slashdot dataset, \crossgd and its variants achieves higher $\overline{\rho}$ all \grouppr values
 
 \iffalse
 \begin{table*}[ht]
