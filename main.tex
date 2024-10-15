@@ -75,7 +75,7 @@ Since the fairness loss is non-convex, we propose an efficient projected gradien
 %%
 %% Keywords. The author(s) should pick words that accurately describe
 %% the work being presented. Separate the keywords with commas.
-\keywords{Link analysis, \pagerank, graph analysis, fairness}
+\keywords{Link analysis, \pagerank, Graph analysis, Fairness}
 %% A "teaser" image appears between the author and affiliation
 %% information and the body of the document, and typically spans the
 %% page.
@@ -979,10 +979,10 @@ Algorithm~\ref{alg:fairgd} (\fairgd)
 is the overall projected gradient-descent scheme that 
 iteratively updates the matrix \newtransmatrix until convergence.
 Algorithm~\ref{alg:poweriteration} (\yapprox)
-presents the approximation of vector $\vecty_\agroup$.
+approximates vector $\vecty_\agroup$.
 % using power iterations.
-Algorithm~\ref{alg:project} (\project) is the projection function, 
-where the transition matrix \newtransmatrix is projected back to the feasible set after each iteration.
+Algorithm~\ref{alg:project} (\project) in Appendix~\ref{appendix:pseudocode} is the projection function, 
+where the transition matrix \newtransmatrix is projected back to the feasible set after each~iteration.
 
 
 \iffalse
@@ -1117,7 +1117,7 @@ whereas more information is presented in \Cref{appendix:datasets}.
 \includegraphics[width=\textwidth]{fig/PhiFair/only_legend.pdf}
 \vspace{-5mm}
 \end{figure*}
-\begin{figure*}[htbp] % Use figure* for spanning across two columns
+\begin{figure*}[t] % Use figure* for spanning across two columns
     \centering
     \begin{subfigure}[b]{0.21\textwidth}
         \centering        \includegraphics[width=\textwidth]{fig/PhiFair/books_trade_Loss.pdf} 
@@ -1197,182 +1197,12 @@ whereas more information is presented in \Cref{appendix:datasets}.
 \end{figure*}
 
 
-\iffalse
-\begin{figure*}[htbp]
-  \centering
-\includegraphics[width=\textwidth]{fig/adaptedLoss/only_legend.pdf}
-\vspace{-5mm}
-\end{figure*}
-\begin{figure*}[htbp] % Use figure* for spanning across two columns
-    \centering
-    \begin{subfigure}[b]{0.21\textwidth}
-        \centering        \includegraphics[width=\textwidth]{fig/adaptedLoss/books_trade_Loss.pdf} 
-        \caption{\book}
-\label{fig:adaptloss_book}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.19\textwidth}
-        \centering
-\includegraphics[width=\textwidth]{fig/adaptedLoss/blogs_loss.pdf}
-        \caption{\blogs}
-\label{fig:adaptloss_blog}
-    \end{subfigure}
-    \hfill
-        \begin{subfigure}[b]{0.19\textwidth}
-        \centering
-\includegraphics[width=\textwidth]{fig/adaptedLoss/mind_loss.pdf}
-        \caption{\mind}
-\label{fig:adaptloss_mind}
-    \end{subfigure}
-    \hfill
-        \begin{subfigure}[b]{0.19\textwidth}
-        \centering
-\includegraphics[width=\textwidth]{fig/adaptedLoss/soc-political-retweet_loss.pdf}
-        \caption{\twitter}
-\label{fig:adaptloss_twitter}
-    \end{subfigure}
-    \hfill
-        \begin{subfigure}[b]{0.19\textwidth}
-        \centering
-\includegraphics[width=\textwidth]{fig/adaptedLoss/slashdot_loss.pdf}
-        \caption{\slashdot}
-\label{fig:adaptloss_slashdot}
-    \end{subfigure}
-    \caption{Fairness loss $\groupAdapLoss(\newtransmatrix,\gamma)$ of each baseline on five datasets for the group-adapted \phiPageRank problem}
-    \label{fig:loss_all_dataset_adapted}
-\end{figure*}
-
-
-
-
-
-\begin{figure*}[t] % Use figure* for spanning across two columns
-    \centering
-    \begin{subfigure}[b]{0.21\textwidth}
-        \centering        \includegraphics[width=\textwidth]{fig/adaptedLoss/books_trade_change.pdf} 
-        \caption{\book}
-\label{fig:adapechange_book}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.19\textwidth}
-        \centering
-\includegraphics[width=\textwidth]{fig/adaptedLoss/blogs_trade_change.pdf}
-        \caption{\blogs}
-\label{fig:adaptchange_blog}
-    \end{subfigure}
-    \hfill
-        \begin{subfigure}[b]{0.19\textwidth}
-        \centering
-\includegraphics[width=\textwidth]{fig/adaptedLoss/mind_trade_change.pdf}
-        \caption{\mind}
-\label{fig:adaptchange_mind}
-    \end{subfigure}
-    \hfill
-        \begin{subfigure}[b]{0.19\textwidth}
-        \centering
-\includegraphics[width=\textwidth]{fig/adaptedLoss/soc-political-retweet_change.pdf}
-        \caption{\twitter}
-\label{fig:adaptchange_twitter}
-    \end{subfigure}
-    \hfill
-        \begin{subfigure}[b]{0.19\textwidth}
-        \centering
-\includegraphics[width=\textwidth]{fig/adaptedLoss/slashdot_change.pdf}
-        \caption{\slashdot}
-\label{fig:adaptchange_slashdot}
-    \end{subfigure}
-    \caption{Transition matrix change $\Delta_\transmatrix$ of each baseline on five datasets for the group-adapted \phiPageRank problem}
-    \label{fig:change_all_dataset_adapted}
-\end{figure*}
-\fi
-
-
-\begin{figure*}[htbp]
-    \centering
-    % First Row: Legend
-    \includegraphics[width=\textwidth]{fig/adaptedLoss/only_legend.pdf}
-    \vspace{2mm} % Space between legend and first row of subfigures
-
-    % Second Row: Fairness Loss Subfigures with Group Caption
-    \begin{subfigure}{\textwidth}
-        \centering
-        \begin{subfigure}[b]{0.21\textwidth}
-            \includegraphics[width=\textwidth]{fig/adaptedLoss/books_trade_Loss.pdf} 
-            \caption{\texttt{Books Trade}}
-            \label{fig:adaptloss_book}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}[b]{0.19\textwidth}
-            \includegraphics[width=\textwidth]{fig/adaptedLoss/blogs_loss.pdf}
-            \caption{\texttt{Blogs}}
-            \label{fig:adaptloss_blog}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}[b]{0.19\textwidth}
-            \includegraphics[width=\textwidth]{fig/adaptedLoss/mind_loss.pdf}
-            \caption{\texttt{MIND}}
-            \label{fig:adaptloss_mind}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}[b]{0.19\textwidth}
-            \includegraphics[width=\textwidth]{fig/adaptedLoss/soc-political-retweet_loss.pdf}
-            \caption{\texttt{Twitter}}
-            \label{fig:adaptloss_twitter}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}[b]{0.19\textwidth}
-            \includegraphics[width=\textwidth]{fig/adaptedLoss/slashdot_loss.pdf}
-            \caption{\texttt{Slashdot}}
-            \label{fig:adaptloss_slashdot}
-        \end{subfigure}
-
-        \caption{Fairness loss $\groupAdapLoss(\newtransmatrix,\gamma)$ of each baseline on five datasets for the group-adapted \phiPageRank problem}
-        \label{fig:loss_all_dataset_adapted}
-    \end{subfigure}
-
-    \vspace{4mm} % Space between first and second row of subfigures
-
-    % Third Row: Transition Matrix Change Subfigures with Group Caption
-    \begin{subfigure}{\textwidth}
-        \centering
-        \begin{subfigure}[b]{0.21\textwidth}
-            \includegraphics[width=\textwidth]{fig/adaptedLoss/books_trade_change.pdf} 
-            \caption{\texttt{Books Trade}}
-            \label{fig:adapechange_book}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}[b]{0.19\textwidth}
-            \includegraphics[width=\textwidth]{fig/adaptedLoss/blogs_trade_change.pdf}
-            \caption{\texttt{Blogs}}
-            \label{fig:adaptchange_blog}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}[b]{0.19\textwidth}
-            \includegraphics[width=\textwidth]{fig/adaptedLoss/mind_trade_change.pdf}
-            \caption{\texttt{MIND}}
-            \label{fig:adaptchange_mind}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}[b]{0.19\textwidth}
-            \includegraphics[width=\textwidth]{fig/adaptedLoss/soc-political-retweet_change.pdf}
-            \caption{\texttt{Twitter}}
-            \label{fig:adaptchange_twitter}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}[b]{0.19\textwidth}
-            \includegraphics[width=\textwidth]{fig/adaptedLoss/slashdot_change.pdf}
-            \caption{\texttt{Slashdot}}
-            \label{fig:adaptchange_slashdot}
-        \end{subfigure}
-
-        \caption{Transition matrix change $\Delta_\transmatrix$ of each baseline on five datasets for the group-adapted \phiPageRank problem}
-        \label{fig:change_all_dataset_adapted}
-    \end{subfigure}
-
-
-    \label{fig:combined_figures}
-\end{figure*}
-
+% % \iffalse
+% \begin{figure*}[htbp]
+%   \centering
+% \includegraphics[width=\textwidth]{fig/adaptedLoss/only_legend.pdf}
+% \vspace{-5mm}
+% \end{figure*}
 
 
 
@@ -1487,8 +1317,94 @@ neither do they change the restart vector.
 
 \lfprn and \lfpru are guaranteed to achieve perfect $\groupDist$-fairness, 
 % in \pagerank scores, 
-provided the restart vector is $\groupDist$-fair, i.e., $\indvect{\agroup}^T v = \grouppr_\agroup$. Both algorithms modify the graph to be fully connected.
+provided the restart vector is $\groupDist$-fair, i.e., $\indvect{\agroup}^T \vectv = \grouppr_\agroup$. Both algorithms modify the graph to be fully connected.
 
+
+\begin{figure*}[t]
+  \centering
+\includegraphics[width=\textwidth]{fig/adaptedLoss/only_legend.pdf}
+\vspace{-5mm}
+\end{figure*}
+\begin{figure*}[t] % Use figure* for spanning across two columns
+% \centering
+% \includegraphics[width=\textwidth]{fig/adaptedLoss/only_legend.pdf}
+    \centering
+    \begin{subfigure}[b]{0.21\textwidth}
+        \centering        \includegraphics[width=\textwidth]{fig/adaptedLoss/books_trade_Loss.pdf} 
+        \caption{\book}
+\label{fig:adaptloss_book}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.19\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/adaptedLoss/blogs_loss.pdf}
+        \caption{\blogs}
+\label{fig:adaptloss_blog}
+    \end{subfigure}
+    \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/adaptedLoss/mind_loss.pdf}
+        \caption{\mind}
+\label{fig:adaptloss_mind}
+    \end{subfigure}
+    \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/adaptedLoss/soc-political-retweet_loss.pdf}
+        \caption{\twitter}
+\label{fig:adaptloss_twitter}
+    \end{subfigure}
+    \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/adaptedLoss/slashdot_loss.pdf}
+        \caption{\slashdot}
+\label{fig:adaptloss_slashdot}
+    \end{subfigure}
+    \caption{Fairness loss $\groupAdapLoss(\newtransmatrix,\gamma)$ of each baseline on five datasets for the group-adapted \phiPageRank problem}
+    \label{fig:loss_all_dataset_adapted}
+\end{figure*}
+
+\begin{figure*}[t] % Use figure* for spanning across two columns
+    \centering
+    \begin{subfigure}[b]{0.21\textwidth}
+        \centering        \includegraphics[width=\textwidth]{fig/adaptedLoss/books_trade_change.pdf} 
+        \caption{\book}
+\label{fig:adapechange_book}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.19\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/adaptedLoss/blogs_trade_change.pdf}
+        \caption{\blogs}
+\label{fig:adaptchange_blog}
+    \end{subfigure}
+    \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/adaptedLoss/mind_trade_change.pdf}
+        \caption{\mind}
+\label{fig:adaptchange_mind}
+    \end{subfigure}
+    \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/adaptedLoss/soc-political-retweet_change.pdf}
+        \caption{\twitter}
+\label{fig:adaptchange_twitter}
+    \end{subfigure}
+    \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/adaptedLoss/slashdot_change.pdf}
+        \caption{\slashdot}
+\label{fig:adaptchange_slashdot}
+    \end{subfigure}
+    \caption{Transition matrix change $\Delta_\transmatrix$ of each baseline on five datasets for the group-adapted \phiPageRank problem}
+    \label{fig:change_all_dataset_adapted}
+\end{figure*}
+% \fi
 
 \subsection{Experimental setting}
 
@@ -1770,20 +1686,18 @@ demonstrating that our method offers significant advantages compared to strong~b
 
 \begin{acks}
 \end{acks}
+\balance
 
 %%
 %% The next two lines define the bibliography style to be used, and
 %% the bibliography file.
-\newpage
+\clearpage
 \bibliographystyle{ACM-Reference-Format}
-\flushend
 \bibliography{refs.bib}
-\flushend
-
 
 %%
 %% If your work has an appendix, this is the place to put it.
-\newpage
+\clearpage
 \appendix
 \input{appendix}
 
