@@ -28,10 +28,10 @@
 \author{Anonymous Author(s)}
 
 \begin{abstract}
-Link-analysis algorithms, such as \pagerank, are instrumental in understanding the structural dynamics of networks by evaluating the importance and influence of individual vertices based on their connectivity patterns. Recently, with the rising importance of responsible AI, the question of fairness in link-analysis algorithms has gained traction.
+Link-analysis algorithms, such as \pagerank, are instrumental in understanding the structural dynamics of networks by evaluating the importance of individual vertices based on their connectivity. Recently, with the rising importance of responsible AI, the question of fairness in link-analysis algorithms has gained traction.
 
 In this paper, we present a new approach for incorporating group fairness into the \pagerank algorithm by reweighting the transition probabilities in the underlying transition matrix. We formulate the problem of achieving fair \pagerank by seeking to minimize the fairness loss, which is the difference between the original group-wise \pagerank distribution and a target \pagerank distribution. We further define a group-adapted fairness notion, which accounts for group homophily by considering random walks with group-biased restart for each group.
-Since the fairness loss is non-convex, we propose an efficient projected gradient-descent method for computing locally optimal edge weights. Unlike earlier approaches, we do not recommend adding new edges to the network, nor do we adjust the restart vector. Instead, we keep the topology of the underlying network unchanged and only modify the relative importance of existing edges. We empirically compare our approach with state-of-the-art baselines and demonstrate the efficacy of our method, where very small changes in the transition matrix lead to significant improvement in the fairness of the \pagerank algorithm.
+Since the fairness loss is non-convex, we propose an efficient projected gradient-descent method for computing locally-optimal edge weights. Unlike earlier approaches, we do not recommend adding new edges to the network, nor do we adjust the restart vector. Instead, we keep the topology of the underlying network unchanged and only modify the relative importance of existing edges. We empirically compare our approach with state-of-the-art baselines and demonstrate the efficacy of our method, where very small changes in the transition matrix lead to significant improvement in the fairness of the \pagerank algorithm.
 %
 % The new edge weights, computed by our method,  can be used to suggest concrete changes in the network ecosystem, e.g., reweighting and prioritizing the feed of users in a social network.
 \end{abstract}
@@ -139,15 +139,17 @@ than the study of fairness in other settings.
 
 Link-analysis algorithms, such as the \pagerank family of methods, 
 are fundamental tools for analyzing large-scale network data 
-\citep{tabrizi2013personalized,gleich_pagerank_2015,wang2020personalized,bahmani2012pagerank,kay2021identification}.
-These \pagerank algorithms quantify the importance or relevance of vertices within a network 
-based on their connections and the quality of those connections, 
-providing a means to identify authoritative vertices \citep{wang2020personalized}, 
-detect communities \citep{tabrizi2013personalized}, 
-uncover patterns of influence \citep{liu2017influence}, and 
-mitigate vulnerabilities within networks \citep{kay2021identification}. 
-From the application aspect, \pagerank algorithms have been used successfully in 
-many different domains including web search, social network analysis, and recommendation systems.
+\citep{tabrizi2013personalized,gleich_pagerank_2015,wang2020personalized,bahmani2012pagerank,kay2021identification}, 
+% These \pagerank algorithms quantify the importance or relevance of vertices within a network 
+% based on their connections and the quality of those connections, 
+% providing a means 
+and have been used in a variety of applications, including 
+identifying authoritative vertices \citep{wang2020personalized}, 
+detecting communities \citep{tabrizi2013personalized}, 
+uncovering patterns of influence \citep{liu2017influence}, and 
+mitigating network vulnerabilities \citep{kay2021identification}. 
+% From the application aspect, \pagerank algorithms have been used successfully in 
+% many different domains including web search, social network analysis, and recommendation systems.
 
 % Link-analysis algorithms, such as the \pagerank series (to name a few \citep{tabrizi2013personalized,gleich_pagerank_2015,wang2020personalized,bahmani2012pagerank,kay2021identification}), are fundamental tools for analyzing large-scale network data. 
 % These \pagerank algorithms quantify the importance or relevance of vertices within a network based on their connections and the quality of those connections, provide a means to identify authoritative vertices \citep{wang2020personalized}, detect communities \citep{tabrizi2013personalized}, uncover patterns of influence \citep{liu2017influence}, and mitigate vulnerabilities within networks \citep{kay2021identification}. 
@@ -1436,8 +1438,10 @@ The code and dataset used in this paper are available.%
 
 \begin{table*}[t]
 \centering
-\caption{Average Spearman's coefficient of each method for the \book dataset}
+\caption{\label{table:ranking_book}
+Average Spearman's coefficient of each method for the \book dataset}
 \vspace{-3mm}
+\begin{small}
 \begin{tabular}{c|ccccc|ccccc}
 \toprule
 & \multicolumn{5}{c|}{({\sc\small R-})\fpr
@@ -1456,7 +1460,7 @@ The code and dataset used in this paper are available.%
 0.9 & 0.02 & 0.04 & 0.04 & \textbf{0.19} & \underline{0.17} & 0.02 & 0.04 & \textbf{0.18} & 0.07 & \underline{0.12} \\
 \bottomrule
 \end{tabular}
-\label{table:ranking_book}
+\end{small}
 \end{table*}
 
 
