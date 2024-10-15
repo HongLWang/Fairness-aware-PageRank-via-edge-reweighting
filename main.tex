@@ -1286,93 +1286,93 @@ whereas more information is presented in \Cref{appendix:datasets}.
 \end{figure*}
 \fi
 
+
 \begin{figure*}[htbp]
     \centering
     % First Row: Legend
     \includegraphics[width=\textwidth]{fig/adaptedLoss/only_legend.pdf}
-    \vspace{2mm} % Adjust space between legend and first row of subfigures
+    \vspace{2mm} % Space between legend and first row of subfigures
 
-    % Second Row: Fairness Loss Subfigures
-    \begin{subfigure}[b]
-    {0.21\textwidth}
+    % Second Row: Fairness Loss Subfigures with Group Caption
+    \begin{subfigure}{\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{fig/adaptedLoss/books_trade_Loss.pdf} 
-        \caption{\book}
-        \label{fig:adaptloss_book}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.19\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{fig/adaptedLoss/blogs_loss.pdf}
-        \caption{\blogs}
-        \label{fig:adaptloss_blog}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.19\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{fig/adaptedLoss/mind_loss.pdf}
-        \caption{\mind}
-        \label{fig:adaptloss_mind}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.19\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{fig/adaptedLoss/soc-political-retweet_loss.pdf}
-        \caption{\twitter}
-        \label{fig:adaptloss_twitter}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.19\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{fig/adaptedLoss/slashdot_loss.pdf}
-        \caption{\slashdot}
-        \label{fig:adaptloss_slashdot}
-    \end{subfigure}
-    
-    \vspace{4mm} % Adjust space between first and second row of subfigures
+        \begin{subfigure}[b]{0.21\textwidth}
+            \includegraphics[width=\textwidth]{fig/adaptedLoss/books_trade_Loss.pdf} 
+            \caption{\texttt{Books Trade}}
+            \label{fig:adaptloss_book}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+            \includegraphics[width=\textwidth]{fig/adaptedLoss/blogs_loss.pdf}
+            \caption{\texttt{Blogs}}
+            \label{fig:adaptloss_blog}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+            \includegraphics[width=\textwidth]{fig/adaptedLoss/mind_loss.pdf}
+            \caption{\texttt{MIND}}
+            \label{fig:adaptloss_mind}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+            \includegraphics[width=\textwidth]{fig/adaptedLoss/soc-political-retweet_loss.pdf}
+            \caption{\texttt{Twitter}}
+            \label{fig:adaptloss_twitter}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+            \includegraphics[width=\textwidth]{fig/adaptedLoss/slashdot_loss.pdf}
+            \caption{\texttt{Slashdot}}
+            \label{fig:adaptloss_slashdot}
+        \end{subfigure}
 
-    % Third Row: Transition Matrix Change Subfigures
-    \begin{subfigure}[b]{0.21\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{fig/adaptedLoss/books_trade_change.pdf} 
-        \caption{\book}
-        \label{fig:adapechange_book}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.19\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{fig/adaptedLoss/blogs_trade_change.pdf}
-        \caption{\blogs}
-        \label{fig:adaptchange_blog}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.19\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{fig/adaptedLoss/mind_trade_change.pdf}
-        \caption{\mind}
-        \label{fig:adaptchange_mind}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.19\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{fig/adaptedLoss/soc-political-retweet_change.pdf}
-        \caption{\twitter}
-        \label{fig:adaptchange_twitter}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.19\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{fig/adaptedLoss/slashdot_change.pdf}
-        \caption{\slashdot}
-        \label{fig:adaptchange_slashdot}
+        \caption{Fairness loss $\groupAdapLoss(\newtransmatrix,\gamma)$ of each baseline on five datasets for the group-adapted \phiPageRank problem}
+        \label{fig:loss_all_dataset_adapted}
     \end{subfigure}
 
-    % % Overall Caption
-    % \caption{
-    %     \textbf{Top Row}: Legend for the figures. \textbf{Middle Row}: Fairness loss $\groupAdapLoss(\newtransmatrix,\gamma)$ of each baseline on five datasets for the group-adapted \phiPageRank problem. \textbf{Bottom Row}: Transition matrix change $\Delta_\transmatrix$ of each baseline on five datasets for the group-adapted \phiPageRank problem.
-    % }
+    \vspace{4mm} % Space between first and second row of subfigures
+
+    % Third Row: Transition Matrix Change Subfigures with Group Caption
+    \begin{subfigure}{\textwidth}
+        \centering
+        \begin{subfigure}[b]{0.21\textwidth}
+            \includegraphics[width=\textwidth]{fig/adaptedLoss/books_trade_change.pdf} 
+            \caption{\texttt{Books Trade}}
+            \label{fig:adapechange_book}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+            \includegraphics[width=\textwidth]{fig/adaptedLoss/blogs_trade_change.pdf}
+            \caption{\texttt{Blogs}}
+            \label{fig:adaptchange_blog}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+            \includegraphics[width=\textwidth]{fig/adaptedLoss/mind_trade_change.pdf}
+            \caption{\texttt{MIND}}
+            \label{fig:adaptchange_mind}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+            \includegraphics[width=\textwidth]{fig/adaptedLoss/soc-political-retweet_change.pdf}
+            \caption{\texttt{Twitter}}
+            \label{fig:adaptchange_twitter}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.19\textwidth}
+            \includegraphics[width=\textwidth]{fig/adaptedLoss/slashdot_change.pdf}
+            \caption{\texttt{Slashdot}}
+            \label{fig:adaptchange_slashdot}
+        \end{subfigure}
+
+        \caption{Transition matrix change $\Delta_\transmatrix$ of each baseline on five datasets for the group-adapted \phiPageRank problem}
+        \label{fig:change_all_dataset_adapted}
+    \end{subfigure}
+
+
     \label{fig:combined_figures}
 \end{figure*}
+
 
 
 
