@@ -1215,10 +1215,10 @@ We fix $\vectv$ to be the uniform vector.
 \noindent
 \textbf{(Group-adapted) fairness loss evaluation.} 
 % We distinguish between datasets as follows: (1) 
-For the \blogs and \mind datasets, we compare our approach with all baselines; 
+For the \blogs and \mind datasets, we compare our approach with all baselines.
 % (2) 
 For the remaining datasets, we only compare with \fairwalk and \crosswalk. 
-The reason is that both \lfpru and \lfprn produce a fully connected graph structure, 
+The reason is that both \lfpru and \lfprn produce a fully-connected graph, 
 making it infeasible to run the \pagerank algorithm on % a laptop given the large scale of 
 the \twitter dataset. 
 Moreover, it is unclear how \lfpru and \lfprn can be extended to the multi-group scenario.
@@ -1228,15 +1228,22 @@ Moreover, it is unclear how \lfpru and \lfprn can be extended to the multi-group
 \vspace{1mm}
 \noindent
 \textbf{Transition matrix change $\Delta_\transmatrix$ evaluation.} 
-On the \twitter dataset, we compare our approach with \lfpru and \lfprn. The remaining experimental settings are consistent with those used in the fairness loss evaluation described above.
+On the \twitter dataset, we compare our approach with \lfpru and \lfprn. 
+The remaining experimental settings are 
+% consistent with those used in the fairness loss evaluation 
+as described above.
 
 \vspace{1mm}
 \noindent
 \textbf{$\fairgd(\boundfactor,\absboundfactor)$ and $\crossgd(\boundfactor, \absboundfactor)$.}
-In the experiments, we set $\boundfactor = 0.1$ and $\absboundfactor = \{0.05, 0.1\}$. for the \resfpr and \resgafpr problem.
+% In the experiments, 
+For \resfpr and \resgafpr, we set $\boundfactor = 0.1$ and $\absboundfactor = \{0.05, 0.1\}$. 
 % \honglian{Explain for setting this two parameters to the current value?}
-We perform a grid search over a logarithmically spaced range of values between $10^-3$ and $10^3$
-, selecting 20 values evenly distributed on a logarithmic scale to find the best learning rate of our proposed algorithms.
+For all gradient-descent methods, 
+we perform a grid search over a logarithmically-spaced range of values between $10^-3$ and $10^3$
+% , selecting 20 values evenly distributed on a logarithmic scale 
+to find the best learning rate.
+%  of our proposed algorithms.
 
 \vspace{1mm}
 \noindent
@@ -1245,11 +1252,10 @@ For datasets containing only two groups, we define the \pagerank score distribut
 $ \groupDist = (\grouppr, 1-\grouppr). $ 
 For datasets with multiple groups, we set 
 $ \grouppr_1 = \grouppr, $ 
-and for the remaining groups, we distribute the scores as 
-$ \grouppr_\agroup = \frac{1-\grouppr}{\nogroups-1}, \forall \agroup \in \{2, \cdots, \nogroups\}$. 
-We vary \(\grouppr\) in the range 
-$ [0.1, 0.2, \dots, 0.9] $ 
-to evaluate the performance of our algorithm compared to all baselines.
+and for the remaining groups, we distribute the scores $\grouppr_\agroup$ equally.
+% $ \grouppr_\agroup = \frac{1-\grouppr}{\nogroups-1}, \forall \agroup \in \{2, \cdots, \nogroups\}$. 
+We vary \(\grouppr\) in the range  $ [0.1, 0.2, \dots, 0.9] $. 
+% to evaluate the performance of our algorithm compared to all baselines.
 
 \vspace{1mm}
 The code and dataset used in this paper are available.%
