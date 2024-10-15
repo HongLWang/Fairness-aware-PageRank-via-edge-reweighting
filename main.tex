@@ -913,8 +913,7 @@ by the following steps:
 \end{enumerate}
 
 % Since our optimization process uses element-wise updates for obtaining \newtransmatrix, the first step can be omitted. 
-Details of the projection are given in Algorithm~\ref{alg:project} in 
-Appendix~\ref{appendix:pseudocode}.
+Details are given in Algorithm~\ref{alg:project} in Appendix~\ref{appendix:pseudocode}.
 
 % \haoyun{I am not sure if it is necessary to discuss how to handle sink vertices. \\
 % 1. It is not the emphasis of this paper, \\
@@ -1006,7 +1005,8 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
 
 \subsection{Group-adapted \pagerank}
 
-The \fairgd algorithm can be extended to address both the \gafpr and \resgafpr problems by introducing an outer loop that iterates over all groups. This enhanced algorithm, referred to as \crossgd, is detailed in Algorithm~\Cref{alg:crossgd}, detailed in \Cref{appendix:pseudocode}.
+The \fairgd algorithm can be extended to address both the \gafpr and \resgafpr problems by introducing an outer loop that iterates over all groups. This enhanced algorithm, referred to as \crossgd, 
+is detailed in~\Cref{alg:crossgd} in~\Cref{appendix:pseudocode}.
 
 \section{Experimental evaluation}
 
@@ -1055,10 +1055,12 @@ A larger $\overline{\rho}$ indicates fewer changes in the PageRank score's ranki
 
 \subsection{Datasets}
 
-\begin{table}[ht]
+\begin{table}[t]
 \centering
   \caption{Datasets used in the experiments. $\groupDist_{O}$ denotes the original group-wise \pagerank scores of the datasets.}
   \label{table:datasets}
+  \vspace{-3mm}
+  \begin{small}
   \begin{tabular}{lrrrc}
     \toprule
     Dataset & \#Vertices & \#Edges  & Modularity & $\groupDist_{O}$\\
@@ -1070,21 +1072,32 @@ A larger $\overline{\rho}$ indicates fewer changes in the PageRank score's ranki
     \slashdot & 82168 & 948464 & 0.2950 & (0.30, 0.17 0.36 0.17)\\
     \bottomrule
   \end{tabular}
+  \end{small}
 \end{table}
 
-The datasets used in the experiments are as follows:
+We evaluate our methods and baselines on the following publicly available datasets:
+\book,\footnote{\url{http://www-personal.umich.edu/~mejn/netdata/}}
+\blogs \citep{adamic_political_2005},
+\mind \citep{wu2020mind},
+\twitter \citep{nr-sigkdd16},
+\slashdot \citep{leskovec_community_2009}.
+%
+Statistics of these datasets are given in \Cref{table:datasets}, 
+whereas more information is presented in \Cref{appendix:datasets}.
 
-\noindent \book \footnote{\url{http://www-personal.umich.edu/~mejn/netdata/}}. This is an undirected network of political books sold on Amazon. Each edge represents frequent co-purchases of two books. The books are categorized into three groups: liberal, neutral, and conservative. Since the network is undirected, each edge is converted into two directed edges. \\
+\iffalse
+\noindent 
+\book\footnote{\url{http://www-personal.umich.edu/~mejn/netdata/}}. This is an undirected network of political books sold on Amazon. Each edge represents frequent co-purchases of two books. The books are categorized into three groups: liberal, neutral, and conservative. Since the network is undirected, each edge is converted into two directed edges. \\
 \blogs \citep{adamic_political_2005}. A directed network of political blogs, where each edge represents a hyperlink between two blogs. The vertices are divided into two groups: liberal and conservative blogs. \\
 \mind \citep{wu2020mind} A dataset built from user impression logs on Microsoft News. Each log captures a user's impressions of current news articles, along with their reading history. News articles are labeled, and we construct a directed graph from these logs, filtering out news articles with a frequency of fewer than 50 occurrences. A directed edge is created from a historically read news article to a current one if both appear in the same user's log. For each news vertex, only the top-5 weighted edges are retained. The two vertex groups correspond to lifestyle-related and society-related news. \footnote{The original dataset contains 14 labels. We aggregate vertices with the labels \{lifestyle, food and drink, sports, health\} into group 1, and those with the labels \{entertainment, travel, tv, news, finance, movies, autos, music, weather, video\} into group 2.}\\
 \twitter \citep{nr-sigkdd16}. A directed network of political retweets, where each edge represents a retweet from one user to another. The vertex groups are left-leaning and right-leaning users.\\
-\noindent \slashdot \citep{leskovec_community_2009}. A directed network representing friend/foe relationships between users on Slashdot. Since this dataset lacks group labels, we apply the METIS graph partitioning algorithm \citep{karypis_metis_1997} to divide the vertices into groups. 
-\\
+\slashdot \citep{leskovec_community_2009}. A directed network representing friend/foe relationships between users on Slashdot. Since this dataset lacks group labels, we apply the METIS graph partitioning algorithm \citep{karypis_metis_1997} to divide the vertices into groups. 
 % \noindent \textbf{Google} \citep{leskovec_community_2009}. A directed network where vertices are web pages and edges are hyperlinks between web pages.
+\fi 
 
 \subsection{Baselines}
 
-We compare the proposed \fairgd and \crossgd algorithms against the following baselines. More details, including the revised transition matrix, can be found in \Cref{appendix:expSetting}.
+We compare the proposed \fairgd and \crossgd algorithms against the following baselines. More details, including the revised transition matrix, can be found in \Cref{appendix:baselines}.
 \iffalse
 In our experiments, 
 \newtransmatrix represents the revised transition matrix, and 

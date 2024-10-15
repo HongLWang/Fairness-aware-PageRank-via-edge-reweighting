@@ -74,8 +74,7 @@ we obtain:
         \right]
 \end{aligned}
 \end{equation}
-By considering the derivative of the inverse~\cite[Equation~(55)]{petersen_matrix_2008}, we have:
-
+By considering the derivative of inverse~\cite[Equation~(55)]{petersen_matrix_2008}~we~have:
 \begin{equation*}
     \frac{\partial (\indvect{\agroup}^T \matrixU^{-1} \vectv)}{\partial \matrixU} 
         = -\matrixU^{-T} \indvect{\agroup} \vectv^T \matrixU^{-T}.
@@ -158,20 +157,50 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
 
 
 
+\section{Experimental settings}
 
-\section{Experimental Settings}
-\label{appendix:expSetting}
+\subsection{Datasets}
+\label{appendix:datasets}
+
+\noindent 
+\book\footnote{\url{http://www-personal.umich.edu/~mejn/netdata/}}. This is an undirected network of political books sold on Amazon. Each edge represents frequent co-purchases of two books. The books are categorized into three groups: liberal, neutral, and conservative. Since the network is undirected, each edge is converted into two directed edges. 
+
+\smallskip
+\noindent 
+\blogs \citep{adamic_political_2005}. A directed network of political blogs, where each edge represents a hyperlink between two blogs. The vertices are divided into two groups: liberal and conservative blogs.
+
+\smallskip
+\noindent 
+\mind \citep{wu2020mind} A dataset built from user impression logs on Microsoft News. Each log captures a user's impressions of current news articles, along with their reading history. News articles are labeled, and we construct a directed graph from these logs, filtering out news articles with a frequency of fewer than 50 occurrences. A directed edge is created from a historically read news article to a current one if both appear in the same user's log. For each news vertex, only the top-5 weighted edges are retained. The two vertex groups correspond to lifestyle-related and society-related news. \footnote{The original dataset contains 14 labels. We aggregate vertices with the labels \{lifestyle, food and drink, sports, health\} into group 1, and those with the labels \{entertainment, travel, tv, news, finance, movies, autos, music, weather, video\} into group 2.}
+
+\smallskip
+\noindent 
+\twitter \citep{nr-sigkdd16}. A directed network of political retweets, where each edge represents a retweet from one user to another. The vertex groups are left-leaning and right-leaning users.
+
+\smallskip
+\noindent 
+\slashdot \citep{leskovec_community_2009}. A directed network representing friend/foe relationships between users on Slashdot. Since this dataset lacks group labels, we apply the METIS graph partitioning algorithm \citep{karypis_metis_1997} to divide the vertices into groups. 
+
+
+
 \subsection{Baselines}
+\label{appendix:baselines}
 
 We compare the proposed \fairgd and \crossgd algorithms against the following baselines. In our experiments, 
 \newtransmatrix represents the revised transition matrix, and 
 \newrestartvec represents the revised restart vector for both our algorithms and all the baselines.
 
-\noindent $\fairgd(\boundfactor,\absboundfactor)$. This is the restricted version of our proposed \fairgd algorithm, with relative and absolute intervention bound $\boundfactor$ and $\absboundfactor$ respectively.
-\\
+\smallskip
 \noindent 
-$\crossgd(\boundfactor,\absboundfactor)$. This is the restricted version of our proposed \crossgd algorithm, with relative and absolute intervention bound $\boundfactor$ and $\absboundfactor$ respectively.\\
-\noindent \lfpru\citep{tsioutsiouliklis_fairness-aware_2021}. 
+$\fairgd(\boundfactor,\absboundfactor)$. This is the restricted version of our proposed \fairgd algorithm, with relative and absolute intervention bound $\boundfactor$ and $\absboundfactor$ respectively.
+
+\smallskip
+\noindent 
+$\crossgd(\boundfactor,\absboundfactor)$. This is the restricted version of our proposed \crossgd algorithm, with relative and absolute intervention bound $\boundfactor$ and $\absboundfactor$ respectively.
+
+\smallskip
+\noindent 
+\lfpru\citep{tsioutsiouliklis_fairness-aware_2021}. 
 A residual-based algorithm that revises both the restart vector and the transition matrix to achieve perfect $\groupDist$-fairness in \pagerank scores. The intuition is that each node distributes a portion of its PageRank to the under-represented groups, and distributes the remaining portion to its neighbors uniformly. 
 
 The revised transition matrix is $\newtransmatrix = \transmatrix_L + \mathbf{R}$, where:
@@ -188,9 +217,11 @@ and $out_{\agroup}(i)$ represents the number of out-neighbors of vertex $i$ that
     \mathbf{R} = \delta_1 \mathbf{x}^T + \delta_2 \mathbf{y}^T
 \end{equation}
 where $\delta_1[i] = \grouppr_1 -\frac{(1-\grouppr_1)out_1(i)}{out_2(i)}$, $\delta_2[i] = (1-\grouppr_1) -\frac{\grouppr_1 out_2(i)}{out_1(i)}$. $\mathbf{x}$ and $\mathbf{y}$ are two indicator vectors where $\mathbf{x}(i) = 1 \text{ if }  i\in \group_1$ and $\mathbf{y}(i) = 1 \text{ if } i\in \group_2$.
-\\
 
-\noindent \lfprn \citep{tsioutsiouliklis_fairness-aware_2021}. 
+
+\smallskip
+\noindent 
+\lfprn \citep{tsioutsiouliklis_fairness-aware_2021}. 
 A neighborhood-based algorithm that achieves perfect $\groupDist$-fairness in \pagerank scores. The revised transition matrix is given by $\newtransmatrix = \sum_{\agroup =1}^{2}\grouppr_\agroup \transmatrix_\agroup$, where 
 \begin{equation}
     \transmatrix_\agroup =  \left\{\begin{matrix}
@@ -199,16 +230,21 @@ A neighborhood-based algorithm that achieves perfect $\groupDist$-fairness in \p
          0 &  \text{otherwise} \\
 \end{matrix}\right.
 \end{equation}
-\\
-\noindent  \fairwalk \citep{rahman_fairwalk_2019}. 
+
+\smallskip
+\noindent 
+\fairwalk \citep{rahman_fairwalk_2019}. 
 This algorithm reweights the edges such that a random walker has an equal probability of visiting each reachable group and an equal probability of visiting each vertex within each reachable group. \fairwalk does not change the restart vector, and the revised transition matrix is given by:
 \begin{equation}
 \label{eq:fairwalk}
     \newtransmatrix[i,j] = \frac{\grouppr_{\labelof_j} \transmatrix[i,j]}{\sum_{m \in \group_{\labelof_j}}P[i,m] \sum_{\agroup =1}^{\nogroups} I_{\agroup}(i)\grouppr_\agroup} ,
 \end{equation}
 where $I_\agroup(i) = 1$ if vertex $i$ has a out-neighbor that belongs to group $\agroup$ and 0 otherwise.
-\\
-\noindent  \crosswalk \citep{khajehnejad_crosswalk_2022}. 
+
+
+\smallskip
+\noindent 
+\crosswalk \citep{khajehnejad_crosswalk_2022}. 
 This algorithm extends \fairwalk by taking into account the distance of each vertex to other groups in the random walk. \crosswalk upweights edges that (1) are closer to the group boundaries or (2) connect different groups in the graph. This algorithm does not change the restart vector, and we refer readers to Algorithm 1 in the paper for the revised transition matrix. 
 
 
