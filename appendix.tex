@@ -60,6 +60,41 @@ completes the proof.
 % \end{proof}
 
 
+\section{Omitted Algorithms}
+\label{appendix:pseudocode}
+
+
+\begin{algorithm}
+\caption{\label{alg:crossgd}\crossgd: Projected gradient descent for \gafpr and \resgafpr}
+  \begin{algorithmic}[1]
+    \REQUIRE \transmatrix, $\gamma$, \vectv, 
+$\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors $\indvect{\agroup}$ for $\agroup = \{1, \cdots, \nogroups\}$, learning rate~$\alpha$, power iteration exponent~$t$, convergence criterion $\kappa$, maximum number of iterations $N_{\text{iter}}$.
+    \ENSURE Optimized transition matrix $\newtransmatrix$
+    \STATE $\newtransmatrix \gets \transmatrix$
+    \STATE ${\iter} \gets 0$
+    \STATE ${\lossprev} \gets \infty$
+    \WHILE {$|\groupAdapLoss(\newtransmatrix, \gamma, \vectv) - {\lossprev}| > \kappa$ and $\iter < N_{\text{iter}}$}
+      \STATE $\iter \gets \iter + 1$
+      \STATE ${\lossprev} \gets \groupAdapLoss(\newtransmatrix, \gamma, \vectv)$
+      \FOR {$\ell = 1$ to $\nogroups$}
+        \STATE $\prvector_{\ell} \gets {\pralgo}(\newtransmatrix, \gamma,  \frac{1}{|\vertices_{\ell}|} \indvect{\ell})$
+        \FOR {$\agroup = 1$ to $\nogroups$}
+          \STATE $\theta_\agroup \gets \indvect{\agroup}^T \prvector_{\ell}$
+          \STATE $\vecty_{\agroup} \gets$ ${\yapprox}(\newtransmatrix, \gamma, \indvect{\agroup}, t)$
+          \FOR {$(i, j)$ where $\transmatrix[i, j] > 0$}
+            \STATE $\newtransmatrix[i, j] \gets \newtransmatrix[i, j] - \alpha \frac{2(1 - \gamma)}{\gamma} (\theta_\agroup - \grouppr_\agroup) \prvector_{\ell}[i] \vecty_{\agroup}[j]$
+          \ENDFOR
+        \ENDFOR
+      \ENDFOR
+      \STATE $\newtransmatrix \gets {\project}(\newtransmatrix)$
+    \ENDWHILE
+    \RETURN $\newtransmatrix$
+  \end{algorithmic}
+\end{algorithm}
+
+
+
+
 \section{Experimental Settings}
 \label{appendix:expSetting}
 \subsection{Baselines}
@@ -113,8 +148,206 @@ where $I_\agroup(i) = 1$ if vertex $i$ has a out-neighbor that belongs to group 
 This algorithm extends \fairwalk by taking into account the distance of each vertex to other groups in the random walk. \crosswalk upweights edges that (1) are closer to the group boundaries or (2) connect different groups in the graph. This algorithm does not change the restart vector, and we refer readers to Algorithm 1 in the paper for the revised transition matrix. 
 
 
-
-
-
 \section{Additional experimental results} 
 \label{appendix:more-experiments}
+
+
+\iffalse
+\begin{table*}[ht]
+\centering
+\caption{Average Spearman's coefficient of each method for the \blogs dataset}
+\begin{tabular}{ccccccccccc}
+\toprule
+\grouppr & \lfpru & \lfprn & \fairwalk & \crosswalk & \fairgd & \makecell{\fairgd \\ (0.1, 0.05)} & \makecell{\fairgd \\ (0.1, 0.1)} & \crossgd & \makecell{\crossgd \\ (0.1, 0.05)} & \makecell{\crossgd \\ (0.1, 0.1)} \\
+\midrule
+0.1 & 0.55 & 0.58 & 0.58 & 0.53 & 0.54 & \underline{0.61} & 0.60 & \textbf{0.69} & 0.59 & 0.60 \\
+0.2 & 0.54 & 0.59 & 0.58 & 0.51 & 0.59 & \underline{0.64} & \underline{0.64} & \textbf{0.73} & 0.57 & 0.57 \\
+0.3 & 0.58 & 0.58 & \underline{0.60} & 0.45 & 0.52 & 0.57 & 0.59 & \textbf{0.71} & 0.56 & 0.56 \\
+0.4 & \underline{0.59} & \underline{0.59} & \underline{0.59} & 0.52 & \textbf{0.60} & \textbf{0.60} & \textbf{0.60} & 0.53 & 0.57 & 0.56 \\
+0.5 & \underline{0.60} & 0.56 & \underline{0.60} & 0.50 & \textbf{0.63} & \textbf{0.63} & \textbf{0.63} & 0.53 & 0.54 & 0.54 \\
+0.6 & \textbf{0.61} &\underline{0.59} & 0.57 & 0.50 & 0.58 & 0.56 & 0.57 & 0.53 & 0.55 & 0.54 \\
+0.7 & 0.59 & \underline{0.60} & 0.59 & 0.53 & 0.54 & 0.55 & 0.53 & \textbf{0.62} & 0.57 & 0.58 \\
+0.8 & \underline{0.61} & \textbf{0.62} & \textbf{0.62} & 0.50 & 0.57 & 0.53 & 0.53 & \underline{0.61} & 0.57 & 0.56 \\
+0.9 & 0.60 & \underline{0.61} & 0.59 & 0.46 & 0.52 & 0.53 & 0.55 & \textbf{0.65} & 0.53 & 0.52 \\
+\bottomrule
+\end{tabular}
+\label{table:ranking_blog}
+\end{table*}
+\fi
+
+\setlength{\tabcolsep}{3pt} % Adjust the column separation (default is 6pt)
+\begin{table*}[ht]
+\centering
+\caption{The average Spearman's coefficient for each method on the \blogs dataset}
+\small
+\begin{tabular}{c|ccccccc|ccccccc}
+\toprule
+& \multicolumn{7}{c|}{({\sc\small R-})\fpr
+} & \multicolumn{7}{c}{({\sc\small R-})\gafpr} \\
+\makecell{\grouppr} & \makecell{\lfpru} & \makecell{\lfprn} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\lfpru} & \makecell{\lfprn} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
+\midrule
+0.1 & 0.55 & 0.58 & 0.58 & 0.53 & 0.54 & \underline{0.61} & \underline{0.60} & 0.55 & 0.58 & 0.58 & 0.53 & \textbf{0.69} & 0.59 & \underline{0.60} \\
+0.2 & 0.54 & \underline{0.59} & 0.58 & 0.51 & \underline{0.59} & \underline{0.64} & \underline{0.64} & 0.54 & \underline{0.59} & {0.58} & 0.51 & \textbf{0.73} & 0.57 & 0.57 \\
+0.3 & 0.58 & 0.58 & \textbf{0.60} & 0.45 & 0.52 & 0.57 & \underline{0.59} & 0.58 & 0.58 & \underline{0.60} & 0.45 & \textbf{0.71} & 0.56 & 0.56 \\
+0.4 & \underline{0.59} & \underline{0.59} & \underline{0.59} & 0.52 & \textbf{0.60} & \textbf{0.60} & \textbf{0.60} & \textbf{0.59} & \textbf{0.59} & \textbf{0.59} & 0.52 & 0.53 & \underline{0.57} & 0.56 \\
+0.5 & \underline{0.60} & 0.56 & \underline{0.60} & 0.50 & \textbf{0.63} & \textbf{0.63} & \textbf{0.63} & \textbf{0.60} & \underline{0.56} & \textbf{0.60} & 0.50 & 0.53 & 0.54 & 0.54 \\
+0.6 & \textbf{0.61} &\underline{0.59} & 0.57 & 0.50 & 0.58 & 0.56 & 0.57 & \textbf{0.61} &\underline{0.59} & 0.57 & 0.50 & 0.53 & 0.55 & 0.54 \\
+0.7 & \underline{0.59} & \textbf{0.60} & 0.59 & 0.53 & 0.54 & 0.55 & 0.53 & 0.59 & \underline{0.60} & 0.59 & 0.53 & \textbf{0.62} & 0.57 & 0.58 \\
+0.8 & \underline{0.61} & \textbf{0.62} & \textbf{0.62} & 0.50 & 0.57 & 0.53 & 0.53 & \underline{0.61} & \textbf{0.62} & \textbf{0.62} & 0.50 & \underline{0.61} & 0.57 & 0.56 \\
+0.9 & \underline{0.60} & \textbf{0.61} & 0.59 & 0.46 & 0.52 & 0.53 & 0.55 & 0.60 & \underline{0.61} & 0.59 & 0.46 & \textbf{0.65} & 0.53 & 0.52 \\
+\bottomrule
+\end{tabular}
+\label{table:ranking_blog}
+\end{table*}
+
+
+
+
+\iffalse
+\begin{table*}[ht]
+\centering
+\begin{tabular}{ccccccccccc}
+\toprule
+Row & \lfpru & \lfprn & \fairwalk & \crosswalk & \makecell{\fairgd \\ (0.1, 0.05)} & \makecell{\fairgd \\ (0.1, 0.1)} & \crossgd & \makecell{\crossgd \\ (0.1, 0.05)} & \makecell{\crossgd \\ (0.1, 0.1)} \\ 
+\midrule
+0.1 & 0.797 & 0.813 & 0.814 & 0.807 & 0.999 & 0.993 & 0.997 & 0.997 & 0.997 \\
+0.2 & 0.803 & 0.806 & 0.799 & 0.799 & 0.999 & 0.993 & 0.997 & 0.997 & 0.997 \\
+0.3 & 0.810 & 0.827 & 0.821 & 0.831 & 0.998 & 0.998 & 0.997 & 0.997 & 0.997 \\
+0.4 & 0.814 & 0.823 & 0.804 & 0.808 & 0.997 & 0.992 & 0.998 & 0.997 & 0.997 \\
+0.5 & 0.816 & 0.857 & 0.888 & 0.987 & 0.992 & 0.993 & 0.997 & 0.997 & 0.997 \\
+0.6 & 0.999 & 0.993 & 0.997 & 0.993 & 0.986 & 0.998 & 0.994 & 0.987 & 0.997 \\
+0.7 & 0.998 & 0.998 & 0.998 & 0.988 & 0.997 & 0.998 & 0.997 & 0.997 & 0.997 \\
+0.8 & 0.997 & 0.988 & 0.988 & 0.988 & 0.973 & 0.998 & 0.994 & 0.987 & 0.997 \\
+0.9 & 0.995 & 0.915 & 0.916 & 0.948 & 0.946 & 0.996 & 0.995 & 0.997 & 0.997 \\
+\bottomrule
+\end{tabular}
+\caption{Table showing various metrics for different rows}
+\end{table*}
+\fi
+
+
+
+\setlength{\tabcolsep}{3pt} % Adjust the column separation (default is 6pt)
+\begin{table*}[ht]
+\centering
+\caption{The average Spearman's coefficient for each method on the  \mind dataset}
+\small
+\begin{tabular}{c|ccccccc|ccccccc}
+\toprule
+& \multicolumn{7}{c|}{({\sc\small R-})\fpr
+} & \multicolumn{7}{c}{({\sc\small R-})\gafpr} \\
+\makecell{\grouppr} & \makecell{\lfpru} & \makecell{\lfprn} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\lfpru} & \makecell{\lfprn} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
+\midrule
+0.1 & 0.797 & 0.803 & 0.810 & 0.814 & \underline{0.816} & \textbf{0.999} & \textbf{0.999} & 0.797 & 0.803 & 0.810 & 0.814 & \textbf{0.998} & \underline{0.997} &\underline{0.997} \\
+0.2 & 0.813 & 0.806 & 0.827 & 0.823 & \underline{0.857} & \textbf{0.993} & \textbf{0.993} & 0.813 & 0.806 & 0.827 & 0.823 & \textbf{0.998} & \underline{0.997} & \underline{0.997} \\
+0.3 & 0.814 & 0.799 & 0.821 & 0.804 & \underline{0.888} & \textbf{0.997} & \textbf{0.997} & 0.814 & 0.799 & 0.821 & 0.804 & \textbf{0.998} & \underline{0.997} & \underline{0.997} \\
+0.4 & 0.807 & 0.799 & 0.831 & 0.809 & \underline{0.987} & 0.935 & \textbf{0.992} & 0.807 & 0.799 & 0.831 & 0.809 & \textbf{0.998} & \underline{0.997} & \underline{0.997} \\
+0.5 & 0.803 & 0.803 & 0.817 & 0.807 & 0.918 & \textbf{0.997} & \underline{0.923} & 0.803 & 0.803 & \underline{0.817} & 0.807 & \textbf{0.997} & \textbf{0.997} & \textbf{0.997} \\
+0.6 & 0.793 & 0.800 & 0.823 & 0.816 & 0.986 & \textbf{0.999} & \underline{0.998} & 0.793 & 0.800 & \underline{0.823} & 0.816 & \textbf{0.997} & \textbf{0.997} & \textbf{0.997} \\
+0.7 & 0.801 & 0.782 & 0.824 & 0.811 & 0.810 & \textbf{0.997} & \underline{0.988} & 0.801 & 0.782 & 0.824 & 0.811 & \textbf{0.998} & \underline{0.997} & \underline{0.997} \\
+0.8 & 0.801 & 0.795 & 0.799 & 0.808 & 0.815 & \underline{0.872} & \textbf{0.998} & 0.801 & 0.795 & 0.799 & 0.808 & \textbf{0.998} & \underline{0.997} & \underline{0.997} \\
+0.9 & 0.803 & 0.791 & 0.817 & 0.796 & 0.806 & \textbf{0.916} & \underline{0.858} & 0.803 & 0.791 & 0.817 & 0.796 & \textbf{0.998} & \underline{0.995} & \underline{0.995}\\
+\bottomrule
+\end{tabular}
+\label{tab:average_spearman_blogs}
+\end{table*}
+
+
+
+\iffalse
+\begin{table*}[ht]
+\centering
+\caption{Average Spearman's coefficient of each method for the \twitter dataset. Each element in the matrix is scaled by $10^{-2}$ to reflect the actual values.}
+\begin{tabular}{ccccccccc}
+\toprule
+\makecell{\grouppr} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
+\midrule
+0.1 & 0.43  & -1.60 & -2.05 & \underline{1.60} & \underline{1.60} & \textbf{10.41} & \textbf{10.41} & \textbf{10.41} \\
+0.2 & 2.06  & 0.45  & 0.72  & \underline{2.87} & \underline{2.87} & \textbf{10.88} & \textbf{10.88} & \textbf{10.88} \\
+0.3 & 1.52  & -0.64 & -0.66 & 3.56 & 3.56 & \textbf{8.86}  & \underline{8.18}  & 7.38  \\
+0.4 & 2.16  & 0.60  & 1.32  & \underline{9.00} & \underline{9.00} & \textbf{11.68} & 0.46  & 2.04  \\
+0.5 & -0.04 & 0.04  & 1.17  & \textbf{24.81} & \textbf{24.81} & \underline{10.54} & 3.21  & 2.89  \\
+0.6 & 1.40  & -1.30 & 0.64  & 1.99  & \underline{2.18}  & \textbf{9.96}   &\textbf{9.96}   & \textbf{9.96}  \\
+0.7 & 5.00  & -9.34 & 5.83  & 9.46  & 0.96  & \underline{13.88} & \textbf{15.86} & \textbf{15.86} \\
+0.8 & 10.09 & -1.30 & -3.44 & 6.53  & 6.53  & \underline{12.94} & 
+\textbf{25.55} & \textbf{25.55} \\
+0.9 & -1.26 & 6.22  & -11.69 & 5.56 & 5.56 & \underline{19.39} & \textbf{35.04} & \textbf{35.04} \\
+\bottomrule
+\end{tabular}
+\label{table:ranking_twitter}
+\end{table*}
+\fi
+
+\begin{table*}[ht]
+\centering
+\caption{The average Spearman's coefficient for each method on the \twitter dataset. Each element in the matrix is scaled by $10^{-2}$ to show the actual values.}
+\begin{tabular}{c|ccccc|ccccc}
+\toprule
+& \multicolumn{5}{c|}{({\sc\small R-})\fpr
+} & \multicolumn{5}{c}{({\sc\small R-})\gafpr} \\
+\makecell{\grouppr} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
+\midrule
+0.1 & \underline{0.43}  & -1.60 & -2.05 & \textbf{1.60} & \textbf{1.60} & \underline{0.43}  & -1.60 & \textbf{10.41} & \textbf{10.41} & \textbf{10.41} \\
+0.2 & \underline{2.06}  & 0.45  & 0.72  & \textbf{2.87} & \textbf{2.87} & \underline{2.06}  & 0.45  & \textbf{10.88} & \textbf{10.88} & \textbf{10.88} \\
+0.3 & \underline{1.52}  & -0.64 & -0.66 & \textbf{3.56} & \textbf{3.56} & 1.52  & -0.64 & \textbf{8.86}  & \underline{8.18}  & 7.38  \\
+0.4 & \underline{2.16}  & 0.60  & 1.32  & \textbf{9.00} & \textbf{9.00} & \underline{2.16}  & 0.60  & \textbf{11.68} & 0.46  & 2.04  \\
+0.5 & -0.04 & 0.04  & \underline{1.17}  & \textbf{24.81} & \textbf{24.81} & -0.04 & 0.04  & \textbf{10.54} & \underline{3.21}  & 2.89  \\
+0.6 & \underline{1.40}  & -1.30 & 0.64  & \underline{1.99}  & \textbf{2.18}  & 1.40  & -1.30 & \textbf{9.96}   &\textbf{9.96}   & \textbf{9.96}  \\
+0.7 & \underline{5.00}  & -9.34 & 5.83  & \textbf{9.46}  & 0.96  & 5.00  & -9.34 & \underline{13.88} & \textbf{15.86} & \textbf{15.86} \\
+0.8 & \textbf{10.09} & -1.30 & -3.44 & \underline{ 6.53}  & \underline{6.53}  & 10.09 & -1.30 & \underline{12.94} & 
+\textbf{25.55} & \textbf{25.55} \\
+0.9 & -1.26 & \textbf{6.22}  & -11.69 & \underline{5.56} & \underline{5.56} & -1.26 & 6.22  & \underline{19.39} & \textbf{35.04} & \textbf{35.04} \\
+\bottomrule
+\end{tabular}
+\label{table:ranking_twitter}
+\end{table*}
+
+
+\iffalse
+\begin{table*}[ht]
+\centering
+\caption{Average Spearman's coefficient of each method for the \slashdot dataset}
+\begin{tabular}{ccccccccc}
+\toprule
+\makecell{\grouppr} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
+\midrule
+0.1 & 0.16 & 0.16 & \underline{0.69} & \textbf{0.84} & \textbf{0.84} & 0.22 & 0.22 & 0.22 \\
+0.2 & 0.18 & 0.18 & \underline{0.69} & \textbf{0.88} & 0.88 & 0.22 & 0.22 & 0.22 \\
+0.3 & 0.18 & 0.18 & \underline{0.68} & \textbf{0.96} & \textbf{0.96} & 0.22 & 0.22 & 0.22 \\
+0.4 & 0.18 & 0.19 & 0.18 & \textbf{0.81} & \textbf{0.81} & \underline{0.22} & \underline{0.22} & \underline{0.22} \\
+0.5 & 0.19 & 0.18 & \textbf{0.63} &\underline{ 0.23} & \underline{0.23} & 0.22 & 0.22 & 0.22 \\
+0.6 & 0.18 & \underline{ 0.19} & \textbf{0.23} & \textbf{0.23}& \textbf{0.23} & \textbf{0.23} & \textbf{0.23} &\textbf{0.23} \\
+0.7 & 0.18 & 0.19 & \underline{0.21} &\underline{0.21} & \underline{0.21} & \textbf{0.23} &\textbf{0.23} & \textbf{0.23} \\
+0.8 & 0.17 & 0.18 & \underline{0.21} & 0.20 & 0.20 & 0.18 & \textbf{0.24} & \textbf{0.24} \\
+0.9 & 0.15 & 0.15 & 0.21 & 0.19 & 0.20 & \underline{0.23} & \textbf{0.24} & \textbf{0.24} \\
+\bottomrule
+\end{tabular}
+\label{table:ranking_slashdot}
+\end{table*}
+\fi
+
+\begin{table*}[ht]
+\centering
+\caption{The average Spearman's coefficient for each method on the \slashdot dataset.}
+\begin{tabular}{c|ccccc|ccccc}
+\toprule
+& \multicolumn{5}{c|}{({\sc\small R-})\fpr
+} & \multicolumn{5}{c}{({\sc\small R-})\gafpr} \\
+\makecell{\grouppr} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
+\midrule
+0.1 & 0.16 & 0.16 & \underline{0.69} & \textbf{0.84} & \textbf{0.84} & \underline{ 0.16} & \underline{0.16} & \textbf{0.22} & \textbf{0.22} & \textbf{0.22} \\
+0.2 & 0.18 & 0.18 & \underline{0.69} & \textbf{0.88} & 0.88 & \underline{ 0.18} & \underline{0.18} & \textbf{0.22} & \textbf{0.22} & \textbf{0.22} \\
+0.3 & 0.18 & 0.18 & \underline{0.68} & \textbf{0.96} & \textbf{0.96} & \underline{0.18} & \underline{0.18} & \textbf{0.22} & \textbf{0.22} & \textbf{0.22} \\
+0.4 & 0.18 & \underline{0.19} & 0.18 & \textbf{0.81} & \textbf{0.81} & 0.18 & \underline{0.19} & \textbf{0.22} & \textbf{0.22} & \textbf{0.22} \\
+0.5 & 0.19 & 0.18 & \textbf{0.63} & \underline{0.23} & \underline{0.23} & \underline{0.19} & 0.18 & \textbf{0.22} & \textbf{0.22} & \textbf{0.22}\\
+0.6 & 0.18 & \underline{0.19} & \textbf{0.23} & \textbf{0.23} & \textbf{0.23} & 0.18 & \underline{0.19} & \textbf{0.23} & \textbf{0.23} & \textbf{0.23} \\
+0.7 & 0.18 & \underline{0.19} & \textbf{0.21} & \textbf{0.21} & \textbf{0.21} & 0.18 & \underline{0.19} & \textbf{0.23} & \textbf{0.23} & \textbf{0.23} \\
+0.8 & 0.17 & 0.18 & \textbf{0.21} & \underline{0.20} & \underline{0.20} & 0.17 & \underline{0.18} & \underline{0.18} & \textbf{0.24} & \textbf{0.24} \\
+0.9 & 0.15 & 0.15 & \textbf{0.21} & \underline{0.19} & 0.20 & 0.15 & 0.15 & \underline{0.23} & \textbf{0.24} & \textbf{0.24} \\
+\bottomrule
+\end{tabular}
+\label{table:ranking_slashdot}
+\end{table*}
+
+
+

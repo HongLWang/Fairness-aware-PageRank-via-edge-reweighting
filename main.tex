@@ -757,16 +757,19 @@ To avoid a matrix inversion,
 we approximate $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$ with a power iteration:
 \fi
 
+
+
+% \REQUIRE Transition matrix~\transmatrix, restart probability~$\gamma$, restart vector~\vectv, 
+%     groups $\vertices_1, \ldots, \vertices_\nogroups$, target \pagerank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, learning rate~$\alpha$, power iteration exponent~$t$, convergence criterion $\kappa$, maximum number of iterations
+
 \begin{algorithm}[t]
-  \caption{\label{alg:fairgd}\fairgd: \pagerank projected gradient descent}
+  \caption{\label{alg:fairgd}\fairgd: Projected gradient descent for \fpr and \resfpr}
   \begin{algorithmic}[1]
-    \REQUIRE Transition matrix~\transmatrix, restart probability~$\gamma$, restart vector~\vectv, 
-    groups $\vertices_1, \ldots, \vertices_\nogroups$, target \pagerank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, learning rate~$\alpha$, power iteration exponent~$t$, convergence criterion $\epsilon$, maximum number of iterations \textit{MaxIter}
+    \REQUIRE \transmatrix, $\gamma$, \vectv, 
+$\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors $\indvect{\agroup}$ for $\agroup = \{1, \cdots, \nogroups\}$, learning rate~$\alpha$, power iteration exponent~$t$, convergence criterion $\kappa$, maximum number of iterations $N_{\text{iter}}$.
     \ENSURE Optimized transition matrix $\newtransmatrix$
-    \STATE $\newtransmatrix \gets \transmatrix$
-    \STATE ${\iter} \gets 0$
-    \STATE ${\lossprev} \gets \infty$
-    \WHILE {$|\loss(\newtransmatrix, \gamma, \vectv) - {\lossprev}| > \epsilon$ and $\iter < \textit{MaxIter}$}
+    \STATE $\newtransmatrix \gets \transmatrix$, ${\iter} \gets 0$, ${\lossprev} \gets \infty$
+    \WHILE {$|\loss(\newtransmatrix, \gamma, \vectv) - {\lossprev}| > \kappa $ and $\iter < N_{\text{iter}}$}
       \STATE $\iter \gets \iter + 1$
       \STATE $\prvector \gets {\pralgo}(\newtransmatrix, \gamma, \vectv)$
       \STATE ${\lossprev} \gets \loss(\newtransmatrix, \gamma, \vectv)$
@@ -789,7 +792,8 @@ we approximate $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$ with a 
     \REQUIRE Transition matrix \transmatrix, restart probability $\gamma$, group indicator vector $\indvect{\agroup}$, power iteration exponent~$t$
     \ENSURE Approximation of $\gamma \indvect{\agroup}^T \matrixU^{-1}$
     \STATE $\vecty \gets \indvect{\agroup}$
-    \STATE $\matrixU \gets \mathbf{I}_k$
+    % \STATE $\matrixU \gets \mathbf{I}_\novertices$ 
+    \STATE $\matrixU \gets \text{Identity matrix of size} \novertices \times \novertices$ 
     \STATE $\indvect{s} \gets \mathbf{1} - \transmatrix \mathbf{1}$
     \FOR {$i = 1$ to $t$}
       \STATE $\matrixU \gets (1 - \gamma) (\transmatrix \matrixU + \indvect{s} \vectv^T \matrixU)$
@@ -800,13 +804,23 @@ we approximate $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$ with a 
 \end{algorithm}
 
 \begin{algorithm}[t]
-  \caption{\label{alg:project}\project: projection to feasible set}
+\caption{\label{alg:project}\project: projection to feasible set}
   \begin{algorithmic}[1]
-    \REQUIRE Transition matrix $\newtransmatrix$
+    \REQUIRE Transition matrix $\newtransmatrix$, original transition matrix \transmatrix, modification bound \boundfactor and \absboundfactor (optional).
     \ENSURE Projected transition matrix $\newtransmatrix$
+     \STATE $\newtransmatrix[i, j] \gets 0$ for $(i, j)$ where $\transmatrix[i, j] = 0$
     \STATE $\newtransmatrix[i, j] \gets 0$ for $(i, j)$ where $\newtransmatrix[i, j] < 0$
+    \IF{\boundfactor and \absboundfactor are provided}   
+    \WHILE{$\newtransmatrix \notin \resfeasiblematrices(\transmatrix)$}
+    \STATE $\newtransmatrix[i,j] = \max ((1-\boundfactor) \transmatrix[i,j] - \absboundfactor, \newtransmatrix[i,j] )$
+    \STATE $\newtransmatrix[i,j] = \min ((1+\boundfactor) \transmatrix[i,j] + \absboundfactor, \newtransmatrix[i,j])$
     \STATE $\vects = \newtransmatrix \mathbf{1}$
     \STATE $\newtransmatrix[i, j] \gets \newtransmatrix[i, j] / \vects[i]$ for $(i, j)$ where $\newtransmatrix[i, j] > 0$
+    \ENDWHILE
+    \ELSE
+    \STATE $\vects = \newtransmatrix \mathbf{1}$
+    \STATE $\newtransmatrix[i, j] \gets \newtransmatrix[i, j] / \vects[i]$ for $(i, j)$ where $\newtransmatrix[i, j] > 0$
+    \ENDIF
   \end{algorithmic}
 \end{algorithm}
 
@@ -857,10 +871,11 @@ to the overall \pagerank score of the group~$\vertices_\agroup$.
 The weight of the $\agroup$-th term  in Eq.~(\ref{equation:gradient}) 
 is proportional to the difference between the total \pagerank scores 
 of group $\vertices_\agroup$ and the group-wise target score~$\grouppr_\agroup$.
-\honglian{I stop here. what "the j-th term of the summation" refers to is not clear. Rewrite this.}
-\aris{I went thought and it is clear enough. Also, there is no j-th term, it is the k-th term, 
-referring to the k-th term in the equation of the gradient, in proposition 2. I added the reference.}
+% \honglian{I stop here. what "the j-th term of the summation" refers to is not clear. Rewrite this.}
+% \aris{I went thought and it is clear enough. Also, there is no j-th term, it is the k-th term, 
+% referring to the k-th term in the equation of the gradient, in proposition 2. I added the reference.}
 
+\iffalse
 \aris{
 {\color{magenta}
 I added with red color below the additional operations we need
@@ -873,21 +888,24 @@ We also need to update the pseudocode in Algorithm 3.
 What is colored with green below, is not so important, 
 and can be omitted, if we need space.
 }}
+\fi
 
 
 \spara{Gradient projection.} 
 We use \newtransmatrix to denote the transition matrix obtained by the projected gradient-descent method.
 After each gradient descent step, 
 \newtransmatrix is projected back to the feasible set 
-$\feasiblematrices(\transmatrix) {\color{magenta}\cap \resfeasiblematrices(\transmatrix)}$ 
+$\feasiblematrices(\transmatrix) {\color{black}\cap \resfeasiblematrices(\transmatrix)}$ 
 by the following steps:
 \begin{enumerate}
   \item For all entries $[i, j]$, if $\transmatrix[i, j] = 0$ then set $\newtransmatrix[i, j] = 0$.
   \item Set all negative entries in $\newtransmatrix$ to zero.
-  \item {\color{magenta} 
-  For the restricted problem \resfpr, truncate all entries in $\newtransmatrix$ in the interval defined by 
-  the modification factors $\absboundfactor$ and $\boundfactor$.}
-  \item Normalize each row of \newtransmatrix, so that \newtransmatrix is row-stochastic.
+  \item For the \fpr problem, normalize each row of \newtransmatrix, so that \newtransmatrix is row-stochastic. 
+  \item For the restricted \resfpr problem, truncate all entries in $\newtransmatrix$ to lie within the interval defined by the modification factors $\absboundfactor$ and $\boundfactor$, then row-normalize the truncated matrix. Repeat the truncation and normalization steps until all entries in $\newtransmatrix$ meet the required constraints. 
+  % \item {\color{magenta} 
+  % For the restricted problem \resfpr, truncate all entries in $\newtransmatrix$ in the interval defined by 
+  % the modification factors $\absboundfactor$ and $\boundfactor$.}
+  % \item Normalize each row of \newtransmatrix, so that \newtransmatrix is row-stochastic.
 \end{enumerate}
 
 % Since our optimization process uses element-wise updates for obtaining \newtransmatrix, the first step can be omitted. 
@@ -912,6 +930,7 @@ Details of the projection steps are given in Algorithm~\ref{alg:project}.
 % I didn't think about the case where the gradient-descent creates a zero row.
 % It is too rare to happen, but if it happens, we can replace the zero row with a uniform vector.}
 
+\iffalse
 {\color{olive}
 In the preliminaries, we mentioned that rows in the transition matrix \transmatrix corresponding to sink vertices are replaced by the restart vector \vectv. Each sink vertex contributes $\bigO(\novertices)$ (where \novertices is the total number of nodes) non-zero entries to the transition matrix \transmatrix. 
 Note that in our algorithm, sparsity of \transmatrix is aiding efficiency. 
@@ -937,7 +956,7 @@ and Equation~\eqref{eq:yapprox} is modified to
 %  \end{aligned}
 \end{equation}
 }%olive
-
+\fi
 To sum up, our method is presented in Algorithms~\ref{alg:fairgd},~\ref{alg:poweriteration}, and~\ref{alg:project}.
 Algorithm~\ref{alg:fairgd} (\fairgd) 
 is the overall projected gradient-descent scheme that 
@@ -948,15 +967,18 @@ using power iterations.
 Algorithm~\ref{alg:project} (\project) is the projection function, 
 where the transition matrix \newtransmatrix is projected back to the feasible set after each iteration.
 
+
+\iffalse
 \begin{algorithm}
-  \caption{\label{alg:crossgd}\crossgd: group-adapted \pagerank projected gradient descent}
+  \caption{\label{alg:crossgd}\crossgd: Projected gradient descent for \gafpr and \resgafpr}
   \begin{algorithmic}[1]
-    \REQUIRE Transition matrix \transmatrix, restart probability $\gamma$, groups $\vertices_1,\ldots, \vertices_\nogroups$, target \pagerank scores $\grouppr_1, \ldots, \grouppr_\nogroups$, learning rate $\alpha$, power iteration exponent~$t$, convergence criterion $\epsilon$, maximum number of iterations \textit{MaxIter}
+    \REQUIRE \transmatrix, $\gamma$, \vectv, 
+$\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors $\indvect{\agroup}$ for $\agroup = \{1, \cdots, \nogroups\}$, learning rate~$\alpha$, power iteration exponent~$t$, convergence criterion $\kappa$, maximum number of iterations $N_{\text{iter}}$.
     \ENSURE Optimized transition matrix $\newtransmatrix$
     \STATE $\newtransmatrix \gets \transmatrix$
     \STATE ${\iter} \gets 0$
     \STATE ${\lossprev} \gets \infty$
-    \WHILE {$|\groupAdapLoss(\newtransmatrix, \gamma, \vectv) - {\lossprev}| > \epsilon$ and $\iter < \textit{MaxIter}$}
+    \WHILE {$|\groupAdapLoss(\newtransmatrix, \gamma, \vectv) - {\lossprev}| > \kappa$ and $\iter < N_{\text{iter}}$}
       \STATE $\iter \gets \iter + 1$
       \STATE ${\lossprev} \gets \groupAdapLoss(\newtransmatrix, \gamma, \vectv)$
       \FOR {$\ell = 1$ to $\nogroups$}
@@ -974,13 +996,12 @@ where the transition matrix \newtransmatrix is projected back to the feasible se
     \RETURN $\newtransmatrix$
   \end{algorithmic}
 \end{algorithm}
-
-\spara{Time complexity analysis.} \todo{} \aris{can also be omitted.}
+\fi
+% \spara{Time complexity analysis.} \todo{} \aris{can also be omitted.}
 
 \subsection{Group-adapted \pagerank}
 
-The \fairgd algorithm can be extended to solve the group-adapted \phiPageRank problem by adding an outer loop that iterates through all groups. 
-The algorithm, dubbed \crossgd, is presented in Algorithm~\ref{alg:crossgd}.
+The \fairgd algorithm can be extended to address both the \gafpr and \resgafpr problems by introducing an outer loop that iterates over all groups. This enhanced algorithm, referred to as \crossgd, is detailed in Algorithm~\Cref{alg:crossgd}, detailed in \Cref{appendix:pseudocode}.
 
 \section{Experimental evaluation}
 
@@ -996,32 +1017,34 @@ The algorithm, dubbed \crossgd, is presented in Algorithm~\ref{alg:crossgd}.
 % what are the results?
 % -- tables and figures
 
-We evaluate the performance of our \fairgd and \crossgd algorithms on real-world networks. In particular, we study the following research questions:
+We evaluate the performance of \fairgd and \crossgd on real-world networks. In particular, we study the following research questions:
 
 
-\noindent \textbf{RQ1:} To what extent can the \fairgd and \crossgd algorithms improve the fairness and group-adapted fairness of the \pagerank scores? \\
+\noindent \textbf{RQ1:} To what extent can the \fairgd and \crossgd algorithms improve the fairness and group-adapted fairness of \pagerank? \\
 \textbf{RQ2:} 
 How do the \fairgd and \crossgd algorithms compare to the baselines in terms of changes to the transition matrix? \\
 \textbf{RQ3:} How does the ranking of the \pagerank score within each group change? Do \fairgd and \crossgd preserve this ranking?
 
-To answer the first question, we report the fairness loss and group-adapted fairness loss as defined in Definitions~\ref{definition:fairloss} and \ref{definition:groupfairloss}.
-
-To answer the second question, we quantify the changes to the transition matrix by the relative change in its Frobenius norm, given by:
-\begin{equation}
-  \Delta_\transmatrix = \frac{||\newtransmatrix - \transmatrix||_F}{||\transmatrix||_F}.
-\end{equation}
-
-For the third question, we compute the Spearman's rank correlation coefficient \citep{spearman1961proof} between the original PageRank ranking and the ranking after re-weighting the transition matrix for each group, reporting the weighted average across all groups. Specifically, let $\ranking_\agroup$ be the original PageRank ranking for group $\group_\agroup$, and $\hat{\ranking}_\agroup$ be the ranking after re-weighting. The average Spearman's rank, $\overline{\rho}$, is calculated as:
-
+To answer the first question, we report the fairness loss and group-adapted fairness loss as defined in Equations
+% Definitions~\ref{definition:fairloss} and \ref{definition:groupfairloss}.
+(\ref{eq:loss_function}) and (\ref{equation:cgfl}). 
+For the second question, we quantify the changes to the transition matrix by the relative change in its Frobenius norm, given by:
+%\begin{equation}
+$  \Delta_\transmatrix = {||\newtransmatrix - \transmatrix||_F}/{||\transmatrix||_F}.$
+%\end{equation}
+For the third question, we compute the Spearman's rank correlation coefficient \citep{spearman1961proof} between the original PageRank ranking and the ranking after re-weighting the transition matrix for each group, and report the weighted average across all groups. Specifically, let $\ranking_\agroup$ be the original PageRank ranking for group $\group_\agroup$, and $\hat{\ranking}_\agroup$ be the ranking after re-weighting. The average Spearman's rank correlation coefficient, $\overline{\rho}$, is calculated as:
 \[
-\overline{\rho} = \sum_{\agroup=1}^{\nogroups} \rho(\ranking_\agroup, \hat{\ranking}_\agroup),
+\overline{\rho} = \sum_{\agroup=1}^{\nogroups} \frac{|\group_\agroup|}{n}\rho(\ranking_\agroup, \hat{\ranking}_\agroup),
 \]
 where $\rho(.,.)$ is the Spearman's rank correlation coefficient of two rankings. A larger $\overline{\rho} $ indicates fewer changes in the PageRank score's ranking.
+
+% \aris{you mention ``weighted average across all groups'', but the Equation is unweighted.}
+% \honglian{Addressed}
 
 
 \subsection{Datasets}
 
-\begin{table}[!b]
+\begin{table}[ht]
 \centering
   \caption{Datasets used in the experiments. $\groupDist_{O}$ denotes the original group-wise \pagerank scores of the datasets.}
   \label{table:datasets}
@@ -1140,7 +1163,10 @@ We distinguish between datasets as follows: (1) For the \blogs and \mind dataset
 On the \twitter dataset, we compare our approach with \lfpru and \lfprn. The remaining experimental settings are consistent with those used in the fairness loss evaluation described above.
 
 \spara{$\fairgd(\boundfactor,\absboundfactor)$ and $\crossgd(\boundfactor, \absboundfactor)$.}
-In the experiments, we set $\boundfactor = 0.1$ and $\absboundfactor = \{0.05, 0.1\}$.\honglian{Explain for setting this two parameters to the current value?}
+In the experiments, we set $\boundfactor = 0.1$ and $\absboundfactor = \{0.05, 0.1\}$. for the \resfpr and \resgafpr problem.
+% \honglian{Explain for setting this two parameters to the current value?}
+We perform a grid search over a logarithmically spaced range of values between $10^-3$ and $10^3$
+, selecting 20 values evenly distributed on a logarithmic scale to find the best learning rate of our proposed algorithms.
 
 \spara{Group-wise target \pagerank score \groupDist.}
 For datasets containing only two groups, we define the \pagerank score distribution as 
@@ -1153,7 +1179,7 @@ We vary \(\grouppr\) in the range
 $ [0.1, 0.2, \dots, 0.9] $ 
 to evaluate the performance of our algorithm compared to all baselines.
 
-
+The code and dataset used in this paper is available at \url{https://anonymous.4open.science/r/Fair-Pagerank-via-Edge-Rewighting-6BB3}
 
 \section{Results}
 
@@ -1264,11 +1290,11 @@ This refinement highlights the balance between fairness and weight change, empha
 
 We evaluate the performance of \crossgd and its restricted variants, \crossgdrone and \crossgdrtwo, on the group-adapted fairness loss, as defined in \Cref{equation:cgfl}, and analyze the corresponding changes in the transition matrix weights. The performance of these methods is compared against baseline models. The results of these comparisons are presented in \Cref{fig:loss_all_dataset_adapted} for the group-adapted fairness loss and in \Cref{fig:change_all_dataset_adapted} for the transition matrix weight changes.
 
-The \crossgd and its variants achieves significantly better weight change on all datasets, and excellent group-adpated loss on 3 out of 5 datasets.
+\crossgd and its variants demonstrate significantly better weight changes across all datasets, while achieving excellent group-adapted loss performance in 3 out of the 5 datasets.
 
-On the \twitter dataset, \crossgd and its variants outperforms \fairwalk and \crosswalk in all \grouppr settings.
-On the \book and \slashdot datasets, \crossgd and its variants outperforms \fairwalk and \crosswalk in both measures on 8 out of 9 \grouppr values.  
+On the \twitter dataset, \crossgd and its variants outperform both \fairwalk and \crosswalk across all \grouppr settings. Similarly, on the \book and \slashdot datasets, \crossgd and its variants surpass \fairwalk and \crosswalk in both metrics for 8 out of 9 \grouppr values.
 
+\honglian{What is the reason that On the \blogs and \mind dataset, the \fairgd algorithm does not perform well?}
 
 
 \begin{figure*}[htbp]
@@ -1359,9 +1385,19 @@ On the \book and \slashdot datasets, \crossgd and its variants outperforms \fair
 
 \subsection{Ranking Coefficient Evaluation}
 
+We report the average Spearman's rank correlation coefficient, $\overline{\rho}$, computed for each method across different datasets. The results for the \book dataset are shown in \Cref{table:ranking_book}, while results for other datasets are provided in \Cref{appendix:more-experiments}.
+
+
+
+
+For the (restricted) \phiPageRank problem, \fairgd and its variants consistently achieve the best or second-best $\overline{\rho}$, demonstrating that the \fairgd algorithm better preserves the relative \pagerank score rankings within each group compared to \fairwalk and \crosswalk. This finding also holds true for the  (restricted) group-adapted \phiPageRank problem and the \crossgd algorithms. These results suggest that, in practical applications, when adjusting the content displayed to users based on items' \pagerank scores to enhance fairness, fewer changes are required within each group. Instead, greater focus should be placed on adjusting the frequency or weighting of content across different groups.
+
+
+
+\iffalse
 \begin{table*}[h!]
 \centering
-\caption{Average Spearman coefficient of each method for the \book dataset}
+\caption{Average Spearman's coefficient of each method for the \book dataset}
 \begin{tabular}{ccccccccc}
 \toprule
 \makecell{\grouppr} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
@@ -1379,103 +1415,32 @@ On the \book and \slashdot datasets, \crossgd and its variants outperforms \fair
 \end{tabular}
 \label{table:ranking_book}
 \end{table*}
+\fi
 
 
-
-\begin{table*}[ht]
+\begin{table*}[h!]
 \centering
-\caption{Average Spearman coefficient of each method for the \blogs dataset}
-\begin{tabular}{ccccccccccc}
+\caption{Average Spearman's coefficient of each method for the \book dataset}
+\begin{tabular}{c|ccccc|ccccc}
 \toprule
-\grouppr & \lfpru & \lfprn & \fairwalk & \crosswalk & \fairgd & \makecell{\fairgd \\ (0.1, 0.05)} & \makecell{\fairgd \\ (0.1, 0.1)} & \crossgd & \makecell{\crossgd \\ (0.1, 0.05)} & \makecell{\crossgd \\ (0.1, 0.1)} \\
+& \multicolumn{5}{c|}{({\sc\small R-})\fpr
+} & \multicolumn{5}{c}{({\sc\small R-})\gafpr} \\
+% Removed the horizontal line below the sections
+\makecell{\grouppr} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
 \midrule
-0.1 & 0.55 & 0.58 & 0.58 & 0.53 & 0.54 & \underline{0.61} & 0.60 & \textbf{0.69} & 0.59 & 0.60 \\
-0.2 & 0.54 & 0.59 & 0.58 & 0.51 & 0.59 & \underline{0.64} & \underline{0.64} & \textbf{0.73} & 0.57 & 0.57 \\
-0.3 & 0.58 & 0.58 & \underline{0.60} & 0.45 & 0.52 & 0.57 & 0.59 & \textbf{0.71} & 0.56 & 0.56 \\
-0.4 & \underline{0.59} & \underline{0.59} & \underline{0.59} & 0.52 & \textbf{0.60} & \textbf{0.60} & \textbf{0.60} & 0.53 & 0.57 & 0.56 \\
-0.5 & \underline{0.60} & 0.56 & \underline{0.60} & 0.50 & \textbf{0.63} & \textbf{0.63} & \textbf{0.63} & 0.53 & 0.54 & 0.54 \\
-0.6 & \textbf{0.61} &\underline{0.59} & 0.57 & 0.50 & 0.58 & 0.56 & 0.57 & 0.53 & 0.55 & 0.54 \\
-0.7 & 0.59 & \underline{0.60} & 0.59 & 0.53 & 0.54 & 0.55 & 0.53 & \textbf{0.62} & 0.57 & 0.58 \\
-0.8 & \underline{0.61} & \textbf{0.62} & \textbf{0.62} & 0.50 & 0.57 & 0.53 & 0.53 & \underline{0.61} & 0.57 & 0.56 \\
-0.9 & 0.60 & \underline{0.61} & 0.59 & 0.46 & 0.52 & 0.53 & 0.55 & \textbf{0.65} & 0.53 & 0.52 \\
+0.1 & -0.05 & -0.04 & \textbf{0.52} & \textbf{0.52} & \textbf{0.52} & -0.05 & -0.04 & \underline{0.16} & 0.09 & \underline{0.11} \\
+0.2 & -0.06 & -0.02 & \textbf{0.24} & -0.00 & 0.10 & -0.06 & -0.02 & 0.14 & \underline{0.18} & \textbf{0.20} \\
+0.3 & -0.03 & -0.02 & \textbf{0.24} & \underline{0.20} & 0.11 & -0.03 & -0.02 & \textbf{0.10} & \underline{0.04} & 0.02 \\
+0.4 & -0.18 & -0.11 & 0.09 & \underline{0.17} & 0.04 & -0.18 & -0.11 & \underline{0.09} & 0.02 & \textbf{0.18} \\
+0.5 & -0.02 & 0.01 & \underline{0.14} & \textbf{0.27} & 0.08 & -0.02 & 0.01 & \underline{0.11} & \underline{0.16} & \underline{0.11} \\
+0.6 & 0.06 & 0.10 & \underline{0.20} & \underline{0.16} & \underline{0.16} & 0.06 & 0.10 & 0.09 & \underline{0.15} & \textbf{0.22} \\
+0.7 & \underline{0.17} & 0.13 & \textbf{0.20} & \underline{0.15} & 0.11 & \textbf{0.17} & \underline{0.13} & \underline{0.13} & 0.10 & 0.09 \\
+0.8 & \underline{0.21} & 0.04 & \textbf{0.31} & 0.09 & 0.17 & 0.21 & 0.04 & \underline{0.17} & 0.02 & \textbf{0.23} \\
+0.9 & 0.02 & 0.04 & 0.04 & \textbf{0.19} & \underline{0.17} & 0.02 & 0.04 & \textbf{0.18} & 0.07 & \underline{0.12} \\
 \bottomrule
 \end{tabular}
-\label{table:ranking_blog}
+\label{table:ranking_book}
 \end{table*}
-
-
-
-
-
-\begin{table*}[ht]
-\centering
-\caption{Average Spearman coefficient of each method for the \mind dataset}
-\begin{tabular}{ccccccccc}
-\toprule
-\makecell{\grouppr} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
-\midrule
-0.1 & 0.797 & 0.813 & 0.814 & 0.806 & 0.803 & \underline{0.993} & \textbf{0.998} & \textbf{0.998} \\
-0.2 & 0.803 & 0.805 & 0.799 & 0.799 & 0.803 & 0.993 & \textbf{0.999} & \underline{0.998} \\
-0.3 & 0.809 & 0.827 & 0.821 & 0.831 & 0.817 & \textbf{0.998} & \textbf{0.998} & \underline{0.997} \\
-0.4 & 0.814 & \underline{0.823} & 0.804 & 0.808 & 0.808 & \textbf{0.997} & \textbf{0.997} & \textbf{0.997} \\
-0.5 & 0.816 & 0.857 & 0.888 & 0.987 & 0.917 & \underline{0.993} & 0.986 & \textbf{0.994} \\
-0.6 & \textbf{0.999} & 0.993 & 0.997 & 0.934 & 0.938 & 0.987 & \underline{0.997} & \underline{0.997} \\
-0.7 & \textbf{0.999} & 0.993 & 0.997 & 0.997 & 0.996 & \underline{0.997} & \underline{0.997} & \underline{0.997} \\
-0.8 & \textbf{0.998} & 0.994 & 0.997 & 0.973 & 0.973 & \underline{0.997} & 0.996 & 0.996 \\
-0.9 & \textbf{0.997} & \textbf{0.997} & \textbf{0.997} & \underline{0.996} & \textbf{0.997} & 0.946 & 0.946 & 0.996 \\
-\bottomrule
-\end{tabular}
-\label{table:ranking_mind}
-\end{table*}
-
-
-
-
-\begin{table*}[ht]
-\centering
-\caption{Average Spearman coefficient of each method for the \twitter dataset. Each element in the matrix is scaled by $10^{-2}$ to reflect the actual values.}
-\begin{tabular}{ccccccccc}
-\toprule
-\makecell{\grouppr} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
-\midrule
-0.1 & 0.43  & -1.60 & -2.05 & \underline{1.60} & \underline{1.60} & \textbf{10.41} & \textbf{10.41} & \textbf{10.41} \\
-0.2 & 2.06  & 0.45  & 0.72  & \underline{2.87} & \underline{2.87} & \textbf{10.88} & \textbf{10.88} & \textbf{10.88} \\
-0.3 & 1.52  & -0.64 & -0.66 & 3.56 & 3.56 & \textbf{8.86}  & \underline{8.18}  & 7.38  \\
-0.4 & 2.16  & 0.60  & 1.32  & \underline{9.00} & \underline{9.00} & \textbf{11.68} & 0.46  & 2.04  \\
-0.5 & -0.04 & 0.04  & 1.17  & \textbf{24.81} & \textbf{24.81} & \underline{10.54} & 3.21  & 2.89  \\
-0.6 & 1.40  & -1.30 & 0.64  & 1.99  & \underline{2.18}  & \textbf{9.96}   &\textbf{9.96}   & \textbf{9.96}  \\
-0.7 & 5.00  & -9.34 & 5.83  & 9.46  & 0.96  & \underline{13.88} & \textbf{15.86} & \textbf{15.86} \\
-0.8 & 10.09 & -1.30 & -3.44 & 6.53  & 6.53  & \underline{12.94} & 
-\textbf{25.55} & \textbf{25.55} \\
-0.9 & -1.26 & 6.22  & -11.69 & 5.56 & 5.56 & \underline{19.39} & \textbf{35.04} & \textbf{35.04} \\
-\bottomrule
-\end{tabular}
-\label{table:ranking_twitter}
-\end{table*}
-
-
-
-\begin{table*}[ht]
-\centering
-\caption{Average Spearman coefficient of each method for the \slashdot dataset}
-\begin{tabular}{ccccccccc}
-\toprule
-\makecell{\grouppr} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
-\midrule
-0.1 & 0.16 & 0.16 & \underline{0.69} & \textbf{0.84} & \textbf{0.84} & 0.22 & 0.22 & 0.22 \\
-0.2 & 0.18 & 0.18 & \underline{0.69} & \textbf{0.88} & 0.88 & 0.22 & 0.22 & 0.22 \\
-0.3 & 0.18 & 0.18 & \underline{0.68} & \textbf{0.96} & \textbf{0.96} & 0.22 & 0.22 & 0.22 \\
-0.4 & 0.18 & 0.19 & 0.18 & \textbf{0.81} & \textbf{0.81} & \underline{0.22} & \underline{0.22} & \underline{0.22} \\
-0.5 & 0.19 & 0.18 & \textbf{0.63} &\underline{ 0.23} & \underline{0.23} & 0.22 & 0.22 & 0.22 \\
-0.6 & 0.18 & \underline{ 0.19} & \textbf{0.23} & \textbf{0.23}& \textbf{0.23} & \textbf{0.23} & \textbf{0.23} &\textbf{0.23} \\
-0.7 & 0.18 & 0.19 & \underline{0.21} &\underline{0.21} & \underline{0.21} & \textbf{0.23} &\textbf{0.23} & \textbf{0.23} \\
-0.8 & 0.17 & 0.18 & \underline{0.21} & 0.20 & 0.20 & 0.18 & \textbf{0.24} & \textbf{0.24} \\
-0.9 & 0.15 & 0.15 & 0.21 & 0.19 & 0.20 & \underline{0.23} & \textbf{0.24} & \textbf{0.24} \\
-\bottomrule
-\end{tabular}
-\label{table:ranking_slashdot}
-\end{table*}
-
 
 
 
@@ -1523,7 +1488,7 @@ On the \book and \slashdot datasets, \crossgd and its variants outperforms \fair
 
 % \begin{table*}[t]
 % \centering
-% \caption{Average spearman coefficient of each method for the \book dataset.}
+% \caption{Average Spearman's coefficient of each method for the \book dataset.}
 % \renewcommand{\arraystretch}{0.9} % Adjust this value to control row height
 % \begin{tabular}{cccccc}
 % \toprule
@@ -1544,7 +1509,7 @@ On the \book and \slashdot datasets, \crossgd and its variants outperforms \fair
 
 % \begin{table*}[t]
 % \centering
-% \caption{Average spearman coefficient of each method for the \blogs dataset.}
+% \caption{Average Spearman's coefficient of each method for the \blogs dataset.}
 % \renewcommand{\arraystretch}{0.9} % Adjust this value to control row height
 % \begin{tabular}{cccccccc}
 % \toprule
