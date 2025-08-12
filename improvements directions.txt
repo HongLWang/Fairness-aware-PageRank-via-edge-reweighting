@@ -1,0 +1,13 @@
+1. Revise the projected gradient method and provide convergence analysis.
+
+2. Expand experimental results discussion: Analyze why specific results behave as observed and identify underlying factors influencing performance.
+
+3. Evaluate PageRank quality: Assess whether the resulting scores preserve the original relative rankings.
+
+4. Use cases and behavior analysis:
+
+(1) Star graph: If reducing the central node's PageRank score, how effectively does FairGD perform? How do other nodes' scores change? Starting from a symmetric setting (equal PR scores for non-center nodes), does symmetry persist?
+(2) Special graphs: Analyze how FairGD preserves relative rankings in star, line, or clique graphs.
+(3) Group influence: If highly influential nodes are "red" and others are "blue," how well can FairGD reduce the red group's influence?
+(4) Edge weight bounds: Derive bounds on edge weight changes for simple graphs to better understand FairGD behavior.
+5. Top-k fairness loss: Explore calculating fairness loss using only the top-k ranked nodes in each group. This might not fit in the current framework, but it is interesting to think about.

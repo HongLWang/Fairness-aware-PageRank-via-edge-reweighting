@@ -1,6 +1,10 @@
 % \documentclass[sigconf]{acmart}
  \documentclass[sigconf, anonymous, review]{acmart}
+  % \documentclass[sigconf, review]{acmart}
+
 \input{macros}
+% \usepackage{needspace}
+
 %%
 %% \BibTeX command to typeset BibTeX logo in the docs
 \AtBeginDocument{%
@@ -25,7 +29,31 @@
 
 \title{Fairness-aware PageRank via Edge Reweighting}
 
-\author{Anonymous Author(s)}
+% \author{Anonymous Author(s)}
+\author{Honglian Wang}
+\affiliation{%
+  \institution{KTH Royal Institute of Technology}
+  \city{Stockholm}
+  \country{Sweden}
+  }
+\email{honglian@kth.se}
+
+\author{Haoyun Chen}
+\affiliation{%
+  \institution{KTH Royal Institute of Technology}
+  \city{Stockholm}
+  \country{Sweden}
+  }
+\email{haoyunz@kth.se}
+
+
+\author{Aristides Gionis}
+\affiliation{%
+  \institution{KTH Royal Institute of Technology}
+  \city{Stockholm}
+  \country{Sweden}
+  }
+\email{argioni@kth.se}
 
 \begin{abstract}
 Link-analysis algorithms, such as \pagerank, are instrumental in understanding the structural dynamics of networks by evaluating the importance of individual vertices based on their connectivity. Recently, with the rising importance of responsible AI, the question of fairness in link-analysis algorithms has gained traction.
@@ -168,8 +196,7 @@ The fairness of the \pagerank distribution is then evaluated
 based on the total \pagerank scores assigned to \emph{red} and \emph{blue} vertices.
 We would like to avoid situations where the \pagerank mass is distributed unevenly (/unfairly) 
 between the two groups. 
-For example, given a target score tuple $\groupDist = (\phi_\mathrm{red}, \phi_\mathrm{blue})$, 
-we say that \pagerank is $\groupDist $-fair if the total \pagerank score of the
+For example, given a target score tuple $\groupDist = (\phi_{\text{red}}, \phi_{\text{blue}})$, we say that \pagerank is $\groupDist$-fair if the total \pagerank score of the
 vertices in the \emph{red} group is equal to~$\phi_\mathrm{red}$.
 
 % \iffalse
@@ -183,12 +210,12 @@ vertices in the \emph{red} group is equal to~$\phi_\mathrm{red}$.
 The task is to design an intervention strategy so that the \pagerank
 scores of the graph vertices become $\groupDist$-fair, or ``close enough'' to $\groupDist$-fair.
 Considering the \pagerank algorithm, 
-there are different ways to design intervention strategies, including: 
-($i$)~modifying the \pagerank restart probability;
-($ii$)~modifying the restart vector; 
-($iii$)~adding/deleting edges in/from the graph; or
-($iv$)~modifying the edge weights of the graph.
-% ($v$)~combinations of the above.
+there are several possible ways to design intervention strategies, including:
+$(i)$~modifying the \pagerank restart probability;
+$(ii)$~modifying the restart vector;
+$(iii)$~adding edges to the graph; and
+$(iv)$~modifying the edge weights of the graph in a controlled manner to ensure that the modified graph remains faithful to the original.
+
 
 In this paper, we focus on intervention strategies of type ($iv$),
 namely, achieving fair \pagerank by re\-weighting the graph edges.
@@ -294,6 +321,9 @@ We propose an efficient projected gradient-descent method for finding locally-op
 We empirically compare our approach with state-of-the-art baselines and demonstrate the efficacy of our method, 
 where very small changes in the transition matrix lead to significant improvement in the fairness of the \pagerank algorithm.
 \end{itemize}
+
+
+% \iffalse
 
 \section{Related Work}
 
@@ -405,7 +435,9 @@ Given an input graph \graph\ and its associated transition matrix \transmatrix, 
 \vspace{1mm}
 \noindent
 \emph{Remark.}  
-For any given $\transmatrix$, $\gamma$, and $\vectv$, the total PageRank score for group $\group_\agroup$ is lowered bounded by $\gamma \indvect{\agroup}^T \vectv$, which represents the probability that a random walk restarts from group $\agroup$. This can be seen from the equation $\indvect{\agroup}^T \prvector = (1 - \gamma)  \indvect{\agroup}^T  \transmatrix^T \prvector + \gamma \indvect{\agroup}^T \vectv \geq \gamma \indvect{\agroup}^T \vectv$. Hence, for fixed $\gamma$ and \vectv, it is clear that it may not always be possible to find a $\newtransmatrixopt$ that exactly achieves the desired target distribution $\groupDist$.
+For any given $\transmatrix$, $\gamma$, and $\vectv$, the total PageRank score for group $\group_\agroup$ is lowered bounded by $\gamma \indvect{\agroup}^T \vectv$ and upper bounded by $1-\gamma + \gamma \indvect{k}^T \vectv$. The lower bound represents the probability that a random walk restarts from group $\agroup$, and it can be derived from the equation $\indvect{\agroup}^T \prvector = (1 - \gamma)  \indvect{\agroup}^T  \transmatrix^T \prvector + \gamma \indvect{\agroup}^T \vectv \geq \gamma \indvect{\agroup}^T \vectv$. The upper bound can be derived from the equation $1 - \sum_{j \neq k} \indvect{j}^T \vectv \leq 1 - \gamma \sum_{j \neq k} \indvect{j}^T \vectv = 1 - \gamma + \gamma \indvect{k}^T$. 
+Thus, for fixed $\gamma$ and \vectv, it is clear that it may not always be possible to find a $\newtransmatrix$ that exactly achieves the desired target distribution $\groupDist$.
+
 
 
 % ${\grouppr_\agroup}_{\{\agroup=1,\ldots,\nogroups\}}$.
@@ -446,6 +478,8 @@ Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots,
 \label{eq:loss_function} 
 \end{equation} 
 where \prvector is the \pagerank vector corresponding to parameters~$(\transmatrix, \gamma, \vectv)$. \end{definition}
+
+
 
 The proof of the following claim can be found in Appendix~\ref{appendix:omitted-proposition-non-convexity}.
 \begin{prop}
@@ -552,7 +586,7 @@ where $\feasiblematrices(\transmatrix)$ is defined as in Problem~\ref{problem:fa
 \end{problem}
 
 In other words, $\resfeasiblematrices(\transmatrix)$ restricts the entries of the new transition matrix $\newtransmatrix$ to be within the range $(1 - \boundfactor)$ and $(1 + \boundfactor)$ of the corresponding entries in the original transition matrix $\transmatrix$, while also imposing an absolute modification bound $\absboundfactor$. The absolute bound is necessary because, for very small values in $\transmatrix$, even slight absolute changes can result in large relative variations. 
-% By applying both a relative and an absolute bound, we ensure that small absolute changes do not cause disproportionately large relative fluctuations.
+\textcolor{black}{By choosing $\delta$ and $\epsilon$ carefully such that $(1 - \delta)\transmatrix - \epsilon >0$, we can guarantee no edges are deleted from the graph.}
 
 The motivation for defining the restricted $\groupDist$-\pagerank problem (Problem~\ref{problem:restricted-fair_problem})
 is to consider only solutions that make small modifications in the transition matrix $\transmatrix$.
@@ -582,7 +616,7 @@ Real-world networks are mostly homophilic,
 i.e., vertices in the same group are more likely to be connected to each other 
 \citep{mcpherson2001birds,tarbush2012homophily}. 
 Hence, the total \pagerank scores in group $\vertices_\agroup$ are largely contributed by random walks 
-(re)\-starting at vertices in group $\vertices_\agroup$. 
+(re)\-starting at vertices in group $\vertices_\agroup$ \cite{tsioutsiouliklis_fairness-aware_2021}. 
 \iffalse
 To increase the diversity in the network, 
 it is desirable for the total \pagerank score $\indvect{\agroup}^T\prvector$  
@@ -624,6 +658,7 @@ Minimizing the group-adapted fairness-loss function
 leads to the group-adapted \phiPageRank problem.
 
 \begin{problem}[Group-adapted \phiPageRank (\gafpr)]
+\label{problem:cross-fair-loss}
 Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix \transmatrix of \graph, a restart probability $0 < \gamma < 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness-loss function
 % Given a graph $\graph = (\vertices, \edges)$ with  
 % row-stochastic transition matrix \transmatrix, 
@@ -643,6 +678,7 @@ Similarly, we define the restricted
 version of the problem.
 
 \begin{problem}[Restricted Group-adapted \phiPageRank \\ (\resgafpr)]
+\label{problem:cross-restricted-fair-loss}
 Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix $\transmatrix$ of \graph, a restart probability $0 < \gamma < 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, a relative modification-bound factor $\boundfactor \ge 0$ and an absolute modification-bound factor $\absboundfactor \ge 0$, find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness-loss function $\groupAdapLoss(\newtransmatrixopt, \gamma)$, i.e.,
 \begin{equation*}
     \newtransmatrixopt = \arg\min_{\newtransmatrix \in \resfeasiblematrices(\transmatrix) \cap \feasiblematrices(\transmatrix)} 
@@ -728,10 +764,11 @@ that have non-negative entries, and for all $i, j$ satisfy the constraint
 
 In this section, we present a projected gradient-descent algorithm 
 for finding a locally-optimal transition matrix $\newtransmatrix$ for the 
-fair \pagerank problems we defined in the previous section.
+fair \pagerank problems we defined in the previous section. We propose \Cref{alg:fairgd} for problem \Cref{problem:fair_problem} and \Cref{problem:restricted-fair_problem}, and \Cref{alg:crossgd} for problem \Cref{problem:cross-fair-loss} and \Cref{problem:cross-restricted-fair-loss}.
 % \fpr and \resfpr. We then extend the method for solving the group-adapted versions of our problems, \gafpr and \resgafpr. 
 
-\subsection{Projected gradient descent for $\groupDist$-\pagerank}
+% \subsection{Projected gradient descent for $\boldsymbol{\phi}$}
+\subsection{Projected gradient descent for \texorpdfstring{$\boldsymbol{\phi}$}{phi}-PageRank}
 
 We first derive the gradient of the fairness-loss function 
 $\loss(\transmatrix, \gamma, \vectv)$ 
@@ -760,6 +797,7 @@ with $\matrixU = \unitary - (1 - \gamma) \transmatrix^T$.
 \end{prop}
 
 
+
 \iffalse
 In terms of computational cost, 
 the gradient of the fairness loss 
@@ -778,19 +816,19 @@ we approximate $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$ with a 
   \caption{\label{alg:fairgd}\fairgd: Projected gradient descent for \fpr and \resfpr}
   \begin{algorithmic}[1]
     \REQUIRE \transmatrix, $\gamma$, \vectv, 
-$\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors $\indvect{\agroup}$ for $\agroup = \{1, \cdots, \nogroups\}$, learning rate~$\alpha$, power iteration exponent~$t$, convergence criterion $\kappa$, maximum number of iterations $N_{\text{iter}}$.
+$\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors $\indvect{\agroup}$ for $\agroup = \{1, \cdots, \nogroups\}$, learning rate~$\alpha$, power iteration exponent~$t_1$ and ~$t_2$, convergence criterion $\kappa$, maximum number of iterations $N_{\text{iter}}$.
     \ENSURE Optimized transition matrix $\newtransmatrix$
     \STATE $\newtransmatrix \gets \transmatrix$, ${\iter} \gets 0$, ${\lossprev} \gets \infty$
     \WHILE {$|\loss(\newtransmatrix, \gamma, \vectv) - {\lossprev}| > \kappa $ and $\iter < N_{\text{iter}}$}
       \STATE $\iter \gets \iter + 1$
-      \STATE $\prvector \gets {\pralgo}(\newtransmatrix, \gamma, \vectv)$
+      \STATE $\prvector \gets \text{iterating } \prvector^T = (1 - \gamma) \prvector^T \newtransmatrix + \gamma \vectv^T \text{ for } t_1 \text{ times}$
       \STATE ${\lossprev} \gets \loss(\newtransmatrix, \gamma, \vectv)$
       \FOR {$\agroup = 1$ to $\nogroups$}
         \STATE $\theta_\agroup \gets \indvect{\agroup}^T \prvector$
-        \STATE $\vecty_{\agroup} \gets$ ${\yapprox}(\newtransmatrix, \gamma, \indvect{\agroup}, t)$
-        \FOR {$(i, j)$ where $\transmatrix[i, j] > 0$}
-          \STATE $\newtransmatrix[i, j] \gets \newtransmatrix[i, j] - \alpha \frac{2(1 - \gamma)}{\gamma} (\theta_\agroup - \grouppr_\agroup) \prvector[i] \vecty_{\agroup}[j]$
-        \ENDFOR
+        \STATE $\vecty_{\agroup} \gets$ $\gamma \sum_{i=1}^{t_2} (1-\gamma)^i \newtransmatrix^i \indvect{k}$
+        % \FOR {$(i, j)$ where $\transmatrix[i, j] > 0$}
+          \STATE $\newtransmatrix \gets \newtransmatrix - \alpha \frac{2(1 - \gamma)}{\nogroups} (\theta_\agroup - \grouppr_\agroup) \prvector \vecty_k^T$
+        % \ENDFOR
         \ENDFOR
         \STATE $\newtransmatrix \gets {\project}(\newtransmatrix)$
     \ENDWHILE
@@ -798,6 +836,8 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
   \end{algorithmic}
 \end{algorithm}
 
+
+\iffalse
 \begin{algorithm}[t]
   \caption{\label{alg:poweriteration}\yapprox: power iteration approximation of $\vecty_\agroup$}
   \begin{algorithmic}[1]
@@ -805,7 +845,7 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
     \ENSURE Approximation of $\gamma \indvect{\agroup}^T \matrixU^{-1}$
     \STATE $\vecty \gets \indvect{\agroup}$
     % \STATE $\matrixU \gets \mathbf{I}_\novertices$ 
-    \STATE $\matrixU \gets \text{Identity matrix of size} \novertices \times \novertices$ 
+    \STATE $\matrixU \gets \text{Identity matrix of size } \novertices \times \novertices$ 
     \STATE $\indvect{s} \gets \mathbf{1} - \transmatrix \mathbf{1}$
     \FOR {$i = 1$ to $t$}
       \STATE $\matrixU \gets (1 - \gamma) (\transmatrix \matrixU + \indvect{s} \vectv^T \matrixU)$
@@ -814,6 +854,7 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
     \RETURN $\gamma \vecty$
   \end{algorithmic}
 \end{algorithm}
+\fi
 
 \iffalse
 \begin{algorithm}[t]
@@ -840,7 +881,7 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
 
 \noindent
 \textbf{Matrix inversion acceleration.}
-The calculation of $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$ involves the inverse of the matrix $\matrixU^T = \unitary - (1 - \gamma) \transmatrix$, which is computationally expensive. To avoid computing matrix inversion, we approximation $\matrixU^{-T}$ with the series
+The calculation of $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$ involves the inverse of the matrix $\matrixU^T = \unitary - (1 - \gamma) \transmatrix$, which is computationally expensive. To avoid computing matrix inversion, we approximation $\matrixU^{-T}$ with the Neumann series
 % \begin{equation}
 % \label{eq:neuman}
 $    \matrixU^{-T} = \sum_{i=0}^{\infty} (1-\gamma)^i \transmatrix^i,$
@@ -854,7 +895,7 @@ As the series terms decrease exponentially in mag\-ni\-tude,
 due to the decaying factor $(1-\gamma)$, 
 we can approximate $\vecty_\agroup$ efficiently 
 by computing only the first $t$~series terms.
-The method is presented in Algorithm~\ref{alg:poweriteration}.
+\textcolor{black}{We show that truncating the Neumann series to its first $50$ terms yields a relative error below $0.0003$. The detailed analysis is provided in the Appendix.}
 
 % $\vecty_\agroup$ with a power iteration:
 % \begin{equation}\label{eq:power_iteration}
@@ -906,27 +947,76 @@ and can be omitted, if we need space.
 }}
 \fi
 
+
+
+
+
+
+
 \vspace{1mm}
 \noindent
 \textbf{Gradient projection.} 
 We use \newtransmatrix to denote the transition matrix obtained by the projected gradient-descent method.
 After each gradient descent step, 
-\newtransmatrix is projected back to the feasible set 
-$\feasiblematrices(\transmatrix) {\color{black}\cap \resfeasiblematrices(\transmatrix)}$ 
-by the following steps:
-\begin{enumerate}[leftmargin=*]
-  \item For all entries $[i, j]$, if $\transmatrix[i, j] = 0$ then set $\newtransmatrix[i, j] = 0$.
-  \item Set all negative entries in $\newtransmatrix$ to zero.
-  \item For \fpr, normalize each row of \newtransmatrix, so that \newtransmatrix is row-stochastic. 
-  \item For the restricted \resfpr problem, truncate all entries in $\newtransmatrix$ to lie within the interval defined by the modification factors $\absboundfactor$ and $\boundfactor$, then row-normalize the truncated matrix. Repeat the truncation and normalization steps until all entries in $\newtransmatrix$ meet the required constraints. 
-  % \item {\color{magenta} 
-  % For the restricted problem \resfpr, truncate all entries in $\newtransmatrix$ in the interval defined by 
-  % the modification factors $\absboundfactor$ and $\boundfactor$.}
-  % \item Normalize each row of \newtransmatrix, so that \newtransmatrix is row-stochastic.
-\end{enumerate}
+\newtransmatrix is projected back to the feasible set $\feasiblematrices(\transmatrix)$ or $\feasiblematrices(\transmatrix) \cap \resfeasiblematrices(\transmatrix)$.
+For both constraints, we solve the projection for each row of $\newtransmatrix$ separately. Given one row, let $\vectalpha$ be the vector of size $K$ comprised of its non-zero elements.
+
+The constraint $\feasiblematrices(\transmatrix)$ calls for a Euclidean projection of $\vectalpha$ onto the probability simplex:
+\begin{equation*}
+    \vectalphaopt  =\underset {\vectr \in  \Delta ^{k}}{\text{argmin}} \left\| \vectalpha - \vectr \right\|_2^2
+\end{equation*}
+where $\Delta ^{k-1} = \{ \vectr \in \mathbb{R}^{K-1} \mid \mathbf{1}^{\intercal} \vectr = 1, \vectr \geq 0\}$ is a probability simplex. This is a well studied problem (\citet{michelot1986finite, pardalos1990algorithm, duchi2008efficient, condat2016fast, cisse2017parseval}). Its solution is of the form: $\alpha^{*}_i = \max (0, \alpha_i - \tau(\vectalpha))$, with $\tau: \mathbb{R}^{K} \rightarrow \mathbb{R}$ the unique function satisfying $\sum_{i} (x_i - \tau(\vectalpha)) = 1$ for every $\textbf{\textit{x}} \in \mathbb{R}^{K}$. According to \citet{duchi2008efficient}, let $\alpha_1 \geq \alpha_2 \geq \cdots \alpha_{K}$ be the sorted elements of $\vectalpha$, and $k(\vectalpha) = \max\{k \in (1, \cdots, K) \mid 1 + k \alpha_k > \sum_{j \leq k} \alpha_j \} $, $\tau(\vectalpha)$ is given by:
+\begin{equation*}
+	\tau(\vectalpha) = \frac{(\sum_{j \leq k(\vectalpha)} \alpha_j) -1}{k(\vectalpha)}
+\end{equation*}
+The time complexity of the projection is $\mathcal{O}(KlogK)$ as it is dominated by sorting of elements in $\vectalpha$, and $K$ is typically small for sparse graphs. In \Cref{alg:project} in~\Cref{appendix:pseudocode}, we use the method detailed by \citet{duchi2008efficient} to perform the projection of $\vectalpha$ after every gradient update step.
+% $\feasiblematrices(\transmatrix) {\color{black}\cap \resfeasiblematrices(\transmatrix)}$ 
+% by the following steps:
+% \begin{enumerate}[leftmargin=*]
+%   \item For all entries $[i, j]$, if $\transmatrix[i, j] = 0$ then set $\newtransmatrix[i, j] = 0$.
+%   \item Set all negative entries in $\newtransmatrix$ to zero.
+%   \item For \fpr, normalize each row of \newtransmatrix, so that \newtransmatrix is row-stochastic. 
+%   \item For the restricted \resfpr problem, truncate all entries in $\newtransmatrix$ to lie within the interval defined by the modification factors $\absboundfactor$ and $\boundfactor$, then row-normalize the truncated matrix. Repeat the truncation and normalization steps until all entries in $\newtransmatrix$ meet the required constraints. 
+%   % \item {\color{magenta} 
+%   % For the restricted problem \resfpr, truncate all entries in $\newtransmatrix$ in the interval defined by 
+%   % the modification factors $\absboundfactor$ and $\boundfactor$.}
+%   % \item Normalize each row of \newtransmatrix, so that \newtransmatrix is row-stochastic.
+% \end{enumerate}
 
 % Since our optimization process uses element-wise updates for obtaining \newtransmatrix, the first step can be omitted. 
-Details are given in Algorithm~\ref{alg:project} in Appendix~\ref{appendix:pseudocode}.
+
+The constraint $\feasiblematrices(\transmatrix)$ calls for a Euclidean projection of $\vectalpha$ onto the intersection of a probability simplex and a box:
+\begin{equation*}
+	\vectalphaopt  =\underset {\vectr \in  \mathcal{F}}{\text{argmin}} \left\| \vectalpha - \vectr \right\|_2^2
+\end{equation*}
+where $\mathcal{F} = \{ \vectr \in \mathbb{R}^{K} \mid \mathbf{1}^{\intercal} \vectr = 1,  \vectl \leq \vectr \leq \vectu \}$, with $\vectl = \max \{0, (1 - \delta) \vectalpha - \epsilon \}$ and $\vectu = \min \{1, (1 + \delta) \vectalpha + \epsilon \}$. According to \citet{adam2022projections}, the solution is $\alpha_i^* = \text{clip} (\alpha_i + \lambdaopt, l_i, u_i)$, with $\text{clip}(x, a, b)$ defined as
+\begin{equation*}
+	\text{clip}(x, a, b) = \begin{cases}
+		a & \text{if } x \leq a \\
+		x & \text{if } a < x < b \\
+		b & \text{if } x \geq b
+	\end{cases}
+\end{equation*}
+and $\lambdaopt$ is the solution that solves the function
+\begin{equation*}
+	h(\lambda) := \sum_{i=1}^{K} \text{clip}(\alpha_i + \lambda, l_i, u_i) -1 = 0
+\end{equation*}
+$h$ is piecewise linear and non-decreasing in $\lambda$, this allows us to find $\lambda$ via a simple simple proposed by \citet{adam2022projections}. The rationale is explained as follows:
+\begin{enumerate}
+	\item For any $\lambda$, $\clip(\alpha_i, l_i, u_i)$ takes value $l_i$, $\lambda + \alpha_i$ or $u_i$, thus we can rewrite $h(\lambda)$ as $h(\lambda) = \act(\lambda) \times \lambda + C$ for some constant $C$, where $\act(\lambda) $ is the number of elements such that $\alpha_i + \lambda$ falls in range $[l_i, u_i)$.
+	\item Let $R$ be the increasing ranking of $2K$ items consisting of $\vectl - \vectalpha$ and $\vectu - \vectalpha$. For any $\lambda$ in interval $[R_j, R_{j+1})$, $\act(\lambda)$ remains constant.
+	\item Let $\Total(\lambda) = \sum_{i=1}^K \clip(\alpha_i + \lambda, l_i, u_i)$, assume $\mathcal{F}$ is non-empty, then there must exist some $j \in \{1, \cdots, 2K\}$ such that $\Total(R_j) \leq 1$ and $\Total(R_{j+1}) > 1$, and we can conclude that $\lambda^*$ lies in range $[R_j, R_{j+1})$. Since $\act(R_j) = \act(\lambda^*)$, it follows that,
+	\begin{equation*}
+		(\lambda^{*} - R_j) \times \act(R_j) = 1 - \Total(R_j)
+	\end{equation*}
+	and thus we can compute $\lambda^{*}$ as 
+	\begin{equation*}
+		\lambda^{*} = \frac{1-Total(R_j)}{\act(R_j)}
+	\end{equation*}
+\end{enumerate}
+The time complexity of the projection is also $\mathcal{O}(KlogK)$ because the computation of $\lambda^*$ is dominated by sorting of $2K$ elements in $\vectl-\vectalpha$ and $\vectu-\vectalpha$.
+The details are given in Algorithm~\ref{alg:project} in Appendix~\ref{appendix:pseudocode}.
+
 
 % \haoyun{I am not sure if it is necessary to discuss how to handle sink vertices. \\
 % 1. It is not the emphasis of this paper, \\
@@ -1021,6 +1111,50 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
 The \fairgd algorithm can be extended to address both the \gafpr and \resgafpr problems by introducing an outer loop that iterates over all groups. This enhanced algorithm, referred to as \crossgd, 
 is detailed in~\Cref{alg:crossgd} in~\Cref{appendix:pseudocode}.
 
+
+
+
+
+
+
+
+
+\begin{prop}
+\label{theorem:adapted-gradient-fairness-loss}
+The gradient of the fairness-loss function 
+$\groupAdapLoss(\transmatrix, \gamma, \vectv)$ 
+with respect to the transition matrix \transmatrix is given by
+\begin{equation}
+\begin{aligned}
+\label{eq:gradient_cross_fairness_loss}
+    \frac{\partial}{\partial \transmatrix} \groupAdapLoss(\transmatrix, \gamma, \vectv) 
+         = \frac{2 (1-\gamma)}{K^2} \sum_{k=1}^{\nogroups} 
+         \sum_{l=1}^{\nogroups} \left(\indvect{\agroup}^T \prvector_l - \grouppr_\agroup\right) \left( \prvector_l \indvect{\agroup}^T \matrixU^{-1} \right)         
+\end{aligned}
+\end{equation}
+
+\end{prop}
+
+
+\subsection{Generalizing the Fairness Loss}
+
+While not explicitly studied in the paper, we note that the proposed fairness loss can be generalized to encompass a broader range of fairness definitions and graph structures. For instance, when fairness scores are specified at the individual-node level, an auxiliary loss term may be incorporated to jointly enforce both group-level and individual-level fairness constraints. Moreover, in graphs exhibiting hierarchical group structures, where each layer defines a distinct partition of the nodes and an associated fairness goal, the overall fairness objective can be formulated as the sum of the layer-specific losses. This formulation enables the simultaneous satisfaction of fairness requirements across multiple structural scales. We also note that the restricted fairness losses can incorporate node-level constraints; that is, if a $\delta$ and $\epsilon$ are specified for each node, our algorithm remains applicable.
+
+
+\section{Computational Complexity and Convergence Analysis}
+
+The primary computational cost arises from computing the \pagerank{} vector and approximating $\vecty_k$. 
+The \pagerank{} vector is obtained by iterating the update equation $\prvector^\top = (1 - \gamma)\, \prvector^\top \transmatrix + \gamma\, \vectv^\top$
+for $t_1$ iterations, resulting in a computational complexity of $\mathcal{O}(t_1 n^2)$. 
+The computation of $\vecty_k$ involves multiplying a vector by a matrix $t_2$ times. 
+Evaluating $\vecty_k$ for all $k \in \{1, \dots, \nogroups\}$ therefore requires $\mathcal{O}(\nogroups t_2 n^2)$ operations. 
+Consequently, the overall complexity of \Cref{alg:fairgd} is $\mathcal{O}\big((\nogroups  t_2 + t_1) n^2\big)$.
+Since \crossgd{} performs an additional loop over $\nogroups$ when computing $\vecty_k$, its complexity becomes $\mathcal{O}\big((\nogroups^2 t_2 + t_1) n^2\big).$
+
+$\mathcal{L}(P)$ and $\mathcal{L}_g(P)$ are both differentiable functions and their first derivatives are smooth. Since the feasible set $\resfeasiblematrices(\transmatrix) \cap \feasiblematrices(\transmatrix)$ is convex and closed, the proposed projected gradient update method with constant step size converges to a stationary point, which is a local minimum \cite{bertsekas1997nonlinear}. We provide detailed analysis in the \Cref{section:convergence_L}
+and \Cref{section:convergence_Lg}.
+
+
 \section{Experimental evaluation}
 
 % \aris{Algorithms for community detection: (1) Louvain (2) METIS}
@@ -1081,11 +1215,11 @@ A larger $\overline{\rho}$ indicates fewer changes in the PageRank score's ranki
     \toprule
     Dataset & \#Vertices & \#Edges  & Modularity & $\groupDist_{O}$\\
     \midrule
-    \book & 105 & 882  & 0.4149 & (0.10, 0.48, 0.42) \\
+    \book & 105 & 882  & 0.4149 & ( 0.42,0.10, 0.48) \\
     \blogs & 1224 & 19025 & 0.4111& (0.48, 0.52) \\
-    \mind & 2269 & 11345  & 0.075 & (0.74, 0.26)\\
+    \mind & 2269 & 11345  & 0.075 & ( 0.26,0.74)\\
     \twitter & 18470 & 48365  & 0.4755 & (0.42, 0.58)\\
-    \slashdot & 82168 & 948464 & 0.2950 & (0.30, 0.17 0.36 0.17)\\
+    \slashdot & 82168 & 948464 & 0.2950 & (0.30, 0.36, 0.17,0.17)\\
     \bottomrule
   \end{tabular}
   \end{small}
@@ -1112,15 +1246,17 @@ whereas more information is presented in \Cref{appendix:datasets}.
 \fi 
 
 
-\begin{figure*}[t]
-  \centering
-\includegraphics[width=\textwidth]{fig/PhiFair/only_legend.pdf}
-\vspace{-5mm}
-\end{figure*}
+% \begin{figure*}[t]
+%   \centering
+% \includegraphics[width=\textwidth]{fig/PhiFair/only_legend.pdf}
+% \vspace{-5mm}
+% \end{figure*}
 \begin{figure*}[t] % Use figure* for spanning across two columns
     \centering
+    \includegraphics[width=\textwidth]{fig/PhiFair/only_legend.pdf}
+    
     \begin{subfigure}[b]{0.21\textwidth}
-        \centering        \includegraphics[width=\textwidth]{fig/PhiFair/books_trade_Loss.pdf} 
+        \centering        \includegraphics[width=\textwidth]{fig/PhiFair/books_Loss.pdf} 
         \caption{\book}
 \label{fig:loss_book}
     \end{subfigure}
@@ -1134,21 +1270,21 @@ whereas more information is presented in \Cref{appendix:datasets}.
     \hfill
         \begin{subfigure}[b]{0.19\textwidth}
         \centering
-\includegraphics[width=\textwidth]{fig/PhiFair/mind_trade_Loss.pdf}
+\includegraphics[width=\textwidth]{fig/PhiFair/mind_Loss.pdf}
         \caption{\mind}
 \label{fig:loss_mind}
     \end{subfigure}
     \hfill
         \begin{subfigure}[b]{0.19\textwidth}
         \centering
-\includegraphics[width=\textwidth]{fig/PhiFair/soc-political-retweet_trade_Loss.pdf}
+\includegraphics[width=\textwidth]{fig/PhiFair/soc-political-retweet_Loss.pdf}
         \caption{\twitter}
 \label{fig:loss_twitter}
     \end{subfigure}
     \hfill
         \begin{subfigure}[b]{0.19\textwidth}
         \centering
-\includegraphics[width=\textwidth]{fig/PhiFair/slashdot_trade_Loss.pdf}
+\includegraphics[width=\textwidth]{fig/PhiFair/slashdot_Loss.pdf}
         \caption{\slashdot}
 \label{fig:loss_slashdot}
     \end{subfigure}
@@ -1160,7 +1296,7 @@ whereas more information is presented in \Cref{appendix:datasets}.
 \begin{figure*}[t] % Use figure* for spanning across two columns
     \centering
     \begin{subfigure}[b]{0.21\textwidth}
-        \centering        \includegraphics[width=\textwidth]{fig/PhiFair/books_trade_change.pdf} 
+        \centering        \includegraphics[width=\textwidth]{fig/PhiFair/books_change.pdf} 
         \caption{\book}
 \label{fig:change_book}
     \end{subfigure}
@@ -1174,21 +1310,21 @@ whereas more information is presented in \Cref{appendix:datasets}.
     \hfill
         \begin{subfigure}[b]{0.19\textwidth}
         \centering
-\includegraphics[width=\textwidth]{fig/PhiFair/mind_trade_change.pdf}
+\includegraphics[width=\textwidth]{fig/PhiFair/mind_change.pdf}
         \caption{\mind}
 \label{fig:change_mind}
     \end{subfigure}
     \hfill
         \begin{subfigure}[b]{0.19\textwidth}
         \centering
-\includegraphics[width=\textwidth]{fig/PhiFair/soc-political-retweet_trade_change.pdf}
+\includegraphics[width=\textwidth]{fig/PhiFair/soc-political-retweet_change.pdf}
         \caption{\twitter}
 \label{fig:change_twitter}
     \end{subfigure}
     \hfill
         \begin{subfigure}[b]{0.19\textwidth}
         \centering
-\includegraphics[width=\textwidth]{fig/PhiFair/slashdot_trade_change.pdf}
+\includegraphics[width=\textwidth]{fig/PhiFair/slashdot_change.pdf}
         \caption{\slashdot}
 \label{fig:change_slashdot}
     \end{subfigure}
@@ -1242,6 +1378,7 @@ We compare our methods with the following strong baselines: \\
 More details on the baselines
 % including the revised transition matrix, 
 can be found in \Cref{appendix:baselines}.
+
 
 \iffalse
 \noindent 
@@ -1317,34 +1454,37 @@ neither do they change the restart vector.
 
 \lfprn and \lfpru are guaranteed to achieve perfect $\groupDist$-fairness, 
 % in \pagerank scores, 
-provided the restart vector is $\groupDist$-fair, i.e., $\indvect{\agroup}^T \vectv = \grouppr_\agroup$. Both algorithms modify the graph to be fully connected.
+provided the restart vector is $\groupDist$-fair, i.e., $\indvect{\agroup}^T \vectv = \grouppr_\agroup$. Both algorithms modify the graph to be fully connected. We report fairness loss $L(\hat{\transmatrix}, \gamma, \vectv)$ and group-adapted fairness loss $L_g(\hat{\transmatrix}, \gamma, \vectv)$ for these two baselines with the restart vector $\vectv$ set to a uniform vector.
 
 
-\begin{figure*}[t]
-  \centering
-\includegraphics[width=\textwidth]{fig/adaptedLoss/only_legend.pdf}
-\vspace{-5mm}
-\end{figure*}
+% \begin{figure*}[t]
+%   \centering
+% \includegraphics[width=\textwidth]{fig/adaptedLoss/only_legend.pdf}
+% \vspace{-5mm}
+% \end{figure*}
 \begin{figure*}[t] % Use figure* for spanning across two columns
 % \centering
 % \includegraphics[width=\textwidth]{fig/adaptedLoss/only_legend.pdf}
     \centering
+    \includegraphics[width=\textwidth]{fig/adaptedLoss/only_legend.pdf}
+
+
     \begin{subfigure}[b]{0.21\textwidth}
-        \centering        \includegraphics[width=\textwidth]{fig/adaptedLoss/books_trade_Loss.pdf} 
+        \centering        \includegraphics[width=\textwidth]{fig/adaptedLoss/books_Loss_trade.pdf} 
         \caption{\book}
 \label{fig:adaptloss_book}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.19\textwidth}
         \centering
-\includegraphics[width=\textwidth]{fig/adaptedLoss/blogs_loss.pdf}
+\includegraphics[width=\textwidth]{fig/adaptedLoss/blogs_Loss.pdf}
         \caption{\blogs}
 \label{fig:adaptloss_blog}
     \end{subfigure}
     \hfill
         \begin{subfigure}[b]{0.19\textwidth}
         \centering
-\includegraphics[width=\textwidth]{fig/adaptedLoss/mind_loss.pdf}
+\includegraphics[width=\textwidth]{fig/adaptedLoss/mind_Loss.pdf}
         \caption{\mind}
 \label{fig:adaptloss_mind}
     \end{subfigure}
@@ -1364,26 +1504,24 @@ provided the restart vector is $\groupDist$-fair, i.e., $\indvect{\agroup}^T \ve
     \end{subfigure}
     \caption{Fairness loss $\groupAdapLoss(\newtransmatrix,\gamma)$ of each baseline on five datasets for the group-adapted \phiPageRank problem}
     \label{fig:loss_all_dataset_adapted}
-\end{figure*}
 
-\begin{figure*}[t] % Use figure* for spanning across two columns
-    \centering
+     \centering
     \begin{subfigure}[b]{0.21\textwidth}
-        \centering        \includegraphics[width=\textwidth]{fig/adaptedLoss/books_trade_change.pdf} 
+        \centering        \includegraphics[width=\textwidth]{fig/adaptedLoss/books_change_trade.pdf} 
         \caption{\book}
 \label{fig:adapechange_book}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.19\textwidth}
         \centering
-\includegraphics[width=\textwidth]{fig/adaptedLoss/blogs_trade_change.pdf}
+\includegraphics[width=\textwidth]{fig/adaptedLoss/blogs_change.pdf}
         \caption{\blogs}
 \label{fig:adaptchange_blog}
     \end{subfigure}
     \hfill
         \begin{subfigure}[b]{0.19\textwidth}
         \centering
-\includegraphics[width=\textwidth]{fig/adaptedLoss/mind_trade_change.pdf}
+\includegraphics[width=\textwidth]{fig/adaptedLoss/mind_change.pdf}
         \caption{\mind}
 \label{fig:adaptchange_mind}
     \end{subfigure}
@@ -1403,7 +1541,12 @@ provided the restart vector is $\groupDist$-fair, i.e., $\indvect{\agroup}^T \ve
     \end{subfigure}
     \caption{Transition matrix change $\Delta_\transmatrix$ of each baseline on five datasets for the group-adapted \phiPageRank problem}
     \label{fig:change_all_dataset_adapted}
+    
 \end{figure*}
+
+% \begin{figure*}[t] % Use figure* for spanning across two columns
+   
+% \end{figure*}
 % \fi
 
 \subsection{Experimental setting}
@@ -1415,30 +1558,23 @@ We fix $\vectv$ to be the uniform vector.
 
 \vspace{1mm}
 \noindent
-\textbf{(Group-adapted) fairness loss evaluation.} 
-% We distinguish between datasets as follows: (1) 
-For the \blogs and \mind datasets, we compare our approach with all baselines.
-% (2) 
-For the remaining datasets, we only compare with \fairwalk and \crosswalk. 
-The reason is that both \lfpru and \lfprn produce a fully-connected graph, 
-making it infeasible to run the \pagerank algorithm on % a laptop given the large scale of 
-the \twitter dataset. 
-Moreover, it is unclear how \lfpru and \lfprn can be extended to the multi-group scenario.
-%  so we do not compare against them on the \slashdot and \book datasets.
+\textbf{Group indicator definition.} 
+For datasets \book, \blogs, \mind, and \twitter, we use node labels as group indicators. For the \slashdot dataset, where node labels are unavailable, we apply the METIS graph partitioning algorithm \cite{karypis_metis_1997} to divide the vertices into groups.
 
 \vspace{1mm}
 \noindent
-\textbf{Transition matrix change $\Delta_\transmatrix$ evaluation.} 
-On the \twitter dataset, we compare our approach with \lfpru and \lfprn. 
-The remaining experimental settings are 
-% consistent with those used in the fairness loss evaluation 
-as described above.
+\textbf{(Group-adapted) fairness loss evaluation.} 
+% We distinguish between datasets as follows: (1) 
+For the \blogs, \mind and \twitter datasets, we compare our approach with all baselines.
+% (2) 
+For the remaining multi-group datasets, we only compare with \fairwalk and \crosswalk because is unclear how \lfpru and \lfprn can be extended to the multi-group scenario.
+%  so we do not compare against them on the \slashdot and \book datasets.
 
 \vspace{1mm}
 \noindent
 \textbf{$\fairgd(\boundfactor,\absboundfactor)$ and $\crossgd(\boundfactor, \absboundfactor)$.}
 % In the experiments, 
-For \resfpr and \resgafpr, we set $\boundfactor = 0.1$ and $\absboundfactor = \{0.05, 0.1\}$. 
+For \resfpr and \resgafpr, we set $\boundfactor = \{ 0.1, 0.5\}$ and $\absboundfactor = 0.1$. 
 % \honglian{Explain for setting this two parameters to the current value?}
 % For all gradient-descent methods, 
 We perform a grid search over a logarithmically-spaced range of values between $10^{-3}$ and~$10^3$
@@ -1467,205 +1603,226 @@ The code and dataset used in this paper are available.%
 
 \begin{table*}[t]
 \centering
-\caption{\label{table:ranking_book}
-Average Spearman's coefficient of each method for the \book dataset}
+\caption{
+Average Spearman's coefficient of each method for the \mind dataset}
 \vspace{-2mm}
 \begin{small}
-\begin{tabular}{c|ccccc|ccccc}
-\toprule
-& \multicolumn{5}{c|}{({\sc\small R-})\fpr
-} & \multicolumn{5}{c}{({\sc\small R-})\gafpr} \\
-% Removed the horizontal line below the sections
-\makecell{\grouppr} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
-\midrule
-0.1 & -0.05 & -0.04 & \textbf{0.52} & \textbf{0.52} & \textbf{0.52} & -0.05 & -0.04 & \underline{0.16} & 0.09 & \underline{0.11} \\
-0.2 & -0.06 & -0.02 & \textbf{0.24} & -0.00 & 0.10 & -0.06 & -0.02 & 0.14 & \underline{0.18} & \textbf{0.20} \\
-0.3 & -0.03 & -0.02 & \textbf{0.24} & \underline{0.20} & 0.11 & -0.03 & -0.02 & \textbf{0.10} & \underline{0.04} & 0.02 \\
-0.4 & -0.18 & -0.11 & 0.09 & \underline{0.17} & 0.04 & -0.18 & -0.11 & \underline{0.09} & 0.02 & \textbf{0.18} \\
-0.5 & -0.02 & 0.01 & \underline{0.14} & \textbf{0.27} & 0.08 & -0.02 & 0.01 & \underline{0.11} & \underline{0.16} & \underline{0.11} \\
-0.6 & 0.06 & 0.10 & \underline{0.20} & \underline{0.16} & \underline{0.16} & 0.06 & 0.10 & 0.09 & \underline{0.15} & \textbf{0.22} \\
-0.7 & \underline{0.17} & 0.13 & \textbf{0.20} & \underline{0.15} & 0.11 & \textbf{0.17} & \underline{0.13} & \underline{0.13} & 0.10 & 0.09 \\
-0.8 & \underline{0.21} & 0.04 & \textbf{0.31} & 0.09 & 0.17 & 0.21 & 0.04 & \underline{0.17} & 0.02 & \textbf{0.23} \\
-0.9 & 0.02 & 0.04 & 0.04 & \textbf{0.19} & \underline{0.17} & 0.02 & 0.04 & \textbf{0.18} & 0.07 & \underline{0.12} \\
-\bottomrule
+\begin{tabular}{c|cccccccccc}
+\hline
+$\phi$ & \fairwalk & \crosswalk & \lfpru & \lfprn &  \fairgd & $\fairgd(0.1, 0.1)$ & $\fairgd(0.5, 0.1)$ & \crossgd & $\crossgd(0.1, 0.1)$ & $\crossgd(0.5, 0.1)$ \\
+\hline
+$0.1$ & 0.811 & 0.812 & 0.790 & 0.802 & \textbf{0.970} & \underline{0.953} & \textbf{0.970} & 0.817 & 0.853 & 0.830 \\
+$0.2$ & 0.830 & 0.823 & 0.808 & 0.801 & \textbf{0.997} & \textbf{0.997} & \textbf{0.997} & 0.810 & \underline{0.855} & 0.817 \\
+$0.3$ & 0.818 & 0.808 & 0.817 & 0.810 & \textbf{0.998} & \textbf{0.998} & \textbf{0.998} & 0.797 & \underline{0.835} & 0.815 \\
+$0.4$ & 0.828 & 0.795 & 0.811 & 0.795 & \textbf{0.970} & \underline{0.966} & \textbf{0.970} & 0.809 & 0.847 & 0.813 \\
+$0.5$ & 0.819 & 0.812 & 0.810 & 0.802 & \textbf{0.970} & 0.909 & \underline{ 0.960} & 0.814 & 0.828 & 0.802 \\
+$0.6$ & 0.821 & 0.809 & 0.788 & 0.807 & \textbf{0.966} & 0.888 & \underline{0.903} & 0.814 & 0.846 & 0.825 \\
+$0.7$ & 0.816 & 0.805 & 0.789 & 0.786 & \textbf{0.958} & 0.884 & \underline{0.888} & 0.816 & 0.836 & 0.810 \\
+$0.8$ & 0.794 & 0.805 & 0.794 & 0.791 & \textbf{0.930} & \underline{0.872} & 0.883 & 0.769 & 0.849 & 0.791 \\
+$0.9$ & 0.810 & 0.800 & 0.802 & 0.798 & \textbf{0.884} & 0.857 & \underline{0.867} & 0.760 & 0.833 & 0.801 \\
+\hline
 \end{tabular}
 \end{small}
+\label{table:ranking_mind}
 \end{table*}
 
-\begin{figure*}[t] % Use figure* for spanning across two columns
+
+
+
+% \begin{table}[h!]
+% \centering
+
+% \caption{Table of values for different $\Phi$ levels (rounded to 2 decimals)}
+% \end{table}
+
+
+
+
+\begin{figure*}[t]
     \centering
-    \begin{subfigure}[b]{0.195\textwidth}
-        \centering        \includegraphics[width=\textwidth]{fig/visual_graph/Left.pdf} 
-        \caption{Original}
+    % First row (5 figures)
+   \begin{subfigure}[b]{0.195\textwidth}
+        \centering        \includegraphics[width=\textwidth]{fig/visual_graph/books_origin.pdf} 
+        \caption{\centering Original\\$[0.426,0.098,0.477]$}
 \label{fig:graph_original}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.195\textwidth}
         \centering
-\includegraphics[width=\textwidth]{fig/visual_graph/fairgd.png}
-        \caption{\fairgd}
+\includegraphics[width=\textwidth]{fig/visual_graph/books_fgd_visualization.pdf}
+        \caption{\centering \fairgd \\$[0.500, 0.249, 0.251 ]$}
 \label{fig:graph_fairgd}
     \end{subfigure}
     \hfill
      \begin{subfigure}[b]{0.195\textwidth}
         \centering
-\includegraphics[width=\textwidth]{fig/visual_graph/cross_graph_right.pdf}
-        \caption{\crossgd}
+\includegraphics[width=\textwidth]{fig/visual_graph/books_adaptfgd_visualization.pdf}
+        \caption{\centering \crossgd \\ $[0.491, 0.240,  0.269]$}
 \label{fig:graph_adapted}
     \end{subfigure}
     \hfill
         \begin{subfigure}[b]{0.195\textwidth}
         \centering
-\includegraphics[width=\textwidth]{fig/visual_graph/fairwalk.png}
-        \caption{\fairwalk}
+\includegraphics[width=\textwidth]{fig/visual_graph/books_fw_visualization.pdf}
+        \caption{ \centering \fairwalk \\ $[0.434, 0.194,  0.371]$}
 \label{fig:graph_fw}
     \end{subfigure}
     \hfill
         \begin{subfigure}[b]{0.195\textwidth}
         \centering
-\includegraphics[width=\textwidth]{fig/visual_graph/crosswalk.png}
-        \caption{\crosswalk}
+\includegraphics[width=\textwidth]{fig/visual_graph/books_cw_visualization.pdf}
+        \caption{ \centering \crosswalk \\ $[0.434, 0.202,0.364]$}
 \label{fig:graph_cw}
     \end{subfigure}
-    \caption{Original graph for \book, and the graph after edge-reweighted by each method, with $\grouppr_2$ set to~0.5. The vertex size is proportional to its \pagerank score, and the edge thickness corresponds to the transition weight.  }
+
+    \vspace{2mm} % space between rows
+
+    % Second row (4 figures)
+    \begin{subfigure}[b]{0.195\textwidth}
+        \centering        \includegraphics[width=\textwidth]{fig/visual_graph/books_fgd(0.1,0.1)_visualization.pdf} 
+        \caption{\centering \fairgdrone \\ $[0.500, 0.249, 0.251]$}
+\label{fig:fairone}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.195\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/visual_graph/books_fgd(0.5,0.1)_visualization.pdf}
+        \caption{\centering \fairgdrtwo \\ $[0.501, 0.249,  0.249]$}
+\label{fig:graph_fairtwo}
+    \end{subfigure}
+    \hfill
+     \begin{subfigure}[b]{0.195\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/visual_graph/books_adaptfgd(0.1,0.1)_visualization.pdf}
+        \caption{\centering \crossgdrone \\ $[0.431, 0.108, 0.460]$}
+\label{fig:graph_adaptedone}
+    \end{subfigure}
+    \hfill
+        \begin{subfigure}[b]{0.195\textwidth}
+        \centering
+\includegraphics[width=\textwidth]{fig/visual_graph/books_adaptfgd(0.5,0.1)_visualization.pdf}
+        \caption{\centering \crossgdrtwo \\ $[0.457, 0.157, 0.386]$}
+\label{fig:graph_adapttwo}
+    \end{subfigure}
+
+   \caption{
+Graph structure of \book before and after edge reweighting by each method. The target group-wise fairness vector is $[0.5, 0.25, 0.25]$. Below each method name, the group-wise \pagerank scores calculated using a uniform restart vector are displayed. The three values correspond to the purple, green, and red groups, respectively.
+}
+
     \label{fig:graph_visualization}
 \end{figure*}
 
-\subsection{Fairness loss and weight change $\Delta_\transmatrix$}
+
+
+
+
+% \begin{figure*}[t] % Use figure* for spanning across two columns
+%     \centering
+%     \begin{subfigure}[b]{0.195\textwidth}
+%         \centering        \includegraphics[width=\textwidth]{fig/visual_graph/books_origin.pdf} 
+%         \caption{Original}
+% \label{fig:graph_original}
+%     \end{subfigure}
+%     \hfill
+%     \begin{subfigure}[b]{0.195\textwidth}
+%         \centering
+% \includegraphics[width=\textwidth]{fig/visual_graph/books_fgd_visualization.pdf}
+%         \caption{\fairgd}
+% \label{fig:graph_fairgd}
+%     \end{subfigure}
+%     \hfill
+%      \begin{subfigure}[b]{0.195\textwidth}
+%         \centering
+% \includegraphics[width=\textwidth]{fig/visual_graph/books_adaptfgd_visualization.pdf}
+%         \caption{\crossgd}
+% \label{fig:graph_adapted}
+%     \end{subfigure}
+%     \hfill
+%         \begin{subfigure}[b]{0.195\textwidth}
+%         \centering
+% \includegraphics[width=\textwidth]{fig/visual_graph/books_fw_visualization.pdf}
+%         \caption{\fairwalk}
+% \label{fig:graph_fw}
+%     \end{subfigure}
+%     \hfill
+%         \begin{subfigure}[b]{0.195\textwidth}
+%         \centering
+% \includegraphics[width=\textwidth]{fig/visual_graph/books_cw_visualization.pdf}
+%         \caption{\crosswalk}
+% \label{fig:graph_cw}
+%     \end{subfigure}
+%     \caption{Original graph for \book, and the graph after edge-reweighted by each method, with $\grouppr_2$ set to~0.5. The vertex size is proportional to its \pagerank score, and the edge thickness corresponds to the transition weight.  }
+%     \label{fig:graph_visualization}
+% \end{figure*}
+
+\subsection{Fairness loss and weight change \texorpdfstring{$\Delta_\transmatrix$}{Delta $P$}}
 
 We evaluate the fairness loss $\loss(\newtransmatrix, \gamma, \vectv)$
 % as defined in \Cref{eq:loss_function}, 
-on \fairgd, \fairgd~($\boundfactor=0.1$, $\absboundfactor=0.05$), \fairgd~($\boundfactor=0.1$, $\absboundfactor=0.1$), and all baselines across the five datasets. 
+on \fairgd, \fairgd~($0.1$, $0.1$), \fairgd~($0.5$, $0.1$), and all baselines across the five datasets. 
 The results are shown in \Cref{fig:loss_all_dataset}. 
 We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original transition matrix; 
 % for each method across the five datasets; 
 the results are shown in \Cref{fig:change_all_dataset}.
 The results demonstrate that \fairgd and its restricted variants generally achieve better or comparable fairness loss compared to the baselines, while maintaining significantly smaller changes in the transition matrix weights.
 
-On the \mind dataset, both \fairgd and the baselines attain near-perfect fairness across all values of $\phi$. However, \fairgd results in substantially smaller changes in $\Delta_\transmatrix$ compared to all baselines. The restricted variants, \fairgdrone and \fairgdrtwo, 
-% impose bounds on edge weight modifications, leading to 
-achieve even smaller weight changes, but fail to achieve perfect fairness when $\grouppr$ exceeds 0.5.
+On the two-group datasets, \lfpru and \lfprn achieve near-perfect fairness by modifying the graph so that each node fairly distributes its \pagerank score to its neighbors according to the target fairness vector. On the \blogs dataset, \fairgd and its two restricted variants exhibit very similar behavior, achieving 8 out of the 10 best fairness outcomes while also minimizing weight changes. For the \twitter dataset, \fairgd and its variants outperform \fairwalk and \crosswalk in terms of fairness loss, whereas \fairwalk performs comparably with our proposed methods in weight change, surpassing all other baselines. On the \mind dataset, \fairgd achieves fairness comparable to other baselines while consistently outperforming them in weight change. However, for \(\phi > 0.5\), the constrained variants \fairgdrone and \fairgdrtwo fail to maintain high fairness but consistently achieve smaller weight changes.
 
-In the \blogs dataset, \lfpru and \lfprn deliver the best fairness outcomes, with \fairgd ranking as the third-best algorithm. Despite this, \fairgd consistently yields the smallest weight changes across all values of \grouppr, except when \grouppr reaches 0.9.
+For multi-group datasets, \fairgd and its two variants perform best on both fairness and weight change on the \slashdot dataset. On the \book dataset, \fairgd attains the highest fairness score, followed by \fairgdrtwo and \fairgdrone; the weight changes surpass those of \fairwalk and \crosswalk for some $\phi$ values to achieve better fairness outcomes.
 
-On the \book and \slashdot datasets, \fairgd and its variants outperform \fairwalk and \crosswalk in both fairness loss and weight change when \grouppr is below 0.7. However, for \grouppr greater than 0.7, \fairgd faces a trade-off: it must sacrifice performance on either fairness loss or weight change to improve the other metric.
 
-In the \twitter dataset, \fairgd surpasses the baselines in 8 out of 9 \grouppr values, indicating its robust performance across a range of fairness targets.
 
-Overall, \fairgd delivers superior results in terms of fairness loss and weight change when \grouppr is close to the original PageRank score, $\grouppr_1$. As \grouppr diverges from $\grouppr_1$, both the fairness loss and weight change increase. The restricted variants, \fairgdrone and \fairgdrtwo, exemplify the trade-off between fairness loss and weight change by achieving smaller weight changes at the cost of higher fairness loss compared to \fairgd.
+% On the \mind dataset, both \fairgd and the baselines attain near-perfect fairness across all values of $\phi$. However, \fairgd results in substantially smaller changes in $\Delta_\transmatrix$ compared to all baselines. The restricted variants, \fairgdrone and \fairgdrtwo, 
+% % impose bounds on edge weight modifications, leading to 
+% achieve even smaller weight changes, but fail to achieve perfect fairness when $\grouppr$ exceeds 0.5.
+
+% In the \blogs dataset, \lfpru and \lfprn deliver the best fairness outcomes, with \fairgd ranking as the third-best algorithm. Despite this, \fairgd consistently yields the smallest weight changes across all values of \grouppr, except when \grouppr reaches 0.9.
+
+% On the \book and \slashdot datasets, \fairgd and its variants outperform \fairwalk and \crosswalk in both fairness loss and weight change when \grouppr is below 0.7. However, for \grouppr greater than 0.7, \fairgd faces a trade-off: it must sacrifice performance on either fairness loss or weight change to improve the other metric.
+
+% In the \twitter dataset, \fairgd surpasses the baselines in 8 out of 9 \grouppr values, indicating its robust performance across a range of fairness targets.
+
+Overall, \fairgd delivers superior results in terms of fairness loss and weight change when \grouppr is close to the original PageRank score, $\grouppr_1$. As \grouppr diverges from $\grouppr_1$, both the fairness loss and weight change increase. The two restricted variants, \fairgdrone and \fairgdrtwo, exemplify the trade-off between fairness loss and weight change by achieving smaller weight changes at the cost of higher fairness loss compared to \fairgd.
 This refinement highlights the balance between fairness and weight change, 
 emphasizing the flexibility of \fairgd in adapting to various fairness~goals.
 
 
-\subsection{Group-adapted fairness loss and $\Delta_\transmatrix$}
+\subsection{Group-adapted fairness loss and \texorpdfstring{$\Delta_\transmatrix$}{Delta $P$}}
 
 We evaluate \crossgd and its restricted variants, \crossgdrone and \crossgdrtwo, on the group-adapted fairness loss, as defined in \Cref{equation:cgfl}, and analyze the corresponding changes in the transition matrix weights. 
 % The performance of these methods is compared against baseline models. 
 The results % of these comparisons 
 are presented in \Cref{fig:loss_all_dataset_adapted} for the group-adapted fairness loss 
 and in \Cref{fig:change_all_dataset_adapted} for the transition matrix weight changes.
+The results show that the trade-off between fairness loss and weight change is further exemplified and shown for \fairgd and its variants.
 
-\crossgd and its variants demonstrate significantly better weight changes across all datasets, while achieving excellent group-adapted fairness loss performance in 3 out of the 5 datasets.
 
-On the \twitter dataset, \crossgd and its variants outperform both \fairwalk and \crosswalk across all \grouppr settings. Similarly, on the \book and \slashdot datasets, \crossgd and its variants surpass \fairwalk and \crosswalk in both metrics for 8 out of 9 \grouppr values.
 
-% \honglian{What is the reason that On the \blogs and \mind dataset, the \fairgd algorithm does not perform well?}
+% On \book, \blogs and \mind datasets, \crossgd achieves the best fairness outcome; in terms of weight change, \crossgd is optimal on the \book dataset, and 8 out of 10 best weight changes on the \mind dataset. On the \twitter dataset, \crossgd underperforms \lfpru and \lfprn, but performs better or comparable to the other two baselines, while achieving much better outcomes in terms of weight change. For the \slashdot dataset, \crossgd and its variants achieve both better fairness and weight change metrics in 5 out of 10 $\phi$ values.
+% On the \blogs dataset, \crossgd trades off weight change performance to achieve improved fairness loss. 
 
+% For all datasets except the \book dataset, the two variants of \crossgd consistently incur comparable or higher fairness loss but maintain lower or comparable weight changes relative to \crossgd.
+
+
+
+Across the \book, \blogs, and \mind datasets, \crossgd consistently achieves the most favorable fairness outcomes. In terms of weight change, \crossgd attains optimal performance on the \book dataset and ranks among the top eight methods on the \mind dataset compared to \fairwalk and \crosswalk. Although \crossgd underperforms \lfpru and \lfprn in fairness loss on the \twitter dataset, it still matches or surpasses the other two baseline methods, while delivering substantially better weight change results. On the \slashdot dataset, \crossgd and its variants outperform competing methods on both fairness and weight change metrics for 5 out of 10 values of $\phi$. Notably, on the \blogs dataset, \crossgd prioritizes improvements in fairness over weight change performance.
+
+For all datasets except \book, the two variants of \crossgd exhibit comparable or slightly higher fairness loss relative to \crossgd, while consistently maintaining lower or comparable weight change.
 \subsection{Ranking coefficient evaluation}
-
-We report the average Spearman's rank correlation coefficient, $\overline{\rho}$, computed for each method across different datasets. The results for the \book dataset are shown in \Cref{table:ranking_book}, while results for other datasets are provided in \Cref{appendix:more-experiments}.  For each table, we bold the largest value and underline the second largest.
-
-For the (restricted) \phiPageRank problem, \fairgd and its variants consistently achieve the best or second-best $\overline{\rho}$, demonstrating that the \fairgd algorithm better preserves the relative \pagerank score rankings within each group compared to \fairwalk and \crosswalk. This finding also holds true for the  (restricted) group-adapted \phiPageRank problem and the \crossgd algorithms. These results suggest that, in practical applications, when adjusting the content displayed to users based on items' \pagerank scores to enhance fairness, fewer changes are required within each group. Instead, greater focus should be placed on adjusting the frequency or weighting of content across different groups.
+We report the average Spearman’s rank correlation coefficient $\overline{\rho}$ for each method across multiple datasets. For each group, we compute the Spearman’s coefficient between the rankings of old and new PageRank values restricted to that group. These per-group coefficients are then aggregated using a weighted average, where each group’s weight corresponds to its proportion of the total items. The results for the \mind dataset are shown in \Cref{table:ranking_book}, while results for other datasets are provided in \Cref{appendix:more-experiments}.  For each table, we bold the largest value and underline the second largest.
 
 
-% We visualize the graph structure of the \book dataset before and after edge-reweighting, and present the results in \Cref{fig:graph_visualization}. The number on each vertex indicates the group it belongs to. 
-% The original group-wise \pagerank score is (0.48, 0.10, 0.42), and we set the target \pagerank score to be (0.25, 0.5, 0.25).
-% From \Cref{fig:graph_visualization} we can understand how each algorithm modify the edge weights of the original graph.
-% \fairgd deletes many edges within group 1 and group 3, and increase several edge weights whose two end points connects group 1 to group 2 or 3 by a large margin.
-% \crossgd increases the edge weights connecting group 3 to group 2, and group 1 to group 2 in a more even way. Compare to \fairgd, \crossgd delete less number of edges within group 1 and 3.
-% \fairwalk fine-tunes the existing edges' weight to distribute each node's pagerank score fairly to its reachable neighbors according to their target group \pagerank score, Edges close to the group boundaries gets higher weights as a result of this strategy.
-% \Crosswalk, building upon \fairwalk, further increased the weights of some edges within group 1 and group 3. Those edges are: edges within group 3 but closer to group 1 or 2, as well as edges within group 1 but closer to group 2 and 3.
 
+Across all $\phi$ values, \fairgd consistently attains the highest $\overline{\rho}$, followed by \fairgdrtwo and \fairgdrone in second and third place, respectively. These results indicate that \fairgd exhibits very good preservation of the relative PageRank score rankings within individual groups. These results suggest that, in practical applications, when adjusting the content displayed to users based on items’ PageRank scores to enhance fairness, fewer changes are required within
+each group. Instead, greater focus should be placed on adjusting
+the frequency or weighting of content across different groups.
 \subsection{Use case}
 
-We visualize the graph structure of the \book dataset before and after edge reweighting, and present the results in \Cref{fig:graph_visualization}. The number on each vertex indicates the group it belongs to. The original group-wise \pagerank scores are (0.48, 0.10, 0.42), and we set the target \pagerank scores to (0.25, 0.5, 0.25).
+We visualize the graph structure of the \book dataset before and after edge reweighting in \Cref{fig:graph_visualization}. In the visualization, vertex labels denote node indices, node colors represent group membership, node sizes are proportional to their \pagerank scores, and edge thickness reflects transition weights.
 
-We can observe how each algorithm modifies the edge weights. \fairgd deletes many edges within groups 1 and 3, while significantly increasing the weights of edges connecting group 1 to 2 or group 3 to 2 as highlighted by the black dashed ovals. \crossgd, on the other hand, increases the edge weights connecting group 3 to 2 and group 1 to 2 in a more balanced manner. 
-Compared to \fairgd, \crossgd removes fewer edges within groups 1 and 3.
+% We observe that \fairgd and its restricted versions \fairgdrone and \fairgdrtwo all achieve almost perfect target fairness score, with \fairgdrtwo leading to a denser structure than \fairgd and \fairgdrone. \crossgd also achieves a close to perfect fairness score, but at the cost of deleting a lot of edges. On the other hand, when the edge reweighting is restricted, \crossgdrone and \crossgdrtwo cannot achieve as good fairness scores as \crossgd.  \fairwalk and \crosswalk achieve very similar results in both fairness score and graph structure, the fairness loss is slightly better than \crossgdrone and \crossgdrtwo, but worse than the rest methods.
 
-\fairwalk adjusts the existing edge weights to distribute each node's \pagerank score fairly to its reachable neighbors according to their target group \pagerank scores. As a result, edges near group boundaries receive higher weights (highlighted by the black dashed ovals). \crosswalk
-% building on \fairwalk, 
-further increases the weights of certain edges within groups 1 and 3, particularly those closer to group boundaries (highlighted with black dashed ovals). 
-% This includes edges within group 3 closer to groups 1 or 2, and edges within group 1 closer to groups 2 or 3.
-
-
-
-\iffalse
-\begin{table*}[h!]
-\centering
-\caption{Average Spearman's coefficient of each method for the \book dataset}
-\begin{tabular}{ccccccccc}
-\toprule
-\makecell{\grouppr} & \makecell{\fairwalk} & \makecell{\crosswalk} & \makecell{\fairgd} & \makecell{\fairgd \\ ($0.1, 0.05$)} & \makecell{\fairgd \\ ($0.1, 0.1$)} & \makecell{\crossgd} & \makecell{\crossgd \\ ($0.1, 0.05$)} & \makecell{\crossgd \\ ($0.1, 0.1$)} \\
-\midrule
-0.1 & -0.05 & -0.04 & \textbf{0.52} & \textbf{0.52} & \textbf{0.52} & \underline{0.16} & 0.09 & 0.11 \\
-0.2 & -0.06 & -0.02 & \textbf{0.24} & -0.00 & 0.10 & 0.14 & 0.18 & \underline{0.20} \\
-0.3 & -0.03 & -0.02 & \textbf{0.24} & \underline{0.20} & 0.11 & 0.10 & 0.04 & 0.02 \\
-0.4 & -0.18 & -0.11 & 0.09 & \underline{0.17} & 0.04 & 0.09 & 0.02 & \textbf{0.18} \\
-0.5 & -0.02 & 0.01 & 0.14 & \textbf{0.27} & 0.08 & 0.11 & \underline{0.16} & 0.11 \\
-0.6 & 0.06 & 0.10 & \underline{0.20} & 0.16 & 0.16 & 0.09 & 0.15 & \textbf{0.22} \\
-0.7 & \underline{0.17} & 0.13 & \textbf{0.20} & 0.15 & 0.11 & 0.13 & 0.10 & 0.09 \\
-0.8 & 0.21 & 0.04 & \textbf{0.31} & 0.09 & 0.17 & 0.17 & 0.02 & \underline{0.23} \\
-0.9 & 0.02 & 0.04 & 0.04 & \textbf{0.19} & 0.17 & \underline{0.18} & 0.07 & 0.12 \\
-\bottomrule
-\end{tabular}
-\label{table:ranking_book}
-\end{table*}
-\fi
-
-
-% \begin{table*}[t]
-% \centering
-% \caption{Average Spearman's coefficient of each method for the \book dataset.}
-% \renewcommand{\arraystretch}{0.9} % Adjust this value to control row height
-% \begin{tabular}{cccccc}
-% \toprule
-% \grouppr & \fairwalk & \crosswalk & \fairgd & \fairgd ($0.1, 0.05$) & \fairgd ($0.1, 0.1$) \\ 
-% \midrule
-% 0.1 & -0.05 & -0.04 & \textbf{0.52} & \textbf{0.52} & \textbf{0.52} \\ 
-% 0.2 & -0.06 & -0.02 & \textbf{0.24} & -0.01 & \underline{0.03} \\ 
-% 0.3 & -0.03 & -0.02 & \textbf{0.24} & \underline{0.20} & 0.11 \\ 
-% 0.4 & -0.18 & -0.11 & 0.09 & \textbf{0.17} & \underline{0.15} \\ 
-% 0.5 & -0.02 & 0.01 & \textbf{0.18} &\underline{ 0.17} & 0.15 \\ 
-% 0.6 & 0.06 & 0.10 & \textbf{0.16} &\underline{ 0.13} & 0.10 \\ 
-% 0.7 & 0.17 & 0.13 & \textbf{1.00} & 0.15 & \underline{0.33} \\
-% 0.8 & 0.21 & 0.04 & \underline{0.23} & \textbf{1.00} &\textbf{1.00} \\ 
-% 0.9 & 0.02 & 0.04 & \underline{0.06} & \textbf{1.00} & \textbf{1.00} \\ 
-% \bottomrule
-% \end{tabular}
-% \end{table*}
-
-% \begin{table*}[t]
-% \centering
-% \caption{Average Spearman's coefficient of each method for the \blogs dataset.}
-% \renewcommand{\arraystretch}{0.9} % Adjust this value to control row height
-% \begin{tabular}{cccccccc}
-% \toprule
-% \grouppr & \lfpru & \lfprn & \fairwalk & \crosswalk & \fairgd & \fairgd ($0.1, 0.05$) & \fairgd ($0.1, 0.1$) \\ 
-% \midrule
-% 0.1 & 0.55 & \underline{0.58} & \textbf{0.58} & 0.53 & 0.56 & \textbf{0.61} & \textbf{0.61} \\ 
-% 0.2 & 0.54 & \underline{0.59} & 0.58 & 0.51 & \textbf{0.60} & 0.59 & \textbf{0.60} \\ 
-% 0.3 & {0.58} & 0.58 & \textbf{0.60} & 0.45 & 0.52 & \underline{0.59} & \underline{0.59} \\ 
-% 0.4 & \underline{0.59} & \underline{0.59} & \underline{0.59} & 0.52 & \textbf{0.60} & \textbf{0.60} & \textbf{0.60} \\ 
-% 0.5 & \underline{0.60} & 0.56 & \underline{0.60} & 0.50 & \textbf{0.63} & \textbf{0.63} & \textbf{0.63} \\ 
-% 0.6 & \textbf{0.61} & \underline{0.59} & 0.57 & 0.50 & 0.58 & 0.56 & 0.57 \\ 
-% 0.7 & \underline{0.59} & \textbf{0.60} & \underline{0.59} & 0.53 & 0.54 & 0.55 & 0.53 \\ 
-% 0.8 & \underline{0.61} & \textbf{0.62} & \textbf{0.62} & 0.50 & 0.56 & 0.56 & 0.56 \\ 
-% 0.9 & \textbf{0.60} & \textbf{0.61} & 0.59 & 0.46 & {0.58} & 0.56 & 0.55 \\ 
-% \bottomrule
-% \end{tabular}
-% \end{table*}
-
+We observe that \fairgd and its restricted variants, \fairgd~($0.1$, $0.1$) and \fairgdrtwo, achieve near-perfect target fairness scores, with \fairgdrtwo producing a denser structure than \fairgd and \fairgdrone. \crossgd also attains an almost perfect fairness score, but at the cost of removing a substantial number of edges. In contrast, when edge reweighting is restricted, algorithms \crossgdrone and \crossgdrtwo fail to match the fairness performance of \crossgd. Finally, \fairwalk and \crosswalk yield very similar results in both fairness scores and graph structure; their fairness loss is slightly lower than that of \crossgdrone and \crossgdrtwo, but higher than that of the remaining methods.
 \section{Conclusion}
 
 We presented a novel approach for incorporating group
@@ -1682,6 +1839,10 @@ Technically, our method is an efficient projected gradient-descent algorithm for
 finding locally-optimal edge weights.
 We presented a comprehensive empirical evaluation, 
 demonstrating that our method offers significant advantages compared to strong~baselines.
+
+\section{Ethical Considerations}
+
+This work focuses on reweighting the transition matrix of a graph to achieve target group-wise PageRank scores, with the goal of improving fairness across groups. While the proposed approach aims to improve fairness and mitigate bias in ranking systems, interventions that alter item rankings could be misused to deliberately amplify or suppress the visibility of certain content, potentially leading to manipulation or censorship. Furthermore, if applied to sensitive domains, such interventions could unintentionally disadvantage specific users or groups, even when fairness metrics improve. Our experiments use only publicly available datasets with no personal user or item-identifying information, reducing privacy risks. To mitigate potential misuse, we recommend deploying such methods with transparent governance, independent auditing of fairness outcomes, and clear documentation of intervention goals and criteria.
 
 
 \begin{acks}
