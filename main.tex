@@ -1146,7 +1146,7 @@ with respect to the transition matrix \transmatrix is given by
 \label{eq:gradient_cross_fairness_loss}
     \frac{\partial}{\partial \transmatrix} \groupAdapLoss(\transmatrix, \gamma, \vectv) 
          = \frac{2 (1-\gamma)}{K^2} \sum_{k=1}^{\nogroups} 
-         \sum_{\ell=1}^{\nogroups} \left(\indvect{\agroup}^T \prvector_l - \grouppr_\agroup\right) \left( \prvector_l \indvect{\agroup}^T \matrixU^{-1} \right)         
+         \sum_{\ell=1}^{\nogroups} \left(\indvect{\agroup}^T \prvector_l - \grouppr_\agroup\right) \left( \prvector_l \indvect{\agroup}^T \matrixU^{-1} \right) .       
 \end{aligned}
 \end{equation}
 
@@ -1168,8 +1168,10 @@ Evaluating $\vecty_k$ for all $k \in \{1, \dots, \nogroups\}$ therefore requires
 Consequently, the overall complexity of \Cref{alg:fairgd} is $\mathcal{O}\big((\nogroups  t_2 + t_1) n^2\big)$.
 Since \crossgd{} performs an additional loop over $\nogroups$ when computing $\vecty_k$, its complexity becomes $\mathcal{O}\big((\nogroups^2 t_2 + t_1) n^2\big).$
 
-$\mathcal{L}(P)$ and $\mathcal{L}_g(P)$ are both differentiable functions and their first derivatives are smooth. Since the feasible set $\resfeasiblematrices(\transmatrix) \cap \feasiblematrices(\transmatrix)$ is convex and closed, the proposed projected gradient update method with constant step size converges to a stationary point, which is a local minimum \cite{bertsekas1997nonlinear}. We provide detailed analysis in the \Cref{section:convergence_L}
-and \Cref{section:convergence_Lg}.
+$\mathcal{L}(P)$ and $\mathcal{L}_g(P)$ are both differentiable functions and their first derivatives are smooth. Since the feasible set $\resfeasiblematrices(\transmatrix) \cap \feasiblematrices(\transmatrix)$ is convex and closed, the proposed projected gradient update method with constant step size converges to a stationary point, which is a local minimum \cite{bertsekas1997nonlinear}. 
+We provide detailed analysis in 
+\agtext{the full version~\citep[\Cref{section:convergence_L} and \Cref{section:convergence_Lg}]{fullversion}}.
+
 
 
 \section{Experimental evaluation}
