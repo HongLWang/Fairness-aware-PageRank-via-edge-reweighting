@@ -284,7 +284,7 @@ Additionally, we aim for globally-fair \pagerank, without requiring local fairne
 %
 If perfect fairness cannot be achieved,
 %  with the permissible transition-matrix modifications, 
-our formulation aims to find a solution as close as possible to the target fairness objective.
+our formulation aims to find a solution as close as possible to the target fairness~objective.
 
 Our approach provides an actionable environment for achieving fairness in \pagerank-type methods, 
 as the new edge weights, computed by our method, 
@@ -327,10 +327,15 @@ We empirically compare our approach with state-of-the-art baselines and demonstr
 where very small changes in the transition matrix lead to significant improvement in the fairness of the \pagerank algorithm.
 \end{itemize}
 
+\agtext{Due to space limitations, 
+the technical proofs of our claims
+as well as additional experiments can be found 
+in the full version of this paper, 
+provided in an anonymous link~\cite{fullversion}.}
 
 % \iffalse
 
-\section{Related Work}
+\section{Related work}
 
 In recent years, algorithmic fairness in graph mining has emerged as a prominent area of research --- for a comprehensive survey, see the recent paper by \citet{saxena2024fairsna}. This paper focuses on enhancing fairness in the content of the well-known \pagerank algorithm, which has been widely utilized for tasks such as vertex ranking, classification, and community detection. The objective in accounting for a fairness notion in the context of \pagerank, is to enable allocating \pagerank scores to vertices in a manner that considers both the vertices' group affiliations and the overall structure of the network~\citep{tsioutsiouliklis_fairness-aware_2021,saxena2024fairsna}.
 
@@ -392,7 +397,7 @@ fairness over multiple groups.
 
 \section{Problem definition}
 
-% In this section, we first present the necessary preliminaries, and then we define \pagerank fairness.
+In this section, we first present the necessary preliminaries, and then we define \pagerank fairness.
 
 \subsection{Preliminaries}
 
@@ -401,7 +406,7 @@ We consider a directed graph $\graph = (\vertices, \edges)$ with a set $\vertice
 We assume that the set of  vertices is partitioned into \nogroups groups $\{\group_1 \cdots \group_{\nogroups}\}$. 
 Let $\labelof_{v}$ indicate the group that a vertex $\vertexv \in \vertices$ belongs to.
 
-The \pagerank algorithm takes \graph as input, and produces a \pagerank vector \prvector that indicates the relative importance of each vertex in the graph ~\citep{brin_anatomy_1998}.
+The \pagerank algorithm takes \graph as input, and produces a \pagerank vector \prvector that indicates the relative importance of each vertex in the graph~\citep{brin_anatomy_1998}.
 Despite the existence of multiple equivalent formulations, the \pagerank algorithm is fully characterized by three parameters: the transition matrix~\transmatrix, the restart (or jump) vector~\vectv, and 
 the restart probability~$\gamma$. 
 % This paper follows the notation established by \citet{tsioutsiouliklis_fairness-aware_2021}, who first introduced the concept of fairness-aware \pagerank.
@@ -429,7 +434,7 @@ Building on the earlier definition of fairness-aware PageRank \citep{tsioutsioul
 
 \subsubsection{Group-wise fair \pagerank}
 %
-To establish the concept of \pagerank fairness, we assume a \emph{target \pagerank score}, $\grouppr_\agroup$ for each vertex group $\agroup = 1, \ldots, \nogroups$. This score represents the total \pagerank mass that the algorithm is expected to allocate to the vertices in group $\vertices_\agroup$. A common approach is to set $\grouppr_\agroup$ proportionally to the size of $\vertices_\agroup$, i.e., $\grouppr_\agroup = |\vertices_\agroup| / \novertices$. However, other choices may be more suitable depending on the specific application. In this work, as in prior studies, we assume that the target \pagerank score $\grouppr_\agroup$ for each group is provided as input to our problem formulation.
+To establish the concept of \pagerank fairness, we assume a \emph{target \pagerank score}, $\grouppr_\agroup$ for each vertex group $\agroup = 1, \ldots, \nogroups$, \agtext{with $\sum_\agroup \grouppr_\agroup = 1$}. This score represents the total \pagerank mass that the algorithm is expected to allocate to the vertices in group~$\vertices_\agroup$. A common approach is to set $\grouppr_\agroup$ proportionally to the size of $\vertices_\agroup$, i.e., $\grouppr_\agroup = |\vertices_\agroup| / \novertices$. However, other choices may be more suitable depending on the specific application. In this work, as in prior studies, we assume that the target \pagerank score $\grouppr_\agroup$ for each group is provided as input to our problem formulation.
 
 Let $\indvect{\agroup} \in \{0, 1\}^{\novertices}$ denote the indicator vector for group $\vertices_\agroup$, where $\indvect{\agroup}[i] = 1$ if vertex $i \in \vertices_\agroup$ and $\indvect{\agroup}[i] = 0$ otherwise. Let \prvector\ be the PageRank vector computed by the PageRank algorithm using a transition matrix \transmatrix, with restart probability~$\gamma$ and restart vector~\vectv. The total PageRank score for group $\vertices_\agroup$ is then given by $\indvect{\agroup}^T \prvector$. 
 
@@ -477,14 +482,12 @@ To formalize our problem, we first define the fairness-loss function. It evaluat
 
 \begin{definition}[Fairness-loss function] 
 \label{definition:fairloss} 
-Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, a row-stochastic transition matrix \transmatrix, a restart probability $0 < \gamma < 1$, a restart vector $\vectv \in \reals^{\novertices}$ satisfying $\|\vectv\|_1 = 1$, and group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, the {fairness-loss function} is defined as: 
+Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, a row-stochastic transition matrix \transmatrix, a restart probability $0 < \gamma < 1$, a restart vector $\vectv \in \reals^{\novertices}$ satisfying $\|\vectv\|_1 = 1$, and group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$ \agtext{satisfying $\|\groupDist\|_1 = 1$}, the {fairness-loss function} is defined~as: 
 \begin{equation} 
 \loss(\transmatrix, \gamma, \vectv) = \frac{1}{\nogroups} \sum_{\agroup=1}^\nogroups \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right)^2, 
 \label{eq:loss_function} 
 \end{equation} 
 where \prvector is the \pagerank vector corresponding to parameters~$(\transmatrix, \gamma, \vectv)$. \end{definition}
-
-
 
 The proof of the following claim can be found in Appendix~\ref{appendix:omitted-proposition-non-convexity}.
 \begin{prop}
@@ -694,7 +697,7 @@ and $\resfeasiblematrices(\transmatrix)$ as in Problem~\ref{problem:restricted-f
 \end{problem}
 
 \iffalse
-\subsection{Restricting edge reweighting}
+\subsection{Restricting edge re\-weighting}
 
 In the \fpr and \gafpr problems, discussed in the previous section, 
 we require that the changes in the transition matrix \transmatrix, 
@@ -821,7 +824,7 @@ we approximate $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$ with a 
   \caption{\label{alg:fairgd}\fairgd: Projected gradient descent for \fpr and \resfpr}
   \begin{algorithmic}[1]
     \REQUIRE \transmatrix, $\gamma$, \vectv, 
-$\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors $\indvect{\agroup}$ for $\agroup = \{1, \cdots, \nogroups\}$, learning rate~$\alpha$, power iteration exponent~$t_1$ and ~$t_2$, convergence criterion $\kappa$, maximum number of iterations $N_{\text{iter}}$.
+$\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors $\indvect{\agroup}$ for $\agroup = \{1, \cdots, \nogroups\}$, learning rate~$\alpha$, power iteration exponent~$t_1$ and~$t_2$, convergence criterion $\kappa$, maximum number of iterations $N_{\text{iter}}$.
     \ENSURE Optimized transition matrix $\newtransmatrix$
     \STATE $\newtransmatrix \gets \transmatrix$, ${\iter} \gets 0$, ${\lossprev} \gets \infty$
     \WHILE {$|\loss(\newtransmatrix, \gamma, \vectv) - {\lossprev}| > \kappa $ and $\iter < N_{\text{iter}}$}
@@ -1007,7 +1010,7 @@ and $\lambdaopt$ is the solution that solves the function
 	h(\lambda) := \sum_{i=1}^{K} \text{clip}(\alpha_i + \lambda, l_i, u_i) -1 = 0
 \end{equation*}
 $h$ is piecewise linear and non-decreasing in $\lambda$, this allows us to find $\lambda$ via a simple simple proposed by \citet{adam2022projections}. The rationale is explained as follows:
-\begin{enumerate}
+\begin{enumerate}[leftmargin=*]
 	\item For any $\lambda$, $\clip(\alpha_i, l_i, u_i)$ takes value $l_i$, $\lambda + \alpha_i$ or $u_i$, thus we can rewrite $h(\lambda)$ as $h(\lambda) = \act(\lambda) \times \lambda + C$ for some constant $C$, where $\act(\lambda) $ is the number of elements such that $\alpha_i + \lambda$ falls in range $[l_i, u_i)$.
 	\item Let $R$ be the increasing ranking of $2K$ items consisting of $\vectl - \vectalpha$ and $\vectu - \vectalpha$. For any $\lambda$ in interval $[R_j, R_{j+1})$, $\act(\lambda)$ remains constant.
 	\item Let $\Total(\lambda) = \sum_{i=1}^K \clip(\alpha_i + \lambda, l_i, u_i)$, assume $\mathcal{F}$ is non-empty, then there must exist some $j \in \{1, \cdots, 2K\}$ such that $\Total(R_j) \leq 1$ and $\Total(R_{j+1}) > 1$, and we can conclude that $\lambda^*$ lies in range $[R_j, R_{j+1})$. Since $\act(R_j) = \act(\lambda^*)$, it follows that,
@@ -1141,12 +1144,12 @@ with respect to the transition matrix \transmatrix is given by
 \end{prop}
 
 
-\subsection{Generalizing the Fairness Loss}
+\subsection{Generalizing the fairness loss}
 
 While not explicitly studied in the paper, we note that the proposed fairness loss can be generalized to encompass a broader range of fairness definitions and graph structures. For instance, when fairness scores are specified at the individual-node level, an auxiliary loss term may be incorporated to jointly enforce both group-level and individual-level fairness constraints. Moreover, in graphs exhibiting hierarchical group structures, where each layer defines a distinct partition of the nodes and an associated fairness goal, the overall fairness objective can be formulated as the sum of the layer-specific losses. This formulation enables the simultaneous satisfaction of fairness requirements across multiple structural scales. We also note that the restricted fairness losses can incorporate node-level constraints; that is, if a $\delta$ and $\epsilon$ are specified for each node, our algorithm remains applicable.
 
 
-\section{Computational Complexity and Convergence Analysis}
+\section{Computational complexity and convergence analysis}
 
 The primary computational cost arises from computing the \pagerank{} vector and approximating $\vecty_k$. 
 The \pagerank{} vector is obtained by iterating the update equation $\prvector^\top = (1 - \gamma)\, \prvector^\top \transmatrix + \gamma\, \vectv^\top$
@@ -1813,6 +1816,7 @@ The results show that the trade-off between fairness loss and weight change is f
 Across the \book, \blogs, and \mind datasets, \crossgd consistently achieves the most favorable fairness outcomes. In terms of weight change, \crossgd attains optimal performance on the \book dataset and ranks among the top eight methods on the \mind dataset compared to \fairwalk and \crosswalk. Although \crossgd underperforms \lfpru and \lfprn in fairness loss on the \twitter dataset, it still matches or surpasses the other two baseline methods, while delivering substantially better weight change results. On the \slashdot dataset, \crossgd and its variants outperform competing methods on both fairness and weight change metrics for 5 out of 10 values of $\phi$. Notably, on the \blogs dataset, \crossgd prioritizes improvements in fairness over weight change performance.
 
 For all datasets except \book, the two variants of \crossgd exhibit comparable or slightly higher fairness loss relative to \crossgd, while consistently maintaining lower or comparable weight change.
+
 \subsection{Ranking coefficient evaluation}
 We report the average Spearman’s rank correlation coefficient $\overline{\rho}$ for each method across multiple datasets. For each group, we compute the Spearman’s coefficient between the rankings of old and new PageRank values restricted to that group. These per-group coefficients are then aggregated using a weighted average, where each group’s weight corresponds to its proportion of the total items. The results for the \mind dataset are shown in \Cref{table:ranking_book}, while results for other datasets are provided in \Cref{appendix:more-experiments}.  For each table, we bold the largest value and underline the second largest.
 
@@ -1845,7 +1849,7 @@ finding locally-optimal edge weights.
 We presented a comprehensive empirical evaluation, 
 demonstrating that our method offers significant advantages compared to strong~baselines.
 
-\section{Ethical Considerations}
+\section{Ethical considerations}
 
 This work focuses on reweighting the transition matrix of a graph to achieve target group-wise PageRank scores, with the goal of improving fairness across groups. While the proposed approach aims to improve fairness and mitigate bias in ranking systems, interventions that alter item rankings could be misused to deliberately amplify or suppress the visibility of certain content, potentially leading to manipulation or censorship. Furthermore, if applied to sensitive domains, such interventions could unintentionally disadvantage specific users or groups, even when fairness metrics improve. Our experiments use only publicly available datasets with no personal user or item-identifying information, reducing privacy risks. To mitigate potential misuse, we recommend deploying such methods with transparent governance, independent auditing of fairness outcomes, and clear documentation of intervention goals and criteria.
 
