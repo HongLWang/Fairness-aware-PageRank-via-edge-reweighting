@@ -489,7 +489,10 @@ Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots,
 \end{equation} 
 where \prvector is the \pagerank vector corresponding to parameters~$(\transmatrix, \gamma, \vectv)$. \end{definition}
 
-The proof of the following claim can be found in Appendix~\ref{appendix:omitted-proposition-non-convexity}.
+The proof of the following claim can be found in the 
+\agtext{full version of this paper
+\citep[Appendix~\ref{appendix:omitted-proposition-non-convexity}]{fullversion}.}
+
 \begin{prop}
 \label{proposition:non-convexity}
 The fairness-loss function $\loss(\transmatrix, \gamma, \vectv)$, 
@@ -781,7 +784,9 @@ fair \pagerank problems we defined in the previous section. We propose \Cref{alg
 We first derive the gradient of the fairness-loss function 
 $\loss(\transmatrix, \gamma, \vectv)$ 
 with respect to the transition matrix \transmatrix.
-The proof of the following proposition can be found in Appendix~\ref{appendix:omitted-proposition-proof}.
+The proof of the following proposition can be found in the
+\agtext{full version of this paper
+\citep[Appendix~\ref{appendix:omitted-proposition-proof}]{fullversion}.}
 
 \begin{prop}
 \label{theorem:gradient-fairness-loss}
@@ -903,7 +908,7 @@ As the series terms decrease exponentially in mag\-ni\-tude,
 due to the decaying factor $(1-\gamma)$, 
 we can approximate $\vecty_\agroup$ efficiently 
 by computing only the first $t$~series terms.
-\textcolor{black}{We show that truncating the Neumann series to its first $50$ terms yields a relative error below $0.0003$. The detailed analysis is provided in the Appendix.}
+\textcolor{black}{We show that truncating the Neumann series to its first $50$ terms yields a relative error below $0.0003$. The detailed analysis is provided in the \agtext{full version of this paper}.}
 
 % $\vecty_\agroup$ with a power iteration:
 % \begin{equation}\label{eq:power_iteration}
@@ -1023,7 +1028,9 @@ $h$ is piecewise linear and non-decreasing in $\lambda$, this allows us to find 
 	\end{equation*}
 \end{enumerate}
 The time complexity of the projection is also $\mathcal{O}(KlogK)$ because the computation of $\lambda^*$ is dominated by sorting of $2K$ elements in $\vectl-\vectalpha$ and $\vectu-\vectalpha$.
-The details are given in Algorithm~\ref{alg:project} in Appendix~\ref{appendix:pseudocode}.
+The details are given in Algorithm~\ref{alg:project} in the
+\agtext{full version of this paper
+\citep[Appendix~\ref{appendix:pseudocode}]{fullversion}.}
 
 
 % \haoyun{I am not sure if it is necessary to discuss how to handle sink vertices. \\
@@ -1072,14 +1079,17 @@ and Equation~\eqref{eq:yapprox} is modified to
 \end{equation}
 }%olive
 \fi
-To sum up, our method is presented in Algorithms~\ref{alg:fairgd},~\ref{alg:poweriteration}, and~\ref{alg:project}.
+To sum up, our method is presented in Algorithms~\ref{alg:fairgd},
+{\color{red}\ref{alg:poweriteration}}, and~\ref{alg:project}.
 Algorithm~\ref{alg:fairgd} (\fairgd) 
 is the overall projected gradient-descent scheme that 
 iteratively updates the matrix \newtransmatrix until convergence.
-Algorithm~\ref{alg:poweriteration} (\yapprox)
+Algorithm~{\color{red}\ref{alg:poweriteration}} (\yapprox)
 approximates vector $\vecty_\agroup$.
 % using power iterations.
-Algorithm~\ref{alg:project} (\project) in Appendix~\ref{appendix:pseudocode} is the projection function, 
+Algorithm~\ref{alg:project} (\project) in 
+\agtext{full version~\citep[Appendix~\ref{appendix:pseudocode}]{fullversion}}
+is the projection function, 
 where the transition matrix \newtransmatrix is projected back to the feasible set after each~iteration.
 
 
