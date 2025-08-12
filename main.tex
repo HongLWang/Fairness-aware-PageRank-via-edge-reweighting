@@ -193,8 +193,12 @@ The fairness of the \pagerank distribution is then evaluated
 based on the total \pagerank scores assigned to \emph{red} and \emph{blue} vertices.
 We would like to avoid situations where the \pagerank mass is distributed unevenly (/unfairly) 
 between the two groups. 
-For example, given a target score tuple $\groupDist = (\phi_{\text{red}}, \phi_{\text{blue}})$, we say that \pagerank is $\groupDist$-fair if the total \pagerank score of the
-vertices in the \emph{red} group is equal to~$\phi_\mathrm{red}$.
+For example, given a target score tuple 
+$\groupDist = (\phi_{\text{red}}, \phi_{\text{blue}})= \agtext{(\phi_{\text{red}}, 1-\phi_{\text{red}})}$, 
+we say that \pagerank is $\groupDist$-fair if the total \pagerank score of the
+vertices in the \emph{red} group is equal to~$\phi_\mathrm{red}$; 
+\agtext{and consequently, the total \pagerank score of the
+vertices in the \emph{blue} group is equal to~$1-\phi_{\text{red}}=\phi_\mathrm{blue}$; }
 
 % \iffalse
 % For example, given a target score $\phi$, 
@@ -204,7 +208,8 @@ vertices in the \emph{red} group is equal to~$\phi_\mathrm{red}$.
 
 \vspace{1mm}
 \para{Intervention strategies.}
-The task is to design an intervention strategy so that the \pagerank
+\agtext{To improve fairness for \pagerank-type link-analysis tasks,} 
+the task is to design an intervention strategy so that the \pagerank
 scores of the graph vertices become $\groupDist$-fair, or ``close enough'' to $\groupDist$-fair.
 Considering the \pagerank algorithm, 
 there are several possible ways to design intervention strategies, including:
@@ -261,7 +266,8 @@ the requirement of locally-fair \pagerank can be too rigid and may lead to a
 disproportionate modification of the graph structure or the edge weights. 
 Instead, in this paper, we pose the question of \emph{whether it is possible to 
 achieve globally-fair \pagerank without having to impose the strict requirement of 
-locally-fair \pagerank}? 
+locally-fair \pagerank}.
+
 As we will see, we answer this question in the~affirmative.
 
 \vspace{1mm}
@@ -269,15 +275,18 @@ As we will see, we answer this question in the~affirmative.
 % Motivated by the above discussion, 
 We present a new approach to incorporate fairness into the \pagerank algorithm by re\-weighting the transition probabilities of the \pagerank matrix. 
 More concretely, we formulate the problem of minimizing the \pagerank distance to a fair distribution while allowing only for re\-weighting the network edges within pre\-specified limits. 
+
 With our formulation, we can quantify and improve fairness with respect to many vertex groups in the network.
 Unlike earlier approaches, 
 we do not recommend that new edges be added to the network, nor do we adjust the restart vector. 
 Instead, we keep the topology of the underlying network unchanged and 
 only modify the relative importance of existing edges. 
 Additionally, we aim for globally-fair \pagerank, without requiring local fairness at each vertex.
+%
 If perfect fairness cannot be achieved,
 %  with the permissible transition-matrix modifications, 
 our formulation aims to find a solution as close as possible to the target fairness objective.
+
 Our approach provides an actionable environment for achieving fairness in \pagerank-type methods, 
 as the new edge weights, computed by our method, 
 can be used to suggest concrete changes in the network ecosystem, e.g., 
