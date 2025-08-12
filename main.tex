@@ -491,7 +491,7 @@ where \prvector is the \pagerank vector corresponding to parameters~$(\transmatr
 
 The proof of the following claim can be found in the 
 \agtext{full version of this paper
-\citep[Appendix~\ref{appendix:omitted-proposition-non-convexity}]{fullversion}.}
+\citep[\Cref{appendix:omitted-proposition-non-convexity}]{fullversion}.}
 
 \begin{prop}
 \label{proposition:non-convexity}
@@ -568,14 +568,14 @@ With the fairness-loss function defined, we introduce two problems that aim to a
 
 \begin{problem}[$\groupDist$-\pagerank (\fpr)]
 \label{problem:fair_problem}
-Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix \transmatrix of \graph, a restart probability $0 < \gamma < 1$, and a restart vector $\vectv \in \reals^{\novertices}$ satisfying $\|\vectv\|_1 = 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, the goal is to find a new transition matrix $\newtransmatrixopt$ that minimizes the fairness-loss function $\loss(\newtransmatrixopt, \gamma, \vectv)$, i.e.,
+Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix \transmatrix of \graph, a restart probability $0 < \gamma < 1$, and a restart vector $\vectv \in \reals^{\novertices}$ satisfying $\|\vectv\|_1 = 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$ \agtext{satisfying $\|\groupDist\|_1 = 1$}, the goal is to find a new transition matrix $\newtransmatrixopt$ that minimizes the fairness-loss function $\loss(\newtransmatrixopt, \gamma, \vectv)$, i.e.,
 \begin{equation}
 \newtransmatrixopt = \arg \min_{\newtransmatrix \in \feasiblematrices(\transmatrix)} \loss(\newtransmatrix, \gamma, \vectv),
 \label{eq:fair_problem}
 \end{equation}
 where 
 \begin{equation*}
-\feasiblematrices(\transmatrix) = \{ \newtransmatrix \in \mathbb{R}_{\geq 0}^{\novertices \times \novertices} \mid \newtransmatrix \uniformvect = \uniformvect, \, \newtransmatrix_{ij} = 0 \text{ if }~ \transmatrix_{ij} = 0 \}
+\feasiblematrices(\transmatrix) = \{ \newtransmatrix \in \mathbb{R}_{\geq 0}^{\novertices \cdot \novertices} \mid \newtransmatrix \uniformvect = \uniformvect, \, \newtransmatrix_{ij} = 0 \text{ if }~ \transmatrix_{ij} = 0 \}
 \end{equation*}
 is the set of row-stochastic matrices that have non-negative entries, and the edge-reweighting of \graph can take place only on existing edges.
 \end{problem}
@@ -583,7 +583,7 @@ is the set of row-stochastic matrices that have non-negative entries, and the ed
 
 \begin{problem}[Restricted $\groupDist$-\pagerank (\resfpr)]
 \label{problem:restricted-fair_problem}
-Given a graph~\graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix $\transmatrix$ of \graph, a restart probability $0 < \gamma < 1$, and a restart vector $\vectv \in \reals^{\novertices}$ satisfying $\|\vectv\|_1 = 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, a relative modification-bound factor $\boundfactor \ge 0$ and an absolute modification-bound factor $\absboundfactor \ge 0$, the goal is to find a new transition matrix $\newtransmatrixopt$ that minimizes the fairness-loss function $\loss(\newtransmatrixopt, \gamma, \vectv)$, i.e.,
+Given a graph~\graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix $\transmatrix$ of \graph, a restart probability $0 < \gamma < 1$, and a restart vector $\vectv \in \reals^{\novertices}$ satisfying $\|\vectv\|_1 = 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$ \agtext{satisfying $\|\groupDist\|_1 = 1$}, a relative modification-bound factor $\boundfactor \ge 0$ and an absolute modification-bound factor $\absboundfactor \ge 0$, the goal is to find a new transition matrix $\newtransmatrixopt$ that minimizes the fairness-loss function $\loss(\newtransmatrixopt, \gamma, \vectv)$, i.e.,
 \begin{equation}
 \newtransmatrixopt = \arg \min_{\newtransmatrix \in \resfeasiblematrices(\transmatrix) \cap \feasiblematrices(\transmatrix)} \loss(\newtransmatrix, \gamma, \vectv),
 \label{eq:restrict_fair_problem}
@@ -592,7 +592,7 @@ where $\feasiblematrices(\transmatrix)$ is defined as in Problem~\ref{problem:fa
 \begin{equation*}
     \resfeasiblematrices(\transmatrix)
     =
-    \{ \newtransmatrix \in \mathbb{R}_{\geq 0}^{\novertices \times \novertices} \mid (1 - \boundfactor) \transmatrix[i, j] - \absboundfactor \le \newtransmatrix[i, j] \le (1 + \boundfactor) \transmatrix[i, j] + \absboundfactor\}.
+    \{ \newtransmatrix \in \mathbb{R}_{\geq 0}^{\novertices \cdot \novertices} \mid (1 - \boundfactor) \transmatrix[i, j] - \absboundfactor \le \newtransmatrix[i, j] \le (1 + \boundfactor) \transmatrix[i, j] + \absboundfactor\}.
 \end{equation*}
 \end{problem}
 
@@ -649,7 +649,8 @@ We define the \emph{group-adapted fairness-loss function} as follows:
 Given a row-stochastic transition matrix \transmatrix, 
 a restart probability $0 < \gamma < 1$, 
 groups $\vertices_1, \ldots, \vertices_\nogroups$, and 
-group-wise target \pagerank scores $\groupDist = \{\grouppr_1,\cdots, \grouppr_{\nogroups}\}$, 
+group-wise target \pagerank scores $\groupDist = \{\grouppr_1,\cdots, \grouppr_{\nogroups}\}$
+\agtext{satisfying $\|\groupDist\|_1 = 1$}, 
 the group-adapted fairness-loss function is defined as 
 \begin{equation}
 \label{equation:cgfl}
@@ -668,9 +669,12 @@ when restarting the random walk at each group.
 Minimizing the group-adapted fairness-loss function 
 leads to the group-adapted \phiPageRank problem.
 
+\aris{Do we really need the ugly acronyms \gafpr and \resgafpr?
+Are we using them?}
+
 \begin{problem}[Group-adapted \phiPageRank (\gafpr)]
 \label{problem:cross-fair-loss}
-Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix \transmatrix of \graph, a restart probability $0 < \gamma < 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness-loss function
+Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix \transmatrix of \graph, a restart probability $0 < \gamma < 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$ \agtext{satisfying $\|\groupDist\|_1 = 1$}, find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness-loss function
 % Given a graph $\graph = (\vertices, \edges)$ with  
 % row-stochastic transition matrix \transmatrix, 
 % a restart probability $0 < \gamma < 1$, 
@@ -690,7 +694,7 @@ version of the problem.
 
 \begin{problem}[Restricted Group-adapted \phiPageRank \\ (\resgafpr)]
 \label{problem:cross-restricted-fair-loss}
-Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix $\transmatrix$ of \graph, a restart probability $0 < \gamma < 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$, a relative modification-bound factor $\boundfactor \ge 0$ and an absolute modification-bound factor $\absboundfactor \ge 0$, find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness-loss function $\groupAdapLoss(\newtransmatrixopt, \gamma)$, i.e.,
+Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix $\transmatrix$ of \graph, a restart probability $0 < \gamma < 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$ \agtext{satisfying $\|\groupDist\|_1 = 1$}, a relative modification-bound factor $\boundfactor \ge 0$ and an absolute modification-bound factor $\absboundfactor \ge 0$, find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness-loss function $\groupAdapLoss(\newtransmatrixopt, \gamma)$, i.e.,
 \begin{equation*}
     \newtransmatrixopt = \arg\min_{\newtransmatrix \in \resfeasiblematrices(\transmatrix) \cap \feasiblematrices(\transmatrix)} 
                          \groupAdapLoss(\newtransmatrix, \gamma),
@@ -786,7 +790,7 @@ $\loss(\transmatrix, \gamma, \vectv)$
 with respect to the transition matrix \transmatrix.
 The proof of the following proposition can be found in the
 \agtext{full version of this paper
-\citep[Appendix~\ref{appendix:omitted-proposition-proof}]{fullversion}.}
+\citep[\Cref{appendix:omitted-proposition-proof}]{fullversion}.}
 
 \begin{prop}
 \label{theorem:gradient-fairness-loss}
@@ -858,7 +862,7 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
     \ENSURE Approximation of $\gamma \indvect{\agroup}^T \matrixU^{-1}$
     \STATE $\vecty \gets \indvect{\agroup}$
     % \STATE $\matrixU \gets \mathbf{I}_\novertices$ 
-    \STATE $\matrixU \gets \text{Identity matrix of size } \novertices \times \novertices$ 
+    \STATE $\matrixU \gets \text{Identity matrix of size } \novertices \cdot \novertices$ 
     \STATE $\indvect{s} \gets \mathbf{1} - \transmatrix \mathbf{1}$
     \FOR {$i = 1$ to $t$}
       \STATE $\matrixU \gets (1 - \gamma) (\transmatrix \matrixU + \indvect{s} \vectv^T \matrixU)$
@@ -908,7 +912,7 @@ As the series terms decrease exponentially in mag\-ni\-tude,
 due to the decaying factor $(1-\gamma)$, 
 we can approximate $\vecty_\agroup$ efficiently 
 by computing only the first $t$~series terms.
-\textcolor{black}{We show that truncating the Neumann series to its first $50$ terms yields a relative error below $0.0003$. The detailed analysis is provided in the \agtext{full version of this paper}.}
+\textcolor{black}{We show that truncating the Neumann series to its first $50$ terms yields a relative error below $0.0003$. The detailed analysis is provided in \agtext{our full version}.}
 
 % $\vecty_\agroup$ with a power iteration:
 % \begin{equation}\label{eq:power_iteration}
@@ -976,13 +980,13 @@ For both constraints, we solve the projection for each row of $\newtransmatrix$ 
 
 The constraint $\feasiblematrices(\transmatrix)$ calls for a Euclidean projection of $\vectalpha$ onto the probability simplex:
 \begin{equation*}
-    \vectalphaopt  =\underset {\vectr \in  \Delta ^{k}}{\text{argmin}} \left\| \vectalpha - \vectr \right\|_2^2
+    \vectalphaopt  =\underset {\vectr \in  \Delta ^{k}}{\arg\min} \left\| \vectalpha - \vectr \right\|_2^2
 \end{equation*}
-where $\Delta ^{k-1} = \{ \vectr \in \mathbb{R}^{K-1} \mid \mathbf{1}^{\intercal} \vectr = 1, \vectr \geq 0\}$ is a probability simplex. This is a well studied problem (\citet{michelot1986finite, pardalos1990algorithm, duchi2008efficient, condat2016fast, cisse2017parseval}). Its solution is of the form: $\alpha^{*}_i = \max (0, \alpha_i - \tau(\vectalpha))$, with $\tau: \mathbb{R}^{K} \rightarrow \mathbb{R}$ the unique function satisfying $\sum_{i} (x_i - \tau(\vectalpha)) = 1$ for every $\textbf{\textit{x}} \in \mathbb{R}^{K}$. According to \citet{duchi2008efficient}, let $\alpha_1 \geq \alpha_2 \geq \cdots \alpha_{K}$ be the sorted elements of $\vectalpha$, and $k(\vectalpha) = \max\{k \in (1, \cdots, K) \mid 1 + k \alpha_k > \sum_{j \leq k} \alpha_j \} $, $\tau(\vectalpha)$ is given by:
+where $\Delta ^{k-1} = \{ \vectr \in \mathbb{R}^{K-1} \mid \mathbf{1}^{\intercal} \vectr = 1, \vectr \geq 0\}$ is a probability simplex. This is a well studied problem~\citep{michelot1986finite, pardalos1990algorithm, duchi2008efficient, condat2016fast, cisse2017parseval}. Its solution is of the form: $\alpha^{*}_i = \max (0, \alpha_i - \tau(\vectalpha))$, with $\tau: \mathbb{R}^{K} \rightarrow \mathbb{R}$ the unique function satisfying $\sum_{i} (x_i - \tau(\vectalpha)) = 1$ for every $\textbf{\textit{x}} \in \mathbb{R}^{K}$. According to \citet{duchi2008efficient}, let $\alpha_1 \geq \alpha_2 \geq \cdots \geq \alpha_{K}$ be the sorted elements of $\vectalpha$, and $k(\vectalpha) = \max\{k \in (1, \cdots, K) \mid 1 + k \alpha_k > \sum_{j \leq k} \alpha_j \} $. Then, $\tau(\vectalpha)$ is given by:
 \begin{equation*}
-	\tau(\vectalpha) = \frac{(\sum_{j \leq k(\vectalpha)} \alpha_j) -1}{k(\vectalpha)}
+	\tau(\vectalpha) = \frac{\left(\sum_{j \leq k(\vectalpha)} \alpha_j\right) -1}{k(\vectalpha)}.
 \end{equation*}
-The time complexity of the projection is $\mathcal{O}(KlogK)$ as it is dominated by sorting of elements in $\vectalpha$, and $K$ is typically small for sparse graphs. In \Cref{alg:project} in~\Cref{appendix:pseudocode}, we use the method detailed by \citet{duchi2008efficient} to perform the projection of $\vectalpha$ after every gradient update step.
+The time complexity of the projection is $\mathcal{O}(KlogK)$ as it is dominated by sorting of elements in $\vectalpha$, and $K$ is typically small for sparse graphs. In \Cref{alg:project} \agtext{in~\citep[\Cref{appendix:pseudocode}]{fullversion}}, we use the method detailed by \citet{duchi2008efficient} to perform the projection of $\vectalpha$ after every gradient update step.
 % $\feasiblematrices(\transmatrix) {\color{black}\cap \resfeasiblematrices(\transmatrix)}$ 
 % by the following steps:
 % \begin{enumerate}[leftmargin=*]
@@ -1000,37 +1004,37 @@ The time complexity of the projection is $\mathcal{O}(KlogK)$ as it is dominated
 
 The constraint $\feasiblematrices(\transmatrix)$ calls for a Euclidean projection of $\vectalpha$ onto the intersection of a probability simplex and a box:
 \begin{equation*}
-	\vectalphaopt  =\underset {\vectr \in  \mathcal{F}}{\text{argmin}} \left\| \vectalpha - \vectr \right\|_2^2
+	\vectalphaopt  =\underset {\vectr \in  \mathcal{F}}{\arg\min} \left\| \vectalpha - \vectr \right\|_2^2,
 \end{equation*}
-where $\mathcal{F} = \{ \vectr \in \mathbb{R}^{K} \mid \mathbf{1}^{\intercal} \vectr = 1,  \vectl \leq \vectr \leq \vectu \}$, with $\vectl = \max \{0, (1 - \delta) \vectalpha - \epsilon \}$ and $\vectu = \min \{1, (1 + \delta) \vectalpha + \epsilon \}$. According to \citet{adam2022projections}, the solution is $\alpha_i^* = \text{clip} (\alpha_i + \lambdaopt, l_i, u_i)$, with $\text{clip}(x, a, b)$ defined as
+where $\mathcal{F} = \{ \vectr \in \mathbb{R}^{K} \mid \mathbf{1}^{\intercal} \vectr = 1,  \vectl \leq \vectr \leq \vectu \}$, with $\vectl = \max \{0, (1 - \delta) \vectalpha - \epsilon \}$ and $\vectu = \min \{1, (1 + \delta) \vectalpha + \epsilon \}$. According to \citet{adam2022projections}, the solution is $\alpha_i^* = \text{clip} (\alpha_i + \lambdaopt, \ell_i, u_i)$, with $\text{clip}(x, a, b)$ defined as
 \begin{equation*}
 	\text{clip}(x, a, b) = \begin{cases}
-		a & \text{if } x \leq a \\
-		x & \text{if } a < x < b \\
-		b & \text{if } x \geq b
+		a & \text{if } x \leq a, \\
+		x & \text{if } a < x < b, \\
+		b & \text{if } x \geq b,
 	\end{cases}
 \end{equation*}
 and $\lambdaopt$ is the solution that solves the function
 \begin{equation*}
-	h(\lambda) := \sum_{i=1}^{K} \text{clip}(\alpha_i + \lambda, l_i, u_i) -1 = 0
+	h(\lambda) := \sum_{i=1}^{K} \text{clip}(\alpha_i + \lambda, \ell_i, u_i) -1 = 0.
 \end{equation*}
-$h$ is piecewise linear and non-decreasing in $\lambda$, this allows us to find $\lambda$ via a simple simple proposed by \citet{adam2022projections}. The rationale is explained as follows:
+Since $h$ is piecewise linear and non-decreasing in $\lambda$, \agtext{we can find~$\lambdaopt$} via a simple method proposed by \citet{adam2022projections}. The rationale is the following:
 \begin{enumerate}[leftmargin=*]
-	\item For any $\lambda$, $\clip(\alpha_i, l_i, u_i)$ takes value $l_i$, $\lambda + \alpha_i$ or $u_i$, thus we can rewrite $h(\lambda)$ as $h(\lambda) = \act(\lambda) \times \lambda + C$ for some constant $C$, where $\act(\lambda) $ is the number of elements such that $\alpha_i + \lambda$ falls in range $[l_i, u_i)$.
-	\item Let $R$ be the increasing ranking of $2K$ items consisting of $\vectl - \vectalpha$ and $\vectu - \vectalpha$. For any $\lambda$ in interval $[R_j, R_{j+1})$, $\act(\lambda)$ remains constant.
-	\item Let $\Total(\lambda) = \sum_{i=1}^K \clip(\alpha_i + \lambda, l_i, u_i)$, assume $\mathcal{F}$ is non-empty, then there must exist some $j \in \{1, \cdots, 2K\}$ such that $\Total(R_j) \leq 1$ and $\Total(R_{j+1}) > 1$, and we can conclude that $\lambda^*$ lies in range $[R_j, R_{j+1})$. Since $\act(R_j) = \act(\lambda^*)$, it follows that,
-	\begin{equation*}
-		(\lambda^{*} - R_j) \times \act(R_j) = 1 - \Total(R_j)
-	\end{equation*}
+	\item For any $\lambda$, $\clip(\alpha_i, \ell_i, u_i)$ takes value $\ell_i$, $\lambda + \alpha_i$, or $u_i$, thus, we can rewrite $h(\lambda)$ as $h(\lambda) = \act(\lambda) \cdot \lambda + C$ for some constant~$C$, where $\act(\lambda) $ is the number of elements such that $\alpha_i + \lambda$ falls in range $[\ell_i, u_i)$.
+	\item Let $R$ be the increasing ranking of $2K$ items consisting of $\vectl - \vectalpha$ and $\vectu - \vectalpha$. For any $\lambda$ in interval $[R_j, R_{j+1})$, the function $\act(\lambda)$ remains constant.
+	\item Let $\Total(\lambda) = \sum_{i=1}^K \clip(\alpha_i + \lambda, \ell_i, u_i)$ and assume that $\mathcal{F}$ is non-empty. Then there must exist some $j \in \{1, \cdots, 2K\}$ such that $\Total(R_j) \leq 1$ and $\Total(R_{j+1}) > 1$, and we can conclude that $\lambda^*$ lies in range $[R_j, R_{j+1})$. Since $\act(R_j) = \act(\lambda^*)$, it follows that
+	%\begin{equation*}
+	$(\lambda^{*} - R_j) \cdot \act(R_j) = 1 - \Total(R_j)$
+	%\end{equation*}
 	and thus we can compute $\lambda^{*}$ as 
 	\begin{equation*}
-		\lambda^{*} = \frac{1-Total(R_j)}{\act(R_j)}
+		\lambda^{*} = \frac{1-Total(R_j)}{\act(R_j)}.
 	\end{equation*}
 \end{enumerate}
 The time complexity of the projection is also $\mathcal{O}(KlogK)$ because the computation of $\lambda^*$ is dominated by sorting of $2K$ elements in $\vectl-\vectalpha$ and $\vectu-\vectalpha$.
 The details are given in Algorithm~\ref{alg:project} in the
 \agtext{full version of this paper
-\citep[Appendix~\ref{appendix:pseudocode}]{fullversion}.}
+\citep[\Cref{appendix:pseudocode}]{fullversion}.}
 
 
 % \haoyun{I am not sure if it is necessary to discuss how to handle sink vertices. \\
@@ -1088,7 +1092,7 @@ Algorithm~{\color{red}\ref{alg:poweriteration}} (\yapprox)
 approximates vector $\vecty_\agroup$.
 % using power iterations.
 Algorithm~\ref{alg:project} (\project) in 
-\agtext{full version~\citep[Appendix~\ref{appendix:pseudocode}]{fullversion}}
+\agtext{full version~\citep[\Cref{appendix:pseudocode}]{fullversion}}
 is the projection function, 
 where the transition matrix \newtransmatrix is projected back to the feasible set after each~iteration.
 
@@ -1127,13 +1131,8 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
 \subsection{Group-adapted \pagerank}
 
 The \fairgd algorithm can be extended to address both the \gafpr and \resgafpr problems by introducing an outer loop that iterates over all groups. This enhanced algorithm, referred to as \crossgd, 
-is detailed in~\Cref{alg:crossgd} in~\Cref{appendix:pseudocode}.
-
-
-
-
-
-
+is detailed in~\Cref{alg:crossgd} in
+\agtext{the full version~\citep[\Cref{appendix:pseudocode}]{fullversion}}.
 
 
 
@@ -1147,7 +1146,7 @@ with respect to the transition matrix \transmatrix is given by
 \label{eq:gradient_cross_fairness_loss}
     \frac{\partial}{\partial \transmatrix} \groupAdapLoss(\transmatrix, \gamma, \vectv) 
          = \frac{2 (1-\gamma)}{K^2} \sum_{k=1}^{\nogroups} 
-         \sum_{l=1}^{\nogroups} \left(\indvect{\agroup}^T \prvector_l - \grouppr_\agroup\right) \left( \prvector_l \indvect{\agroup}^T \matrixU^{-1} \right)         
+         \sum_{\ell=1}^{\nogroups} \left(\indvect{\agroup}^T \prvector_l - \grouppr_\agroup\right) \left( \prvector_l \indvect{\agroup}^T \matrixU^{-1} \right)         
 \end{aligned}
 \end{equation}
 
@@ -1251,7 +1250,8 @@ We evaluate our methods and the baselines on the following publicly-available da
 \slashdot~\citep{leskovec_community_2009}.
 %
 Statistics of these datasets are given in \Cref{table:datasets}, 
-whereas more information is presented in \Cref{appendix:datasets}.
+whereas more information is presented in 
+\agtext{the full version~\citep[\Cref{appendix:datasets}]{fullversion}}.
 
 \iffalse
 \noindent 
@@ -1395,7 +1395,8 @@ We compare our methods with the following strong baselines: \\
 \crosswalk~\citep{khajehnejad_crosswalk_2022}.
 More details on the baselines
 % including the revised transition matrix, 
-can be found in \Cref{appendix:baselines}.
+can be found in 
+\agtext{the full version~\citep[\Cref{appendix:baselines}]{fullversion}}.
 
 
 \iffalse
@@ -1828,9 +1829,9 @@ Across the \book, \blogs, and \mind datasets, \crossgd consistently achieves the
 For all datasets except \book, the two variants of \crossgd exhibit comparable or slightly higher fairness loss relative to \crossgd, while consistently maintaining lower or comparable weight change.
 
 \subsection{Ranking coefficient evaluation}
-We report the average Spearman’s rank correlation coefficient $\overline{\rho}$ for each method across multiple datasets. For each group, we compute the Spearman’s coefficient between the rankings of old and new PageRank values restricted to that group. These per-group coefficients are then aggregated using a weighted average, where each group’s weight corresponds to its proportion of the total items. The results for the \mind dataset are shown in \Cref{table:ranking_book}, while results for other datasets are provided in \Cref{appendix:more-experiments}.  For each table, we bold the largest value and underline the second largest.
-
-
+We report the average Spearman’s rank correlation coefficient $\overline{\rho}$ for each method across multiple datasets. For each group, we compute the Spearman’s coefficient between the rankings of old and new PageRank values restricted to that group. These per-group coefficients are then aggregated using a weighted average, where each group’s weight corresponds to its proportion of the total items. The results for the \mind dataset are shown in \Cref{table:ranking_book}, while results for other datasets are provided in 
+\agtext{the full version~\citep[\Cref{appendix:more-experiments}]{fullversion}}.
+For each table, we bold the largest value and underline the second largest.
 
 Across all $\phi$ values, \fairgd consistently attains the highest $\overline{\rho}$, followed by \fairgdrtwo and \fairgdrone in second and third place, respectively. These results indicate that \fairgd exhibits very good preservation of the relative PageRank score rankings within individual groups. These results suggest that, in practical applications, when adjusting the content displayed to users based on items’ PageRank scores to enhance fairness, fewer changes are required within
 each group. Instead, greater focus should be placed on adjusting
