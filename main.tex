@@ -275,7 +275,7 @@ As we will see, we answer this question in the~affirmative.
 % Motivated by the above discussion, 
 We present a new approach to incorporate fairness into the \pagerank algorithm by re\-weighting the transition probabilities of the \pagerank matrix. 
 More concretely, we seek to minimize the \pagerank distance to a fair distribution while allowing only for re\-weighting the network edges within pre\-specified limits. 
-Our approach handles multiple vertex groups in the network.
+Our approach handles multiple vertex groups.
 Unlike earlier approaches, 
 we do not recommend that new edges be added to the network, nor do we adjust the restart vector. 
 Instead, we keep the topology of the underlying network unchanged. 
@@ -286,10 +286,10 @@ If perfect fairness cannot be achieved,
 %  with the permissible transition-matrix modifications, 
 our formulation aims to find a solution as close as possible to the target fairness~objective.
 
-Our approach provides an actionable environment for achieving fairness in \pagerank-type methods, 
-as the new edge weights, computed by our method, 
-can be used to suggest concrete changes in the network ecosystem, e.g., 
-re\-weighting and prioritizing the feed of users in a social network. 
+Our approach provides an actionable environment to improve    \pagerank fairness, 
+as the newly computed edge weights 
+can be lead to concrete actions, e.g., 
+re\-weighting and prioritizing the feed of users in the social-network platform. 
 
 We propose a projected gradient descent method for computing locally-optimal edge re\-weightings and show how it can be implemented efficiently. 
 We empirically compare our approach with state-of-the-art baselines
@@ -306,7 +306,6 @@ in the fairness of the \pagerank algorithm.
 \para{Contributions.}
 In concrete, we make the following contributions.
 
-\vspace{-2mm}
 \begin{itemize}[leftmargin=*]
 \item 
 We present a new approach for incorporating group fairness into the \pagerank algorithm 
@@ -980,9 +979,9 @@ $\feasiblematrices(\transmatrix)$. Projecting \vects to \vectt subject to $\feas
     \vectsopt  =\underset {\vectr \in  \mathcal{F}_1}{\arg\min} \left\| \vects - \vectr \right\|_2^2
 \end{equation*}
 where $\mathcal{F}_1 = \{ \vectr \in \mathbb{R}^{K} \mid \mathbf{1}^{\mathsf{T}}\vectr = 1, \vectr \geq 0\}$ is a probability simplex. This is a well studied problem~\citep{michelot1986finite, pardalos1990algorithm, duchi2008efficient, condat2016fast, cisse2017parseval}.
-In \Cref{alg:project}, \agtext{shown in the full version~\citep[\Cref{appendix:pseudocode}]{fullversion}}, we use the method detailed by \citet{duchi2008efficient} to perform the projection of $\vects$ after every gradient update step.
+In \Cref{alg:project}, \agtext{shown in the full version~\citep[\Cref{appendix:pseudocode}]{fullversion}}, we use the method detailed by \citet{duchi2008efficient} to perform the projection of $\vects$ after every gradient update step. According to \citet{cisse2017parseval}, the computational complexity for the projection is $\bigO(KlogK)$.
 
- Its solution is of the form: $\alpha^{*}_i = \max (0, \alpha_i - \tau(\vectalpha))$, with $\tau: \mathbb{R}^{K} \rightarrow \mathbb{R}$ the unique function satisfying $\sum_{i} (x_i - \tau(\vectalpha)) = 1$ for every $\textbf{\textit{x}} \in \mathbb{R}^{K}$. According to \citet{duchi2008efficient}, let $\alpha_1 \geq \alpha_2 \geq \cdots \geq \alpha_{K}$ be the sorted elements of $\vectalpha$, and $k(\vectalpha) = \max\{k \in (1, \cdots, K) \mid 1 + k \alpha_k > \sum_{j \leq k} \alpha_j \} $. Then, $\tau(\vectalpha)$ is given by:
+ % Its solution is of the form: $\alpha^{*}_i = \max (0, \alpha_i - \tau(\vectalpha))$, with $\tau: \mathbb{R}^{K} \rightarrow \mathbb{R}$ the unique function satisfying $\sum_{i} (x_i - \tau(\vectalpha)) = 1$ for every $\textbf{\textit{x}} \in \mathbb{R}^{K}$. According to \citet{duchi2008efficient}, let $\alpha_1 \geq \alpha_2 \geq \cdots \geq \alpha_{K}$ be the sorted elements of $\vectalpha$, and $k(\vectalpha) = \max\{k \in (1, \cdots, K) \mid 1 + k \alpha_k > \sum_{j \leq k} \alpha_j \} $. Then, $\tau(\vectalpha)$ is given by:
 % \begin{equation*}
 % 	\tau(\vectalpha) = \frac{\left(\sum_{j \leq k(\vectalpha)} \alpha_j\right) -1}{k(\vectalpha)}.
 % \end{equation*}
@@ -1003,11 +1002,11 @@ In \Cref{alg:project}, \agtext{shown in the full version~\citep[\Cref{appendix:p
 
 % Since our optimization process uses element-wise updates for obtaining \newtransmatrix, the first step can be omitted. 
 
-The constraint $\feasiblematrices(\transmatrix)$ calls for a Euclidean projection of $\vects$ onto the intersection of a probability simplex and a box:
+We then discuss constraint $\feasiblematrices(\transmatrix) \cap \resfeasiblematrices(\transmatrix)$. Solving the projection subject to this constraint is equivalent to solving a Euclidean projection of $\vects$ onto the intersection of a probability simplex and a box:
 \begin{equation*}
-	\vectsopt  =\underset {\vectt \in  \mathcal{F}}{\arg\min} \left\| \vects - \vectt \right\|_2^2,
+	\vectsopt  =\underset {\vectt \in  \mathcal{F}_2}{\arg\min} \left\| \vects - \vectt \right\|_2^2,
 \end{equation*}
-where $\mathcal{F} = \{ \vectt \in \mathbb{R}^{K} \mid \mathbf{1}^{\intercal} \vectt = 1,  \vectl \leq \vectt \leq \vectu \}$, with $\vectl = \max \{0, (1 - \delta) \vects - \epsilon \}$ and $\vectu = \min \{1, (1 + \delta) \vects + \epsilon \}$. According to \citet{adam2022projections}, the solution is $\alpha_i^* = \text{clip} (\alpha_i + \lambdaopt, \ell_i, u_i)$, with $\text{clip}(x, a, b)$ defined as
+where $\mathcal{F}_2 = \{ \vectt \in \mathbb{R}^{K} \mid \mathbf{1}^{\mathsf{T}} \vectt = 1,  \vectl \leq \vectt \leq \vectu \}$, with $\vectl = \max \{0, (1 - \delta) \vects - \epsilon \}$ and $\vectu = \min \{1, (1 + \delta) \vects + \epsilon \}$. According to \citet{adam2022projections}, the solution is $\alpha_i^* = \text{clip} (\alpha_i + \lambdaopt, \ell_i, u_i)$, with $\text{clip}(x, a, b)$ defined as
 \begin{equation*}
 	\text{clip}(x, a, b) = \begin{cases}
 		a & \text{if } x \leq a, \\
