@@ -52,13 +52,13 @@ we have the following:
 \label{eq:gradient_fairness_loss}
     \frac{\partial}{\partial \transmatrix} \loss(\transmatrix, \gamma, \vectv) 
         & = \frac{\partial}{\partial \transmatrix} \frac{1}{K}
-                \sum_{k=1}^{\nogroups}  \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right)^2 \\
-        & = \frac{2}{K} \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right) 
-                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right) \\
-        & = \frac{2}{\nogroups} \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right) 
-                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^T \prvector\right)  \\ 
-        & = \frac{2 \gamma}{K} \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right) 
-                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^T \matrixU^{-1} \vectv\right). 
+                \sum_{k=1}^{\nogroups}  \left(\indvect{\agroup}^{\mathsf{T}} \prvector - \grouppr_\agroup\right)^2 \\
+        & = \frac{2}{K} \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^{\mathsf{T}} \prvector - \grouppr_\agroup\right) 
+                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^{\mathsf{T}} \prvector - \grouppr_\agroup\right) \\
+        & = \frac{2}{\nogroups} \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^{\mathsf{T}} \prvector - \grouppr_\agroup\right) 
+                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^{\mathsf{T}} \prvector\right)  \\ 
+        & = \frac{2 \gamma}{K} \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^{\mathsf{T}} \prvector - \grouppr_\agroup\right) 
+                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \vectv\right). 
 \end{aligned}
 \end{equation}
 By the chain rule of matrix calculus \citep[Equation~(137)]{petersen_matrix_2008}, 
@@ -66,44 +66,44 @@ we obtain:
 \begin{equation}
 \label{eq:chain_rule}
 \begin{aligned}
-\frac{\partial}{\partial \transmatrix[i, j]} \left(\indvect{\agroup}^T \matrixU^{-1} \vectv\right) 
+\frac{\partial}{\partial \transmatrix[i, j]} \left(\indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \vectv\right) 
     & = \mathrm{Tr} 
         \left[ 
-            \left( \frac{\partial (\indvect{\agroup}^T \matrixU^{-1} \vectv)}{\partial \matrixU} \right)^T 
+            \left( \frac{\partial (\indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \vectv)}{\partial \matrixU} \right)^{\mathsf{T}} 
             \frac{\partial \matrixU}{\partial \transmatrix[i, j]} 
         \right]
 \end{aligned}
 \end{equation}
 By considering the derivative of inverse~\cite[Equation~(61)]{petersen_matrix_2008}~we~have:
 \begin{equation*}
-    \frac{\partial (\indvect{\agroup}^T \matrixU^{-1} \vectv)}{\partial \matrixU} 
-        = -\matrixU^{-T} \indvect{\agroup} \vectv^T \matrixU^{-T}.
+    \frac{\partial (\indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \vectv)}{\partial \matrixU} 
+        = -\matrixU^{-T} \indvect{\agroup} \vectv^{\mathsf{T}} \matrixU^{-T}.
 \end{equation*}
 The gradient of $\matrixU$ with respect to $\transmatrix[i, j]$ is:
 \begin{equation*}
     \frac{\partial \matrixU}{\partial \transmatrix[i, j]} 
-        = - (1 - \gamma) \frac{\partial \transmatrix^T}{\partial \transmatrix[i, j]} = - (1 - \gamma) \Ematrix_{ji},
+        = - (1 - \gamma) \frac{\partial \transmatrix^{\mathsf{T}}}{\partial \transmatrix[i, j]} = - (1 - \gamma) \Ematrix_{ji},
 \end{equation*}
 where $\Ematrix_{ij}$ is the matrix whose $[i,j]$ entry is 1 and all other entries are 0.
 From Equation~\eqref{eq:chain_rule}, we get:
 % \begin{equation}
 % \label{eq:gradient_onek_Uinv_v}
 % \begin{aligned}
-% \frac{\partial}{\partial \transmatrix[i, j]} \left(\indvect{\agroup}^T \matrixU^{-1} \vectv\right) 
+% \frac{\partial}{\partial \transmatrix[i, j]} \left(\indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \vectv\right) 
 %     & = (1 - \gamma) \mathrm{Tr} 
-%             \left[ \left( \matr{U}^{-T} \indvect{\agroup} \vectv^T \matrixU^{-T} \right)^T \Ematrix_{ji} \right] \\ 
-%     & = (1 - \gamma) \left( \matrixU^{-1} \vectv \indvect{\agroup}^T \matrixU^{-1} \right)[i, j] \\
-%     & = \frac{1 - \gamma}{\gamma^2} \left( \prvector \vecty_\agroup^T \right)[i, j].
+%             \left[ \left( \matr{U}^{-T} \indvect{\agroup} \vectv^{\mathsf{T}} \matrixU^{-T} \right)^{\mathsf{T}} \Ematrix_{ji} \right] \\ 
+%     & = (1 - \gamma) \left( \matrixU^{-1} \vectv \indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \right)[i, j] \\
+%     & = \frac{1 - \gamma}{\gamma^2} \left( \prvector \vecty_\agroup^{\mathsf{T}} \right)[i, j].
 % \end{aligned}
 % \end{equation}
 \begin{equation}
 \label{eq:gradient_onek_Uinv_v}
 \begin{aligned}
-\frac{\partial}{\partial \transmatrix[i, j]} \left(\indvect{\agroup}^T \matrixU^{-1} \vectv\right) 
+\frac{\partial}{\partial \transmatrix[i, j]} \left(\indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \vectv\right) 
     & = (1 - \gamma) \mathrm{Tr} 
-            \left[ \left( \matr{U}^{-T} \indvect{\agroup} \vectv^T \matrixU^{-T} \right)^T \Ematrix_{ji} \right] \\ 
-    & = (1 - \gamma) \left( \matrixU^{-1} \vectv \indvect{\agroup}^T \matrixU^{-1} \right)[i, j] \\
-    & = \frac{1 - \gamma}{\gamma} \left( \prvector \indvect{\agroup}^T \matrixU^{-1} \right)[i, j].
+            \left[ \left( \matr{U}^{-T} \indvect{\agroup} \vectv^{\mathsf{T}} \matrixU^{-T} \right)^{\mathsf{T}} \Ematrix_{ji} \right] \\ 
+    & = (1 - \gamma) \left( \matrixU^{-1} \vectv \indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \right)[i, j] \\
+    & = \frac{1 - \gamma}{\gamma} \left( \prvector \indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \right)[i, j].
 \end{aligned}
 \end{equation}
 
@@ -113,7 +113,7 @@ leads to
 \begin{aligned}
 \label{eq:gradient_fairness_loss_final}
     \frac{\partial}{\partial \transmatrix} \loss(\transmatrix, \gamma, \vectv) 
-         = \frac{2 (1-\gamma)}{K} \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right) \left( \prvector \indvect{\agroup}^T \matrixU^{-1} \right)           
+         = \frac{2 (1-\gamma)}{K} \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^{\mathsf{T}} \prvector - \grouppr_\agroup\right) \left( \prvector \indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \right)           
 \end{aligned}
 \end{equation}
 
@@ -129,13 +129,13 @@ Similarly to the proof in Appendix \ref{appendix:omitted-proposition-proof}, for
 \label{eq:gradient_fairness_loss_group_adapted}
     \frac{\partial}{\partial \transmatrix} \loss(\transmatrix, \gamma, \vectv) 
         & = \frac{\partial}{\partial \transmatrix} \frac{1}{K}
-                \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^T \prvector_l - \grouppr_\agroup\right)^2 \\
-        & = \frac{2}{K} \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^T \prvector_l - \grouppr_\agroup\right) 
-                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^T \prvector_l - \grouppr_\agroup\right) \\
-        & = \frac{2}{\nogroups^2} \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^T \prvector_l - \grouppr_\agroup\right) 
-                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^T \prvector_l \right)  \\ 
-        & = \frac{2 \gamma}{K} \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^T \prvector_l - \grouppr_\agroup\right) 
-                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^T \matrixU^{-1} \vectv_l \right). 
+                \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^{\mathsf{T}} \prvector_l - \grouppr_\agroup\right)^2 \\
+        & = \frac{2}{K} \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^{\mathsf{T}} \prvector_l - \grouppr_\agroup\right) 
+                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^{\mathsf{T}} \prvector_l - \grouppr_\agroup\right) \\
+        & = \frac{2}{\nogroups^2} \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^{\mathsf{T}} \prvector_l - \grouppr_\agroup\right) 
+                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^{\mathsf{T}} \prvector_l \right)  \\ 
+        & = \frac{2 \gamma}{K} \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^{\mathsf{T}} \prvector_l - \grouppr_\agroup\right) 
+                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \vectv_l \right). 
 \end{aligned}
 \end{equation}
 
@@ -144,9 +144,9 @@ According to \Cref{eq:gradient_onek_Uinv_v},
 \begin{equation}
 \label{eq:gradient_onek_Uinv_v_l}
 \begin{aligned}
-\frac{\partial}{\partial \transmatrix[i, j]} \left(\indvect{\agroup}^T \matrixU^{-1} \vectv_l \right) 
-    & = (1 - \gamma) \left( \matrixU^{-1} \vectv_l \indvect{\agroup}^T \matrixU^{-1} \right)[i, j] \\
-    & = \frac{1 - \gamma}{\gamma} \left( \prvector_l \indvect{\agroup}^T \matrixU^{-1} \right)[i, j].
+\frac{\partial}{\partial \transmatrix[i, j]} \left(\indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \vectv_l \right) 
+    & = (1 - \gamma) \left( \matrixU^{-1} \vectv_l \indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \right)[i, j] \\
+    & = \frac{1 - \gamma}{\gamma} \left( \prvector_l \indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \right)[i, j].
 \end{aligned}
 \end{equation}
 Substituting \Cref{eq:gradient_onek_Uinv_v_l} to \Cref{eq:gradient_fairness_loss_group_adapted}, we get
@@ -156,7 +156,7 @@ Substituting \Cref{eq:gradient_onek_Uinv_v_l} to \Cref{eq:gradient_fairness_loss
 \label{eq:gradient_cross_fairness_loss}
     \frac{\partial}{\partial \transmatrix} \loss(\transmatrix, \gamma, \vectv) 
          = \frac{2 (1-\gamma)}{K^2} \sum_{k=1}^{\nogroups} 
-         \sum_{l=1}^{\nogroups} \left(\indvect{\agroup}^T \prvector_l - \grouppr_\agroup\right) \left( \prvector_l \indvect{\agroup}^T \matrixU^{-1} \right)         
+         \sum_{l=1}^{\nogroups} \left(\indvect{\agroup}^{\mathsf{T}} \prvector_l - \grouppr_\agroup\right) \left( \prvector_l \indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \right)         
 \end{aligned}
 \end{equation}
 
@@ -169,24 +169,24 @@ In this section, we prove that for approximating $\vecty_k$, truncating the Neum
 
 According to the Neumann series formula, we can calculate the matrix inverse of a matrix $\textbf{X}$ as: 
 $
-(\textbf{I} - \textbf{X})^{-1} = \sum_{t=0}^\infty \textbf{X}^t.
+(\textbf{I} - \textbf{X})^{-1} = \sum_{t=0}^\infty \textbf{X}^{\mathsf{T}}.
 $ 
 Let $\textbf{S}_k$ denote the partial sum of the Neumann series up to the $k$-th term, that is,
 \begin{equation*}
-    \textbf{S}_k = \sum_{t=0}^k \textbf{X}^t = \textbf{I} + \textbf{X} + \textbf{X}^2 + \dots + \textbf{X}^k.
+    \textbf{S}_k = \sum_{t=0}^k \textbf{X}^{\mathsf{T}} = \textbf{I} + \textbf{X} + \textbf{X}^2 + \dots + \textbf{X}^k.
 \end{equation*}
 We denote the truncation error as
 $
 \textbf{E}_k = (\textbf{I} - \textbf{X})^{-1} - \textbf{S}_k
 $, then we can express $\textbf{E}_k$ as the sum of the remaining terms:
 \begin{equation*}
-    \textbf{E}_k = \sum_{t=k+1}^\infty \textbf{X}^t
+    \textbf{E}_k = \sum_{t=k+1}^\infty \textbf{X}^{\mathsf{T}}
 \end{equation*}
 By factoring out $\textbf{X}^{k+1}$ from the series we get:
 \begin{equation*}
-    \textbf{E}_k = \textbf{X}^{k+1} \sum_{t=0}^\infty \textbf{X}^t.
+    \textbf{E}_k = \textbf{X}^{k+1} \sum_{t=0}^\infty \textbf{X}^{\mathsf{T}}.
 \end{equation*}
-Using the formula for the Neumann series, the infinite sum $\sum_{t=0}^\infty \textbf{X}^t$ is equal to $(\textbf{I} - \textbf{X})^{-1}$. Thus:
+Using the formula for the Neumann series, the infinite sum $\sum_{t=0}^\infty \textbf{X}^{\mathsf{T}}$ is equal to $(\textbf{I} - \textbf{X})^{-1}$. Thus:
 \begin{equation*}
     \textbf{E}_k = \textbf{X}^{k+1} (\textbf{I} - \textbf{X})^{-1}
 \end{equation*}
@@ -200,9 +200,9 @@ Given that $|\textbf{X}|<1$, it follows that
 \end{equation*}
 Thus, we conclude that the relative error for approximating $(1-\textbf{X})^{-1}$ is given by $\|\textbf{X}\|^{k+1}$.
 
-% Since $\matrixU^T = 1 - (1 - \gamma) \transmatrix$, to evaluate the approximation loss of $\vecty_k = \gamma \matrixU^{-T} \indvect{k}$, we let $\textbf{X}=(1-\gamma) \transmatrix $, with $\gamma$ set to $0.15$, and consequently, $|(1-\gamma) \transmatrix|_\infty = 0.85$. We conclude that the relative error of using the first $t$ term approximation is $0.85^{t+1}$. By setting $t = 50$ the relative error is smaller than 0.0003.
+% Since $\matrixU^{\mathsf{T}} = 1 - (1 - \gamma) \transmatrix$, to evaluate the approximation loss of $\vecty_k = \gamma \matrixU^{-T} \indvect{k}$, we let $\textbf{X}=(1-\gamma) \transmatrix $, with $\gamma$ set to $0.15$, and consequently, $|(1-\gamma) \transmatrix|_\infty = 0.85$. We conclude that the relative error of using the first $t$ term approximation is $0.85^{t+1}$. By setting $t = 50$ the relative error is smaller than 0.0003.
 
-Since $\matrixU^T = 1 - (1 - \gamma) \transmatrix$, to evaluate the approximation error of $\vecty_k = \gamma \matrixU^{-T} \indvect{k}$, we set $\mathbf{X} = (1-\gamma) \transmatrix$ with $\gamma = 0.15$. Consequently, $\lVert (1-\gamma) \transmatrix \rVert_\infty = 0.85$. It follows that the relative error of the $t$-term approximation is $0.85^{\,t+1}$. Setting $t = 50$ yields a relative error below $0.0003$.
+Since $\matrixU^{\mathsf{T}} = 1 - (1 - \gamma) \transmatrix$, to evaluate the approximation error of $\vecty_k = \gamma \matrixU^{-T} \indvect{k}$, we set $\mathbf{X} = (1-\gamma) \transmatrix$ with $\gamma = 0.15$. Consequently, $\lVert (1-\gamma) \transmatrix \rVert_\infty = 0.85$. It follows that the relative error of the $t$-term approximation is $0.85^{\,t+1}$. Setting $t = 50$ yields a relative error below $0.0003$.
 
 
 
@@ -289,10 +289,10 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
       \STATE $\iter \gets \iter + 1$
       \STATE ${\lossprev} \gets \groupAdapLoss(\newtransmatrix, \gamma, \vectv)$
       \FOR {$\ell = 1$ to $\nogroups$}
-       \STATE $\prvector \gets \text{iterating } \prvector^T = (1 - \gamma) \prvector^T \newtransmatrix + \frac{\gamma}{|\vertices_{\ell}|} \indvect{\ell}^T \text{ for } t_1 \text{ times}$
+       \STATE $\prvector \gets \text{iterating } \prvector^{\mathsf{T}} = (1 - \gamma) \prvector^{\mathsf{T}} \newtransmatrix + \frac{\gamma}{|\vertices_{\ell}|} \indvect{\ell}^{\mathsf{T}} \text{ for } t_1 \text{ times}$
         % \STATE $\prvector_{\ell} \gets {\pralgo}(\newtransmatrix, \gamma,  \frac{1}{|\vertices_{\ell}|} \indvect{\ell})$
         \FOR {$\agroup = 1$ to $\nogroups$}
-          \STATE $\theta_\agroup \gets \indvect{\agroup}^T \prvector_{\ell}$
+          \STATE $\theta_\agroup \gets \indvect{\agroup}^{\mathsf{T}} \prvector_{\ell}$
           % \STATE $\vecty_{\agroup} \gets$ ${\yapprox}(\newtransmatrix, \gamma, \indvect{\agroup}, t)$
            \STATE $\vecty_{\agroup} \gets$ $\gamma \sum_{i=1}^{t_2} (1-\gamma)^i \newtransmatrix^i \indvect{k}$          
             \STATE $\newtransmatrix \gets \newtransmatrix- \alpha \frac{2(1 - \gamma)}{\gamma} (\theta_\agroup - \grouppr_\agroup) \prvector_{\ell} \vecty_{\agroup}$
@@ -314,7 +314,7 @@ Given restart probability $\gamma$ and restart vector $\vectv$, we can rewrite t
 \begin{equation*}
     \mathcal{L}(\transmatrix) = \frac{1}{K} \sum_{k=1}^K \left( g_k(\transmatrix) \right)^2
 \end{equation*}
-where $g_k(\transmatrix) = \indvect{\agroup}^T \prvector - \phi_k$ and $\prvector = \gamma (I - (1-\gamma) \transmatrix^T)^{-1} \vectv.$
+where $g_k(\transmatrix) = \indvect{\agroup}^{\mathsf{T}} \prvector - \phi_k$ and $\prvector = \gamma (I - (1-\gamma) \transmatrix^{\mathsf{T}})^{-1} \vectv.$
 
 
 \subsection{Gradient of the Loss $\mathcal{L}(\transmatrix)$}
@@ -324,11 +324,11 @@ Though we have already provided the first-gradient analysis of the loss function
     \frac{\partial \mathcal{L}}{\partial \transmatrix_{ij}}
 = \frac{2}{K} \sum_{k=1}^K g_k \frac{\partial h_k}{\partial \transmatrix_{ij}}
 \end{equation*}
-where \( h_k(\transmatrix) = \indvect{\agroup}^T \prvector \).
+where \( h_k(\transmatrix) = \indvect{\agroup}^{\mathsf{T}} \prvector \).
 
 % \paragraph{\textbf{Derivative of \( h_k(P) \) with Respect to \( P_{ij} \)}}
 
-Let \(\Amatrix = I - (1-\gamma) \transmatrix^T\), then it holds that, $\Amatrix \prvector = \gamma \vectv$, and 
+Let \(\Amatrix = I - (1-\gamma) \transmatrix^{\mathsf{T}}\), then it holds that, $\Amatrix \prvector = \gamma \vectv$, and 
 \begin{equation*}
     \frac{\partial \Amatrix \prvector}{\partial \transmatrix_{ij}} = \frac{\partial \gamma \vectv}{\partial \transmatrix_{ij}} = 0.
 \end{equation*}
@@ -342,16 +342,16 @@ and thus
 \end{equation*}
 where
 \begin{align*}
-    \frac{\partial \Amatrix}{\partial \transmatrix_{ij}} &= \frac{\partial I - (1 - \gamma)\partial \transmatrix^T}{\partial \transmatrix_{ij}} \\
-    & = -(1-\gamma) \frac{\partial \transmatrix^T}{\partial \transmatrix_{ij}} = -(1 - \gamma) \Ematrix_{ji},
+    \frac{\partial \Amatrix}{\partial \transmatrix_{ij}} &= \frac{\partial I - (1 - \gamma)\partial \transmatrix^{\mathsf{T}}}{\partial \transmatrix_{ij}} \\
+    & = -(1-\gamma) \frac{\partial \transmatrix^{\mathsf{T}}}{\partial \transmatrix_{ij}} = -(1 - \gamma) \Ematrix_{ji},
 \end{align*}
 with $\Ematrix_{ji}$ denoting the matrix where only the $(j,i)$-th element is 1, and all other elements are zero. 
 
 Therefore,
 \begin{align*}
-\frac{\partial h_k}{\partial \transmatrix_{ij}} &= \indvect{\agroup}^T \frac{\partial \prvector}{\partial \transmatrix_{ij}} \\
-&= (1-\gamma) \indvect{\agroup}^T \invAmatrix \Ematrix_{ji} \prvector \\
-&= (1-\gamma) \prvector_i (\indvect{\agroup}^T \invAmatrix \matr{e}_j)
+\frac{\partial h_k}{\partial \transmatrix_{ij}} &= \indvect{\agroup}^{\mathsf{T}} \frac{\partial \prvector}{\partial \transmatrix_{ij}} \\
+&= (1-\gamma) \indvect{\agroup}^{\mathsf{T}} \invAmatrix \Ematrix_{ji} \prvector \\
+&= (1-\gamma) \prvector_i (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j)
 \end{align*}
 where $\matr{e}_j$ is the standard basis vector (1 at position $j$, zero elsewhere).
 
@@ -372,16 +372,16 @@ We now compute the second derivative of the loss:
 We calculate each term of the second derivative respectively.
 \paragraph{First term:}
 \[
-\frac{\partial g_k}{\partial \transmatrix_{ab}} = \frac{\partial h_k}{\partial \transmatrix_{ab}} = (1-\gamma) \prvector_a (\indvect{\agroup}^T \invAmatrix \matr{e}_b)
+\frac{\partial g_k}{\partial \transmatrix_{ab}} = \frac{\partial h_k}{\partial \transmatrix_{ab}} = (1-\gamma) \prvector_a (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_b)
 \]
 
 \paragraph{Second term:}
 \begin{align*}
 \frac{\partial^2 h_k}{\partial \transmatrix_{ij} \partial \transmatrix_{ab}}
-&= (1-\gamma) \frac{\partial}{\partial \transmatrix_{ab}} \left[ \prvector_i (\indvect{\agroup}^T \invAmatrix \matr{e}_j) \right] \\
+&= (1-\gamma) \frac{\partial}{\partial \transmatrix_{ab}} \left[ \prvector_i (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j) \right] \\
 &= (1-\gamma) \left[
-    \frac{\partial \prvector_i}{\partial \transmatrix_{ab}} (\indvect{\agroup}^T \invAmatrix \matr{e}_j)
-    + \prvector_i \frac{\partial}{\partial \transmatrix_{ab}} (\indvect{\agroup}^T \invAmatrix \matr{e}_j)
+    \frac{\partial \prvector_i}{\partial \transmatrix_{ab}} (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j)
+    + \prvector_i \frac{\partial}{\partial \transmatrix_{ab}} (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j)
 \right]
 \end{align*}
 We have:
@@ -390,14 +390,14 @@ We have:
 \]
 and
 \[
-\frac{\partial}{\partial \transmatrix_{ab}} (\indvect{\agroup}^T \invAmatrix \matr{e}_j) = (1-\gamma) \indvect{\agroup}^T \invAmatrix \Ematrix_{ba} \invAmatrix \matr{e}_j
+\frac{\partial}{\partial \transmatrix_{ab}} (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j) = (1-\gamma) \indvect{\agroup}^{\mathsf{T}} \invAmatrix \Ematrix_{ba} \invAmatrix \matr{e}_j
 \]
 {Combining the two terms, we get}
 \begin{align*}
 \frac{\partial^2 h_k}{\partial \transmatrix_{ij} \partial \transmatrix_{ab}} &=
 (1-\gamma)^2 \Big(
-    [\invAmatrix \Ematrix_{ba} \prvector]_i \cdot (\indvect{\agroup}^T \invAmatrix \matr{e}_j)
-    + \prvector_i \cdot \indvect{\agroup}^T \invAmatrix \Ematrix_{ba} \invAmatrix \matr{e}_j
+    [\invAmatrix \Ematrix_{ba} \prvector]_i \cdot (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j)
+    + \prvector_i \cdot \indvect{\agroup}^{\mathsf{T}} \invAmatrix \Ematrix_{ba} \invAmatrix \matr{e}_j
 \Big)
 \end{align*}
 
@@ -406,10 +406,10 @@ The Hessian entry of \(\mathcal{L}(\transmatrix)\) at \(((ij), (ab))\) is:
 \label{eq:hessian}
     & \frac{\partial^2 \mathcal{L}}{\partial \transmatrix_{ij} \partial \transmatrix_{ab}}
 = \frac{2}{K} \sum_{k=1}^K \Bigg[
-        (1-\gamma)^2 \prvector_a \prvector_i (\indvect{\agroup}^T \invAmatrix \matr{e}_b)(\indvect{\agroup}^T \invAmatrix \matr{e}_j)\\ \nonumber
+        (1-\gamma)^2 \prvector_a \prvector_i (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_b)(\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j)\\ \nonumber
     &+\ g_k(\transmatrix) \cdot (1-\gamma)^2 \Big(
-        [\invAmatrix \Ematrix_{ba} \prvector]_i \cdot (\indvect{\agroup}^T \invAmatrix \matr{e}_j)
-        + \prvector_i \cdot \indvect{\agroup}^T \invAmatrix \Ematrix_{ba} \invAmatrix \matr{e}_j
+        [\invAmatrix \Ematrix_{ba} \prvector]_i \cdot (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j)
+        + \prvector_i \cdot \indvect{\agroup}^{\mathsf{T}} \invAmatrix \Ematrix_{ba} \invAmatrix \matr{e}_j
     \Big)
 \Bigg]
 \end{align}
@@ -428,22 +428,22 @@ We can then rewrite \Cref{eq:hessian} as
 \label{eq:hessian}
      \Hmatrix_{rs}
 &= \frac{2}{K} \sum_{k=1}^K \Bigg[
-        (1-\gamma)^2 \prvector_{a(s)} \prvector_{i(r)}(\indvect{\agroup}^T \invAmatrix \matr{e}_{b(s)})(\indvect{\agroup}^T \invAmatrix \matr{e}_{j(r)})\\ \nonumber
+        (1-\gamma)^2 \prvector_{a(s)} \prvector_{i(r)}(\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_{b(s)})(\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_{j(r)})\\ \nonumber
     &+\ g_k(\transmatrix) \cdot (1-\gamma)^2 \Big(
-        [\invAmatrix \Ematrix_{b(s)a(s)} \prvector]_{i(r)} \cdot (\indvect{\agroup}^T \invAmatrix \matr{e}_{j(r)} \\ \nonumber 
-        &+ \ g_k(\transmatrix) \cdot (1-\gamma)^2 \prvector_{i(r)} \cdot \indvect{\agroup}^T \invAmatrix \Ematrix_{b(s)a(s)} \invAmatrix \matr{e}_{j(r)}
+        [\invAmatrix \Ematrix_{b(s)a(s)} \prvector]_{i(r)} \cdot (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_{j(r)} \\ \nonumber 
+        &+ \ g_k(\transmatrix) \cdot (1-\gamma)^2 \prvector_{i(r)} \cdot \indvect{\agroup}^{\mathsf{T}} \invAmatrix \Ematrix_{b(s)a(s)} \invAmatrix \matr{e}_{j(r)}
     \Big)
 \Bigg]
 \end{align*}
 Let 
 \begin{align*}
     \Hmatrix_{rs}^{(1)} & = \frac{2}{K} (1-\gamma)^2\sum_{k=1}^K 
-         \prvector_{a(s)} \prvector_{i(r)}(\indvect{\agroup}^T \invAmatrix \matr{e}_{b(s)})(\indvect{\agroup}^T \invAmatrix \matr{e}_{j(r)}) \\
+         \prvector_{a(s)} \prvector_{i(r)}(\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_{b(s)})(\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_{j(r)}) \\
         \Hmatrix_{rs}^{(2)} & = \frac{2}{K} (1-\gamma)^2\sum_{k=1}^K 
         \ g_k(\transmatrix) 
-        [\invAmatrix \Ematrix_{b(s)a(s)} \prvector]_{i(r)} \cdot (\indvect{\agroup}^T \invAmatrix \matr{e}_{j(r)}) \\    
+        [\invAmatrix \Ematrix_{b(s)a(s)} \prvector]_{i(r)} \cdot (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_{j(r)}) \\    
         \Hmatrix_{rs}^{(3)} & = \frac{2}{K} (1-\gamma)^2\sum_{k=1}^K 
-        \ g_k(\transmatrix)  \prvector_{i(r)} \cdot \indvect{\agroup}^T \invAmatrix \Ematrix_{b(s)a(s)} \invAmatrix \matr{e}_{j(r)} 
+        \ g_k(\transmatrix)  \prvector_{i(r)} \cdot \indvect{\agroup}^{\mathsf{T}} \invAmatrix \Ematrix_{b(s)a(s)} \invAmatrix \matr{e}_{j(r)} 
 \end{align*}
 Then it holds that
 \begin{equation*}
@@ -453,11 +453,11 @@ To be able to bound the operator norm of $H$, we bound the operator norm of $\Hm
 
 
 Before bounding the operator norm of each term, we first proof $\|\invAmatrix\|_2 \leq 1/\gamma$, which will be used multiple times in the following deriviation.
- The proof is the result of three observations: (1) the largest eigenvalue of $P^T$ is 1, (2) the smallest eigenvalue of $\Amatrix$ is $\gamma$ and (3) the operator norm of the symmetric matrix $\|\invAmatrix\|_2$ is the reciprocal of the smallest absolute eigenvalue of $\Amatrix$. We provide details for each observation in the following:
+ The proof is the result of three observations: (1) the largest eigenvalue of $P^{\mathsf{T}}$ is 1, (2) the smallest eigenvalue of $\Amatrix$ is $\gamma$ and (3) the operator norm of the symmetric matrix $\|\invAmatrix\|_2$ is the reciprocal of the smallest absolute eigenvalue of $\Amatrix$. We provide details for each observation in the following:
 \begin{enumerate}
-	\item Let $\textbf{1}$ be an all-one vector, i.e. $\textbf{1} = (1,1,...,1)^T$. We can see $\textbf{1}$ is a eigenvector of $\transmatrix$ since $\transmatrix \textbf{1} = 1$. We also know the largest eigenvalue is bounded by the infinity norm, which is $\| \transmatrix\|_{\infty} = \max_i \sum_{j}|\transmatrix_{ij}| = 1$. Thus, the maximum eigenvalue of $P^T$, which is equal to the maximum eigenvalue of $P$, is equal to 1.
+	\item Let $\textbf{1}$ be an all-one vector, i.e. $\textbf{1} = (1,1,...,1)^{\mathsf{T}}$. We can see $\textbf{1}$ is a eigenvector of $\transmatrix$ since $\transmatrix \textbf{1} = 1$. We also know the largest eigenvalue is bounded by the infinity norm, which is $\| \transmatrix\|_{\infty} = \max_i \sum_{j}|\transmatrix_{ij}| = 1$. Thus, the maximum eigenvalue of $P^{\mathsf{T}}$, which is equal to the maximum eigenvalue of $P$, is equal to 1.
 	
-	\item Let $\lambda$ denote each eigenvalue of $\transmatrix^T$, and $\mu$ each eigenvalue of $\Amatrix$. Since $\Amatrix = I - (1 - \gamma) \transmatrix^T$, it holds that $\mu = 1 - (1 - \gamma) \lambda$. Thus the smallest eigenvalue of $\Amatrix$ occurs when $\lambda = 1$, leading to $u_{min} = 1 - (1 - \gamma) = \gamma$
+	\item Let $\lambda$ denote each eigenvalue of $\transmatrix^{\mathsf{T}}$, and $\mu$ each eigenvalue of $\Amatrix$. Since $\Amatrix = I - (1 - \gamma) \transmatrix^{\mathsf{T}}$, it holds that $\mu = 1 - (1 - \gamma) \lambda$. Thus the smallest eigenvalue of $\Amatrix$ occurs when $\lambda = 1$, leading to $u_{min} = 1 - (1 - \gamma) = \gamma$
 	
 	\item Combining (1) and (2), we get $\| \invAmatrix\| = \frac{1}{\mu_{min}} = \frac{1}{\gamma}$. 
 \end{enumerate}
@@ -465,16 +465,16 @@ Before bounding the operator norm of each term, we first proof $\|\invAmatrix\|_
 \subsubsection{Bounding $\|\Hmatrix^{(1)}\|_2$}
 Let $\vectw_k$ of a vector of length $n^2$ that depends on $k$, specifically,  
 \begin{equation*}
-    \vectw_k[r] = (1 - \gamma) \prvector_{i(r)} (\indvect{k}^T \invAmatrix e_{j(r)})
+    \vectw_k[r] = (1 - \gamma) \prvector_{i(r)} (\indvect{k}^{\mathsf{T}} \invAmatrix e_{j(r)})
 \end{equation*}
 Then we can represent $\Hmatrix^{(1)}$ as a rank 1 matrix as follow:
 \begin{equation*}
-    \Hmatrix^{(1)} = \frac{2}{K}\sum_{k=1}^{K} \vectw_k \vectw_k^T
+    \Hmatrix^{(1)} = \frac{2}{K}\sum_{k=1}^{K} \vectw_k \vectw_k^{\mathsf{T}}
 \end{equation*}
-By the subadditivity of the spectral norm, and the identity $\|\vectw_k \vectw_k^T\|_2 = \|\vectw_k\|_2^2$. We first bound the second norm of $\vectw_k$,  it follows that
+By the subadditivity of the spectral norm, and the identity $\|\vectw_k \vectw_k^{\mathsf{T}}\|_2 = \|\vectw_k\|_2^2$. We first bound the second norm of $\vectw_k$,  it follows that
 \begin{align*}
-    \|\vectw_k\|_2^2 &= {(1-\gamma)^2} \sum_{i=1}^{n}\prvector_{i}^2  \sum_{j=1}^{n} (\indvect{k}^T \invAmatrix e_j)^2\\
-    & ={(1-\gamma)^2} \sum_{i=1}^{n}\prvector_{i}^2  \|\indvect{k}^T \invAmatrix \|_2^2 \\
+    \|\vectw_k\|_2^2 &= {(1-\gamma)^2} \sum_{i=1}^{n}\prvector_{i}^2  \sum_{j=1}^{n} (\indvect{k}^{\mathsf{T}} \invAmatrix e_j)^2\\
+    & ={(1-\gamma)^2} \sum_{i=1}^{n}\prvector_{i}^2  \|\indvect{k}^{\mathsf{T}} \invAmatrix \|_2^2 \\
     & \stackrel{(a)}{\leq}  \frac{(1-\gamma)^2}{\gamma^2} \|\indvect{k}\|_2^2
 \end{align*}
 where (a) holds because $\sum_i \prvector_i^2 \leq 1$, and $\|\invAmatrix\| \leq \frac{1}{\gamma}$.
@@ -499,8 +499,8 @@ We can then obtain a vector $\vecty = \Hmatrix^{(2)} \vectx \in \mathbb{R}^{n^2}
 \begin{align*}
 	 \Ymatrix_{i(r), j(r)} &= \vecty_r  =\sum_{s = 1}^{n^2} \Hmatrix^{(2)}_{r,s} \vectx  \\
 	&= \sum_{a(s)=1}^{n} \sum_{b(s)=1}^{n} \Hmatrix^{(2)}_{(i(r),j(r)),(a(s),b(s))} \Xmatrix_{a(s),b(s)} \\
-	& \stackrel{(a)}{=} \frac{2(1-\gamma)^2}{K} \sum_{k=1}^{K} g_k \left[ \sum_{a, b} [\invAmatrix \Ematrix_{b a} \prvector]_i \Xmatrix_{a b} \right] (\indvect{k}^T \invAmatrix \vecte_{j})	\\
-	&=  \frac{2(1-\gamma)^2}{K} \sum_{k=1}^{K} g_k \left[ \sum_{ b} \left(\invAmatrix \right)_{i,b} \left(\sum_a \prvector_a \Xmatrix_{a,b} \right) \right] (\indvect{k}^T \invAmatrix \vecte_{j})
+	& \stackrel{(a)}{=} \frac{2(1-\gamma)^2}{K} \sum_{k=1}^{K} g_k \left[ \sum_{a, b} [\invAmatrix \Ematrix_{b a} \prvector]_i \Xmatrix_{a b} \right] (\indvect{k}^{\mathsf{T}} \invAmatrix \vecte_{j})	\\
+	&=  \frac{2(1-\gamma)^2}{K} \sum_{k=1}^{K} g_k \left[ \sum_{ b} \left(\invAmatrix \right)_{i,b} \left(\sum_a \prvector_a \Xmatrix_{a,b} \right) \right] (\indvect{k}^{\mathsf{T}} \invAmatrix \vecte_{j})
 \end{align*}
 where for equality (a) and the following deriviation, we replace $a(s), b(s)$ with $a,b$, and $i(r), j(r)$ with $(i,j)$ for ease of notation whenever the context is clear.
 
@@ -508,17 +508,17 @@ where for equality (a) and the following deriviation, we replace $a(s), b(s)$ wi
 %	 \Ymatrix_{i, j} &= \vecty_r =\sum_{s = 1}^{n^2} \Hmatrix^{(2)}_{r,s} \vectx  \\
 %	&= \sum_{a=1}^{n} \sum_{b=1}^{n} H_{(i,j),(a,b)} \Xmatrix_{a,b}
 %\end{align*} 
-Let $\vectu = \Xmatrix^T \prvector$, $\vectz = \sum_{k=1}^{K} g_k \indvect{k}$, and $\vectw = \matr{A}^{-T} \vectz$, then we can rewrite $\Ymatrix$ as
+Let $\vectu = \Xmatrix^{\mathsf{T}} \prvector$, $\vectz = \sum_{k=1}^{K} g_k \indvect{k}$, and $\vectw = \matr{A}^{-T} \vectz$, then we can rewrite $\Ymatrix$ as
 \begin{equation*}
-	\Ymatrix = \frac{2(1-\gamma)^2}{K} (\invAmatrix u) \vectw^T
+	\Ymatrix = \frac{2(1-\gamma)^2}{K} (\invAmatrix u) \vectw^{\mathsf{T}}
 \end{equation*}
-Since  $(\invAmatrix u) \vectw^T$ is a rank-1 matrix, the spectrual norm and the Frobenius norm of $(\invAmatrix u) \vectw^T$ are equal. 
+Since  $(\invAmatrix u) \vectw^{\mathsf{T}}$ is a rank-1 matrix, the spectrual norm and the Frobenius norm of $(\invAmatrix u) \vectw^{\mathsf{T}}$ are equal. 
 Thus we can bound the operator norm of \Ymatrix as
 \begin{align*}
 	\|\Ymatrix\|_F & = \frac{2(1-\gamma)^2}{K} \|\invAmatrix \vectu\|_2   \|\vectw\|_2 \\
 	&\leq \frac{2(1-\gamma)^2}{K} (\|\invAmatrix\|_2  \|\vectu\|_2)  (\|\invAmatrix\|_2 \|\vectz\|_2)\\
 	&\stackrel{(a)}{\leq} \frac{2(1-\gamma)^2}{K \gamma^2} \|\vectu\|_2 \|\vectz\|_2\\
-	& \leq \frac{2(1-\gamma)^2}{K \gamma^2} \|\Xmatrix^T \prvector\|_2 \sum_{k=1}^{K} \|\indvect{k}\|_2 |g_k| \\
+	& \leq \frac{2(1-\gamma)^2}{K \gamma^2} \|\Xmatrix^{\mathsf{T}} \prvector\|_2 \sum_{k=1}^{K} \|\indvect{k}\|_2 |g_k| \\
 	& \stackrel{(b)}{\leq}\frac{2(1-\gamma)^2}{K \gamma^2} \|\Xmatrix\|_F \|\prvector\|_2 \sum_{k=1}^{K} \|\indvect{k}\|_2 \\
 		& \stackrel{(c)}{\leq}\frac{2(1-\gamma)^2}{K \gamma^2} \|\Xmatrix\|_F  \sqrt{n} 
 \end{align*}
@@ -540,12 +540,12 @@ by dividing both side by $\|\vectx\|_2$ and taking the supremum over $\vectx \ne
 
 After reorganizing terms in $\Hmatrix^{(2)}$, we can obtain
 \begin{equation*}
-	\Hmatrix^{(2)}_{rs} = \frac{2(1-\gamma)^2}{K} \sum_{k=1}^{K} g_k \prvector_{a(s)} (\invAmatrix_{i(r)b(s)})\left(\indvect{k}^T \invAmatrix \vecte_{j(r)}\right)
+	\Hmatrix^{(2)}_{rs} = \frac{2(1-\gamma)^2}{K} \sum_{k=1}^{K} g_k \prvector_{a(s)} (\invAmatrix_{i(r)b(s)})\left(\indvect{k}^{\mathsf{T}} \invAmatrix \vecte_{j(r)}\right)
 \end{equation*}
 
 For a fixed $(k,b)$ pair, we can define a vector $\vectx_{k,b} \in \mathbb{R}^{n^2}$ as follow
 \begin{equation*}
-    \vectx_{k,b}[r] = \sqrt{|g_k|}(1 - \gamma)^2 (\invAmatrix)_{i(r),b}(\indvect{k}^T \invAmatrix \vecte_{j(r)})
+    \vectx_{k,b}[r] = \sqrt{|g_k|}(1 - \gamma)^2 (\invAmatrix)_{i(r),b}(\indvect{k}^{\mathsf{T}} \invAmatrix \vecte_{j(r)})
 \end{equation*}
 and for each $b$, we define a vector $\vectz_b \in \mathbb{R}^{n^2}$ as follow
 \begin{equation*}
@@ -554,13 +554,13 @@ and for each $b$, we define a vector $\vectz_b \in \mathbb{R}^{n^2}$ as follow
 where $\matr{1} (b(s) = b) = 1 $ if $b = b(s)$ and otherwise $\matr{1} (b(s) = b) = 0 $. Consequently, $\vectz_b[s] = \prvector_{a(s)}$ only when $b = b(s)$. 
 We can then rewrite $\Hmatrix^{(2)}$ as the outer product of $\vectx_{k,b}$ and $\vectz_{b}$, to be specific, 
 \begin{equation*}
-	\Hmatrix^{(2)} = \frac{2}{K} \sum_{k=1}^{K} \sum_{b=1}^{n}  \vectx_{k,b} \vectz_b^T
+	\Hmatrix^{(2)} = \frac{2}{K} \sum_{k=1}^{K} \sum_{b=1}^{n}  \vectx_{k,b} \vectz_b^{\mathsf{T}}
 \end{equation*}
 To bound the operator borm of $\Hmatrix^{(2)}$, we first bound its components seperately. It holds that
 
 \begin{align*}
-	\|\vectx_{k,b}\|_2 &= \sqrt{|g_k|} (1 - \gamma)^2 \|\Amatrix \vecte_b \|_2 \|\indvect{k}^T \invAmatrix\|_2 \\ 
-	&\leq \sqrt{|g_k|} (1 - \gamma)^2 ( \|\Amatrix \|_2)^2 \|\indvect{k}^T\|_2 \leq \frac{(1-\gamma)^2\sqrt{|g_k|}}{\gamma^2} \|\indvect{k}^T\|_2
+	\|\vectx_{k,b}\|_2 &= \sqrt{|g_k|} (1 - \gamma)^2 \|\Amatrix \vecte_b \|_2 \|\indvect{k}^{\mathsf{T}} \invAmatrix\|_2 \\ 
+	&\leq \sqrt{|g_k|} (1 - \gamma)^2 ( \|\Amatrix \|_2)^2 \|\indvect{k}^{\mathsf{T}}\|_2 \leq \frac{(1-\gamma)^2\sqrt{|g_k|}}{\gamma^2} \|\indvect{k}^{\mathsf{T}}\|_2
 \end{align*}
 and
 \begin{equation*}
@@ -569,7 +569,7 @@ and
 We can bound $\|\Hmatrix^{(2)}\|$ as follows
 \begin{align*}
 	\|\Hmatrix^{(2)}\|_2 & \leq \frac{2}{K} \sum_{b=1}^{n} \sum_{k=1}^{K} \|\vectx_{k,b}\|_2 \|\vectz_b\|_2 \\
-	& \leq \frac{K (1-\gamma)^2}{\gamma^2} \max_k |g_k| \sum_{k=1}^{K} \|\indvect{k}^T\|_2 \sum_{b=1}^{n} 1  \\
+	& \leq \frac{K (1-\gamma)^2}{\gamma^2} \max_k |g_k| \sum_{k=1}^{K} \|\indvect{k}^{\mathsf{T}}\|_2 \sum_{b=1}^{n} 1  \\
 	& \leq \frac{ (1-\gamma)^2}{\gamma^2} n \sqrt{m_k}
 \end{align*}
 where $m_k = \max_k \sqrt{|\group_{k}|}$.
@@ -578,7 +578,7 @@ where $m_k = \max_k \sqrt{|\group_{k}|}$.
 \begin{equation*}
 	\Hmatrix^{(3)}_{rs} = \frac{2(1-\gamma)^2}{K} \sum_{k=1}^{K} g_k \prvector_{i(r)} (\invAmatrix)_{a(s),j(r)} (\vectz_k)_{b(s)}
 \end{equation*}
-where $\vectz_k = \indvect{k}^T \invAmatrix$.
+where $\vectz_k = \indvect{k}^{\mathsf{T}} \invAmatrix$.
 
 Let $(C_k)_{(i(r), j(r)),(a(s), b(s))} = \prvector_{i(r)} (\invAmatrix)_{a(s), j(r)} (\vectz_k)_{b(s)}$, we can further rewrite $\Hmatrix^{2}$ as follow:
 \begin{equation}
@@ -613,7 +613,7 @@ where inequality (a) is due to Cauchy-Schwarz inequatlity.
 
 \iffalse
 \begin{equation*}
-	\vectalpha_{k,b,j}[r] = (1 - \gamma) \prvector_{i(r)} (\indvect{k}^T \invAmatrix \vecte_b) \matr{1} (j(r) = j)
+	\vectalpha_{k,b,j}[r] = (1 - \gamma) \prvector_{i(r)} (\indvect{k}^{\mathsf{T}} \invAmatrix \vecte_b) \matr{1} (j(r) = j)
 \end{equation*}
 we also define for each $(b,j)$ pair a vector $\vectbeta_{b,j}$ as
 \begin{equation*}
@@ -621,12 +621,12 @@ we also define for each $(b,j)$ pair a vector $\vectbeta_{b,j}$ as
 \end{equation*}
 We can express $\Hmatrix^{(3)}$ as a sum of rank-one outer products as follow.
 \begin{equation*}
-	\Hmatrix^{(3)} = \frac{2}{K} \sum_{k=1}^{K} \sum_{b=1}^{n} \sum_{j=1}^{n} g_k \vectalpha_{k,b,j} \vectbeta_{b,j}^T
+	\Hmatrix^{(3)} = \frac{2}{K} \sum_{k=1}^{K} \sum_{b=1}^{n} \sum_{j=1}^{n} g_k \vectalpha_{k,b,j} \vectbeta_{b,j}^{\mathsf{T}}
 \end{equation*}
 To bound the operator norm of $\Hmatrix^{(3)}$, we bound each component seperately as follows:
 \begin{align*}
-	\|\vectalpha_{k,b,j}\|_2 &\leq (1-\gamma) \|p\|_2 |\indvect{k}^T \invAmatrix e_b| \matr{1}(j(r) = j) \\
-	& \leq (1 - \gamma) |\indvect{k}^T \invAmatrix e_b| \sum_{i=1}^{n} \prvector_i^2 \matr{1}(j(r) = j) \\
+	\|\vectalpha_{k,b,j}\|_2 &\leq (1-\gamma) \|p\|_2 |\indvect{k}^{\mathsf{T}} \invAmatrix e_b| \matr{1}(j(r) = j) \\
+	& \leq (1 - \gamma) |\indvect{k}^{\mathsf{T}} \invAmatrix e_b| \sum_{i=1}^{n} \prvector_i^2 \matr{1}(j(r) = j) \\
 	&  \leq (1 - \gamma) \|\indvect{k}\|_2 \|\invAmatrix\|_2 \|e_b\|_2 \matr{1}(j(r) = j)\\
 	& \leq \frac{1-\gamma}{\gamma} \|\indvect{k}\|_2 \matr{1}(j(r) = j)
 \end{align*}
@@ -639,7 +639,7 @@ and,
 We can bound $\|H^3\|_2$ as below
 \begin{align*}
 	\|H^3\|_2 & \leq   \frac{2}{K}\sum_{k=1}^{K} |g_k| \sum_{b=1}^{n} \sum_{j=1}^{n} \|\vectalpha_{k,b,j}\|_2 \|\vectbeta_{b,j}\|_2 \\
-	&  \leq \frac{2}{K} \sum_{k=1}^{K} g_{max} \|\indvect{k}^T\|_2 \sum_{b=1}^{n} \frac{1-\gamma}{\gamma}
+	&  \leq \frac{2}{K} \sum_{k=1}^{K} g_{max} \|\indvect{k}^{\mathsf{T}}\|_2 \sum_{b=1}^{n} \frac{1-\gamma}{\gamma}
 \end{align*}
 \fi
 \subsubsection{the Lipschitz constant for $\Delta \mathcal{L}$}
@@ -663,10 +663,10 @@ We can derive the Hessian matrix of $\mathcal{L}_g(\transmatrix)$ and its Lipsch
 & \textbf{H}_g[(i,j),(a,b)] = 
      \frac{\partial^2 \mathcal{L}_g}{\partial \transmatrix_{ij} \partial \transmatrix_{ab}}  \\ \nonumber
 & = \frac{2}{K^2} \sum_{k=1}^K \sum_{l=1}^K \Bigg[
-        (1-\gamma)^2 {\prvector_l}_a {\prvector_l}_i (\indvect{\agroup}^T \invAmatrix \matr{e}_b)(\indvect{\agroup}^T \invAmatrix \matr{e}_j)\\ \nonumber
+        (1-\gamma)^2 {\prvector_l}_a {\prvector_l}_i (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_b)(\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j)\\ \nonumber
     &+\ g_k(\transmatrix) \cdot (1-\gamma)^2 \Big(
-        [\invAmatrix \Ematrix_{ba} {\prvector_l}]_i \cdot (\indvect{\agroup}^T \invAmatrix \matr{e}_j)
-        + {\prvector_l}_i \cdot \indvect{\agroup}^T \invAmatrix \Ematrix_{ba} \invAmatrix \matr{e}_j
+        [\invAmatrix \Ematrix_{ba} {\prvector_l}]_i \cdot (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j)
+        + {\prvector_l}_i \cdot \indvect{\agroup}^{\mathsf{T}} \invAmatrix \Ematrix_{ba} \invAmatrix \matr{e}_j
     \Big)
 \Bigg]
 \end{align}
@@ -744,7 +744,7 @@ The revised transition matrix is $\newtransmatrix = \transmatrix_L + \mathbf{R}$
     \end{equation}
 and $out_{\agroup}(i)$ represents the number of out-neighbors of vertex $i$ that belongs to group \agroup, and $L_\agroup$ denotes the set of vertices whose portion of neighbors that belong to group \agroup is smaller than the fairness target $\grouppr_\agroup$. $\mathbf{R}$ is given by
 \begin{equation}
-    \mathbf{R} = \delta_1 \mathbf{x}^T + \delta_2 \mathbf{y}^T
+    \mathbf{R} = \delta_1 \mathbf{x}^{\mathsf{T}} + \delta_2 \mathbf{y}^{\mathsf{T}}
 \end{equation}
 where $\delta_1[i] = \grouppr_1 -\frac{(1-\grouppr_1)out_1(i)}{out_2(i)}$, $\delta_2[i] = (1-\grouppr_1) -\frac{\grouppr_1 out_2(i)}{out_1(i)}$. $\mathbf{x}$ and $\mathbf{y}$ are two indicator vectors where $\mathbf{x}(i) = 1 \text{ if }  i\in \group_1$ and $\mathbf{y}(i) = 1 \text{ if } i\in \group_2$.
 
