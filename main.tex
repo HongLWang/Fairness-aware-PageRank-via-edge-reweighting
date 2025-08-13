@@ -306,6 +306,7 @@ in the fairness of the \pagerank algorithm.
 \para{Contributions.}
 In concrete, we make the following contributions.
 
+\vspace{-2mm}
 \begin{itemize}[leftmargin=*]
 \item 
 We present a new approach for incorporating group fairness into the \pagerank algorithm 
@@ -327,11 +328,13 @@ We empirically compare our approach with state-of-the-art baselines and demonstr
 where very small changes in the transition matrix lead to significant improvement in the fairness of the \pagerank algorithm.
 \end{itemize}
 
-\agtext{Due to space limitation, 
+\agtext{Due to space limitations, 
 the technical proofs of our claims
-as well as additional experiments can be found 
+and additional material can be found 
 in the full version of this paper, 
-provided in an anonymous link~\cite{fullversion}.}
+provided anonymously~\cite{fullversion}.
+Our code and datasets are~available.%
+\footnote{\url{https://anonymous.4open.science/r/Fair-Pagerank-via-Edge-Rewighting-6BB3}}}
 
 % \iffalse
 
@@ -1203,7 +1206,7 @@ To answer the first question, we report the fairness loss and group-adapted fair
 (\ref{eq:loss_function}) and (\ref{equation:cgfl}). 
 For the second question, we quantify the changes to the transition matrix by the relative change, 
 % in its Frobenius norm, 
-given by:
+given by
 %\begin{equation}
 $  \Delta_\transmatrix = {||\newtransmatrix - \transmatrix||_F}/{||\transmatrix||_F}.$
 %\end{equation}
@@ -1360,7 +1363,7 @@ whereas more information is presented in
 
 
 
-\subsection{Baselines}
+\subsection{Proposed methods and baselines}
 
 \iffalse
 In our experiments, 
@@ -1473,7 +1476,7 @@ neither do they change the restart vector.
 
 \lfprn and \lfpru are guaranteed to achieve perfect $\groupDist$-fairness, 
 % in \pagerank scores, 
-provided the restart vector is $\groupDist$-fair, i.e., $\indvect{\agroup}^T \vectv = \grouppr_\agroup$. Both algorithms modify the graph to be fully connected. We report fairness loss $L(\hat{\transmatrix}, \gamma, \vectv)$ and group-adapted fairness loss $L_g(\hat{\transmatrix}, \gamma, \vectv)$ for these two baselines with the restart vector $\vectv$ set to a uniform vector.
+provided the restart vector is $\groupDist$-fair, i.e., $\indvect{\agroup}^T \vectv = \grouppr_\agroup$. Both algorithms modify the graph to be fully connected. We report fairness loss $L(\hat{\transmatrix}, \gamma, \vectv)$ and group-adapted fairness loss $L_g(\hat{\transmatrix}, \gamma, \vectv)$ for these two baselines with the restart vector $\vectv$ set to the uniform vector.
 
 
 % \begin{figure*}[t]
@@ -1586,7 +1589,7 @@ For datasets \book, \blogs, \mind, and \twitter, we use node labels as group ind
 % We distinguish between datasets as follows: (1) 
 For the \blogs, \mind and \twitter datasets, we compare our approach with all baselines.
 % (2) 
-For the remaining multi-group datasets, we only compare with \fairwalk and \crosswalk because is unclear how \lfpru and \lfprn can be extended to the multi-group scenario.
+For the remaining multi-group datasets, we only compare with \fairwalk and \crosswalk as \lfpru and \lfprn do not  extend directly to the multi-group scenario.
 %  so we do not compare against them on the \slashdot and \book datasets.
 
 \vspace{1mm}
@@ -1596,7 +1599,7 @@ For the remaining multi-group datasets, we only compare with \fairwalk and \cros
 For Group-adapted \phiPageRank and Restricted Group-adapted \phiPageRank problems, we set $\boundfactor = \{ 0.1, 0.5\}$ and $\absboundfactor = 0.1$. 
 % \honglian{Explain for setting this two parameters to the current value?}
 % For all gradient-descent methods, 
-We perform a grid search over a logarithmically-spaced range of values between $10^{-3}$ and~$10^3$
+We perform a grid search over a logarithmic\-al\-ly-spaced range of values between $10^{-3}$ and~$10^3$
 % , selecting 20 values evenly distributed on a logarithmic scale 
 to find the best learning rate.
 %  of our proposed algorithms.
