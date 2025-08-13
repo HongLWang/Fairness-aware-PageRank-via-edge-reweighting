@@ -432,6 +432,9 @@ $\prvector^T = \gamma \vectv^T (\unitary - (1 - \gamma) \transmatrix)^{-1}.$
 
 Building on the earlier definition of fairness-aware PageRank \citep{tsioutsiouliklis_fairness-aware_2021, tsioutsiouliklis_link_2022}, we consider the vertices of a graph to be partitioned into distinct groups. These groups may represent social categories based on sensitive attributes such as gender, ethnicity, or sexual orientation. We begin by defining the fair PageRank problem, followed by a discussion of various approaches to achieving PageRank fairness, and conclude with a formal definition of the $\groupDist$-\pagerank (\fpr) problem and the Restricted $\groupDist$-\pagerank (\resfpr) problem.
 
+\aris{I would keep {\groupDist} lowercase to be consistent with our conventions
+(boldface lowercase for vectors and boldface uppercase for matrices)}
+
 \subsubsection{Group-wise fair \pagerank}
 %
 To establish the concept of \pagerank fairness, we assume a \emph{target \pagerank score}, $\grouppr_\agroup$ for each vertex group $\agroup = 1, \ldots, \nogroups$, \agtext{with $\sum_\agroup \grouppr_\agroup = 1$}. This score represents the total \pagerank mass that the algorithm is expected to allocate to the vertices in group~$\vertices_\agroup$. A common approach is to set $\grouppr_\agroup$ proportionally to the size of $\vertices_\agroup$, i.e., $\grouppr_\agroup = |\vertices_\agroup| / \novertices$. However, other choices may be more suitable depending on the specific application. In this work, as in prior studies, we assume that the target \pagerank score $\grouppr_\agroup$ for each group is provided as input to our problem formulation.
@@ -669,9 +672,9 @@ when restarting the random walk at each group.
 Minimizing the group-adapted fairness-loss function 
 leads to the group-adapted \phiPageRank problem.
 
-\aris{Do we really need the ugly acronyms \gafpr and \resgafpr?
-Are we using them?}
-\honglian{We used them, but not very frequently. I've removed the acronyms and use their full name instead.}
+% \aris{Do we really need the ugly acronyms \gafpr and \resgafpr?
+% Are we using them?}
+% \honglian{We used them, but not very frequently. I've removed the acronyms and use their full name instead.}
 
 \begin{problem}[Group-adapted \phiPageRank]
 \label{problem:cross-fair-loss}
@@ -790,7 +793,7 @@ We first derive the gradient of the fairness-loss function
 $\loss(\transmatrix, \gamma, \vectv)$ 
 with respect to the transition matrix \transmatrix.
 The proof of the following proposition can be found in the
-\agtext{full version of this paper
+\agtext{full version
 \citep[\Cref{appendix:omitted-proposition-proof}]{fullversion}.}
 
 \begin{prop}
@@ -913,7 +916,7 @@ As the series terms decrease exponentially in mag\-ni\-tude,
 due to the decaying factor $(1-\gamma)$, 
 we can approximate $\vecty_\agroup$ efficiently 
 by computing only the first $t$~series terms.
-\textcolor{black}{We show that truncating the Neumann series to its first $50$ terms yields a relative error below $0.0003$. The detailed analysis is provided in \agtext{our full version}~\citep{fullversion}.}
+\textcolor{black}{We show that truncating the Neumann series to its first $50$ terms yields a relative error below $0.0003$. The detailed analysis is provided in \agtext{our full version~\citep{fullversion}.}}
 
 % $\vecty_\agroup$ with a power iteration:
 % \begin{equation}\label{eq:power_iteration}
@@ -1019,7 +1022,8 @@ and $\lambdaopt$ is the solution that solves the function
 \begin{equation*}
 	h(\lambda) := \sum_{i=1}^{K} \text{clip}(\alpha_i + \lambda, \ell_i, u_i) -1 = 0.
 \end{equation*}
-Since $h$ is piecewise linear and non-decreasing in $\lambda$, \agtext{we can find~$\lambdaopt$} via a simple method proposed by \citet{adam2022projections}. The rationale is the following:
+Since $h$ is piecewise linear and non-decreasing in $\lambda$, \agtext{we can find~$\lambdaopt$} via a simple method proposed by \citet{adam2022projections}:
+% The rationale is the following:
 \begin{enumerate}[leftmargin=*]
 	\item For any $\lambda$, $\clip(\alpha_i, \ell_i, u_i)$ takes value $\ell_i$, $\lambda + \alpha_i$, or $u_i$, thus, we can rewrite $h(\lambda)$ as $h(\lambda) = \act(\lambda) \cdot \lambda + C$ for some constant~$C$, where $\act(\lambda) $ is the number of elements such that $\alpha_i + \lambda$ falls in range $[\ell_i, u_i)$.
 	\item Let $R$ be the increasing ranking of $2K$ items consisting of $\vectl - \vectalpha$ and $\vectu - \vectalpha$. For any $\lambda$ in interval $[R_j, R_{j+1})$, the function $\act(\lambda)$ remains constant.
@@ -1150,20 +1154,26 @@ with respect to the transition matrix \transmatrix is given by
 \end{prop}
 
 
-\subsection{Generalizing the fairness loss}
+\subsection{Extensions}
 
 While not explicitly studied in the paper, we note that the proposed fairness loss can be generalized to encompass a broader range of fairness definitions and graph structures. For instance, when fairness scores are specified at the individual-node level, an auxiliary loss term may be incorporated to jointly enforce both group-level and individual-level fairness constraints. Moreover, in graphs exhibiting hierarchical group structures, where each layer defines a distinct partition of the nodes and an associated fairness goal, the overall fairness objective can be formulated as the sum of the layer-specific losses. This formulation enables the simultaneous satisfaction of fairness requirements across multiple structural scales. We also note that the restricted fairness losses can incorporate node-level constraints; that is, if a $\delta$ and $\epsilon$ are specified for each node, our algorithm remains applicable.
 
 
-\section{Computational complexity and convergence analysis}
+\section{Complexity and convergence analysis}
 
-The primary computational cost arises from computing the \pagerank{} vector and approximating $\vecty_k$. 
+The primary computational cost arises from computing \pagerank{} and approximating $\vecty_k$. 
 The \pagerank{} vector is obtained by iterating the update equation $\prvector^\top = (1 - \gamma)\, \prvector^\top \transmatrix + \gamma\, \vectv^\top$
-for $t_1$ iterations, resulting in a computational complexity of $\mathcal{O}(t_1 n^2)$. 
+for~$t_1$ iterations, resulting in computational complexity $\mathcal{O}(t_1 n^2)$. 
 The computation of $\vecty_k$ involves multiplying a vector by a matrix $t_2$ times. 
 Evaluating $\vecty_k$ for all $k \in \{1, \dots, \nogroups\}$ therefore requires $\mathcal{O}(\nogroups t_2 n^2)$ operations. 
 Consequently, the overall complexity of \Cref{alg:fairgd} is $\mathcal{O}\big((\nogroups  t_2 + t_1) n^2\big)$.
-Since \crossgd{} performs an additional loop over $\nogroups$ when computing $\vecty_k$, its complexity becomes $\mathcal{O}\big((\nogroups^2 t_2 + t_1) n^2\big).$
+Since \crossgd{} performs an additional loop over $\nogroups$ groups when computing $\vecty_k$, its complexity becomes $\mathcal{O}\big((\nogroups^2 t_2 + t_1) n^2\big).$
+
+\aris{What are $\mathcal{L}(P)$ and $\mathcal{L}_g(P)$?
+Is it the loss function? I think we are using different notation
+(that's why it is important to stick to using macros).
+Also, sentences cannot start with a math symbol, they always need to start with English words.
+}
 
 $\mathcal{L}(P)$ and $\mathcal{L}_g(P)$ are both differentiable functions and their first derivatives are smooth. Since the feasible set $\resfeasiblematrices(\transmatrix) \cap \feasiblematrices(\transmatrix)$ is convex and closed, the proposed projected gradient update method with constant step size converges to a stationary point, which is a local minimum \cite{bertsekas1997nonlinear}. 
 We provide detailed analysis in 
@@ -1186,15 +1196,15 @@ We provide detailed analysis in
 % -- tables and figures
 
 % We evaluate the performance of \fairgd and \crossgd on real-world networks. 
-In our experiments, we study the following research questions:
+In our experimental evaluation, we study the following questions:
 
 \vspace{1mm}
-\noindent \textbf{RQ1:} To what extent can the \fairgd and \crossgd algorithms improve the fairness and group-adapted fairness of \pagerank? 
+\noindent \textbf{Q1:} To what extent can the \fairgd and \crossgd algorithms improve the fairness and group-adapted fairness of \pagerank? 
 \vspace{1mm}\\ 
-\textbf{RQ2:} 
+\textbf{Q2:} 
 How do the \fairgd and \crossgd algorithms compare to the baselines in terms of changes to the transition matrix? 
 \vspace{1mm}\\ 
-\textbf{RQ3:} How does the ranking of the \pagerank score within each group change? Do \fairgd and \crossgd preserve this ranking?
+\textbf{Q3:} How does the ranking of the \pagerank score within each group change? Do \fairgd and \crossgd preserve this ranking?
 
 \vspace{1mm}
 To answer the first question, we report the fairness loss and group-adapted fairness loss as defined in Equations
@@ -1248,7 +1258,7 @@ We evaluate our methods and the baselines on the following publicly-available da
 \twitter~\citep{nr-sigkdd16}, and
 \slashdot~\citep{leskovec_community_2009}.
 %
-Statistics of these datasets are given in \Cref{table:datasets}, 
+Dataset statistics are given in \Cref{table:datasets}, 
 whereas more information is presented in 
 \agtext{the full version~\citep[\Cref{appendix:datasets}]{fullversion}}.
 
@@ -1387,7 +1397,7 @@ with relative and absolute intervention bound $\boundfactor$ and $\absboundfacto
 
 \vspace{1mm}
 \noindent 
-We compare our methods with the following strong baselines: \\
+We compare our methods with the following baselines:
 \lfpru~\citep{tsioutsiouliklis_fairness-aware_2021},
 \lfprn~\citep{tsioutsiouliklis_fairness-aware_2021},
 \fairwalk~\citep{rahman_fairwalk_2019}, and
