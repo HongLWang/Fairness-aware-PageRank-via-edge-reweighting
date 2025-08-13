@@ -972,10 +972,11 @@ and can be omitted, if we need space.
 \vspace{1mm}
 \noindent
 \textbf{Gradient projection.} 
-We use \newtransmatrix to denote the transition matrix obtained by the projected gradient-descent method.
+% We use \newtransmatrix to denote the transition matrix obtained by the projected gradient-descent method.
 After each gradient descent step, 
-\newtransmatrix is projected back to the feasible set $\feasiblematrices(\transmatrix)$ or $\feasiblematrices(\transmatrix) \cap \resfeasiblematrices(\transmatrix)$.
-For both constraints, we solve the projection for each row of $\newtransmatrix$ separately. Given one row, let $\vectalpha$ be the vector of size $K$ comprised of its non-zero elements.
+\newtransmatrix needs be projected back to the feasible set $\feasiblematrices(\transmatrix)$ or $\feasiblematrices(\transmatrix) \cap \resfeasiblematrices(\transmatrix)$.
+We perform the projection for each row of $\newtransmatrix$ separately. Since both constraints forbid adding non-existing edges, we only need to perform the projection for the non-zero columns.
+% For both constraints, we solve the projection for each row of $\newtransmatrix$ separately. Given one row, let $\vectalpha$ be the vector of size $K$ comprised of its non-zero elements.
 
 \aris{What does ``calls for'' mean below?
 Also the equation uses $\Delta^{k}$ but then we define $\Delta^{k-1}$}
@@ -1172,13 +1173,14 @@ Evaluating $\vecty_k$ for all $k \in \{1, \dots, \nogroups\}$ therefore requires
 Consequently, the overall complexity of \Cref{alg:fairgd} is $\mathcal{O}\big((\nogroups  t_2 + t_1) n^2\big)$.
 Since \crossgd{} performs an additional loop over $\nogroups$ groups when computing $\vecty_k$, its complexity becomes $\mathcal{O}\big((\nogroups^2 t_2 + t_1) n^2\big).$
 
-\aris{What are $\mathcal{L}(P)$ and $\mathcal{L}_g(P)$?
-Is it the loss function? I think we are using different notation
-(that's why it is important to stick to using macros).
-Also, sentences cannot start with a math symbol, they always need to start with English words.
-}
+% \aris{What are $\mathcal{L}(P)$ and $\mathcal{L}_g(P)$?
+% Is it the loss function? I think we are using different notation
+% (that's why it is important to stick to using macros).
+% Also, sentences cannot start with a math symbol, they always need to start with English words.
+% }
+% \honglian{they are the loss functions $\loss$ and $\groupAdapLoss$. }
 
-$\mathcal{L}(P)$ and $\mathcal{L}_g(P)$ are both differentiable functions and their first derivatives are smooth. Since the feasible set $\resfeasiblematrices(\transmatrix) \cap \feasiblematrices(\transmatrix)$ is convex and closed, the proposed projected gradient update method with constant step size converges to a stationary point, which is a local minimum \cite{bertsekas1997nonlinear}. 
+Both loss objective functions, $\loss(P)$ and $\groupAdapLoss(P)$, are differentiable functions, and their first derivatives are smooth. Since the feasible set $\resfeasiblematrices(\transmatrix) \cap \feasiblematrices(\transmatrix)$ is convex and closed, the proposed projected gradient update method with constant step size converges to a stationary point, which is a local minimum \cite{bertsekas1997nonlinear}. 
 We provide detailed analysis in 
 \agtext{the full version~\citep[\Cref{section:convergence_L} and~\Cref{section:convergence_Lg}]{fullversion}}.
 
