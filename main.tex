@@ -419,7 +419,7 @@ the restart probability~$\gamma$.
 The \pagerank vector~\prvector is the solution to the equation
 % \begin{equation}
 % \label{eq:pagerank}
-$    \prvector^T = (1 - \gamma) \prvector^T \transmatrix + \gamma \vectv^T.$
+$    \prvector^{\mathsf{T}} = (1 - \gamma) \prvector^{\mathsf{T}} \transmatrix + \gamma \vectv^{\mathsf{T}}.$
 % \end{equation}
 
 Here, the transition matrix \transmatrix is row stochastic, derived by normalizing each row of the adjacency matrix of $\graph$. The restart vector~\vectv specifies a distribution over all vertices, indicating where a random walk might restart. The parameter $\gamma$ represents the probability that the random walk will restart at any given step. In the case of directed graph, there may exist sink vertices that have no outgoing edges, so their rows in the transition matrix would be all zeros.
@@ -430,7 +430,7 @@ By solving
 the  equation of \pagerank definition, 
 we obtain the \pagerank vector as 
 % \begin{equation} 
-$\prvector^T = \gamma \vectv^T (\unitary - (1 - \gamma) \transmatrix)^{-1}.$ 
+$\prvector^{\mathsf{T}} = \gamma \vectv^{\mathsf{T}} (\unitary - (1 - \gamma) \transmatrix)^{-1}.$ 
 % \end{equation}
 
 \subsection{Fair \pagerank}
@@ -441,7 +441,7 @@ Building on the earlier definition of fairness-aware PageRank \citep{tsioutsioul
 %
 To establish the concept of \pagerank fairness, we assume a \emph{target \pagerank score}, $\grouppr_\agroup$ for each vertex group $\agroup = 1, \ldots, \nogroups$, \agtext{with $\sum_\agroup \grouppr_\agroup = 1$}. This score represents the total \pagerank mass that the algorithm is expected to allocate to the vertices in group~$\vertices_\agroup$. A common approach is to set $\grouppr_\agroup$ proportionally to the size of $\vertices_\agroup$, i.e., $\grouppr_\agroup = |\vertices_\agroup| / \novertices$. However, other choices may be more suitable depending on the specific application. In this work, as in prior studies, we assume that the target \pagerank score $\grouppr_\agroup$ for each group is provided as input to our problem formulation.
 
-Let $\indvect{\agroup} \in \{0, 1\}^{\novertices}$ denote the indicator vector for group $\vertices_\agroup$, where $\indvect{\agroup}[i] = 1$ if vertex $i \in \vertices_\agroup$ and $\indvect{\agroup}[i] = 0$ otherwise. Let \prvector\ be the PageRank vector computed by the PageRank algorithm using a transition matrix \transmatrix, with restart probability~$\gamma$ and restart vector~\vectv. The total PageRank score for group $\vertices_\agroup$ is then given by $\indvect{\agroup}^T \prvector$. 
+Let $\indvect{\agroup} \in \{0, 1\}^{\novertices}$ denote the indicator vector for group $\vertices_\agroup$, where $\indvect{\agroup}[i] = 1$ if vertex $i \in \vertices_\agroup$ and $\indvect{\agroup}[i] = 0$ otherwise. Let \prvector\ be the PageRank vector computed by the PageRank algorithm using a transition matrix \transmatrix, with restart probability~$\gamma$ and restart vector~\vectv. The total PageRank score for group $\vertices_\agroup$ is then given by $\indvect{\agroup}^{\mathsf{T}} \prvector$. 
 
 
 
@@ -450,7 +450,7 @@ Given an input graph \graph\ and its associated transition matrix \transmatrix, 
 \vspace{1mm}
 \noindent
 \emph{Remark.}  
-For any given $\transmatrix$, $\gamma$, and $\vectv$, the total PageRank score for group $\group_\agroup$ is lowered bounded by $\gamma \indvect{\agroup}^T \vectv$ and upper bounded by $1-\gamma + \gamma \indvect{k}^T \vectv$. The lower bound represents the probability that a random walk restarts from group $\agroup$, and it can be derived from the equation $\indvect{\agroup}^T \prvector = (1 - \gamma)  \indvect{\agroup}^T  \transmatrix^T \prvector + \gamma \indvect{\agroup}^T \vectv \geq \gamma \indvect{\agroup}^T \vectv$. The upper bound can be derived from the equation $1 - \sum_{j \neq k} \indvect{j}^T \vectv \leq 1 - \gamma \sum_{j \neq k} \indvect{j}^T \vectv = 1 - \gamma + \gamma \indvect{k}^T$. 
+For any given $\transmatrix$, $\gamma$, and $\vectv$, the total PageRank score for group $\group_\agroup$ is lowered bounded by $\gamma \indvect{\agroup}^{\mathsf{T}} \vectv$ and upper bounded by $1-\gamma + \gamma \indvect{k}^{\mathsf{T}} \vectv$. The lower bound represents the probability that a random walk restarts from group $\agroup$, and it can be derived from the equation $\indvect{\agroup}^{\mathsf{T}} \prvector = (1 - \gamma)  \indvect{\agroup}^{\mathsf{T}}  \transmatrix^{\mathsf{T}} \prvector + \gamma \indvect{\agroup}^{\mathsf{T}} \vectv \geq \gamma \indvect{\agroup}^{\mathsf{T}} \vectv$. The upper bound can be derived from the equation $1 - \sum_{j \neq k} \indvect{j}^{\mathsf{T}} \vectv \leq 1 - \gamma \sum_{j \neq k} \indvect{j}^{\mathsf{T}} \vectv = 1 - \gamma + \gamma \indvect{k}^{\mathsf{T}}$. 
 Thus, for fixed $\gamma$ and \vectv, it is clear that it may not always be possible to find a $\newtransmatrix$ that exactly achieves the desired target distribution $\groupDist$.
 
 
@@ -489,7 +489,7 @@ To formalize our problem, we first define the fairness-loss function. It evaluat
 \label{definition:fairloss} 
 Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, a row-stochastic transition matrix \transmatrix, a restart probability $0 < \gamma < 1$, a restart vector $\vectv \in \reals^{\novertices}$ satisfying $\|\vectv\|_1 = 1$, and group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$ \agtext{satisfying $\|\groupDist\|_1 = 1$}, the {fairness-loss function} is defined~as: 
 \begin{equation} 
-\loss(\transmatrix, \gamma, \vectv) = \frac{1}{\nogroups} \sum_{\agroup=1}^\nogroups \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right)^2, 
+\loss(\transmatrix, \gamma, \vectv) = \frac{1}{\nogroups} \sum_{\agroup=1}^\nogroups \left(\indvect{\agroup}^{\mathsf{T}} \prvector - \grouppr_\agroup\right)^2, 
 \label{eq:loss_function} 
 \end{equation} 
 where \prvector is the \pagerank vector corresponding to parameters~$(\transmatrix, \gamma, \vectv)$. \end{definition}
@@ -616,12 +616,12 @@ Without loss of generality, in this paper, we study both \fpr and \resfpr with a
 \iffalse
 \subsection{group-adapted Fair \pagerank}
 In the \fpr % 
-problem we require the total \pagerank score $\indvect{\agroup}^T\prvector$ 
+problem we require the total \pagerank score $\indvect{\agroup}^{\mathsf{T}}\prvector$ 
 in each group $\vertices_\agroup$ to be equal to $\grouppr_\agroup$. 
-When it is not possible to satisfy the requirement $\indvect{\agroup}^T \prvector = \grouppr_\agroup$
+When it is not possible to satisfy the requirement $\indvect{\agroup}^{\mathsf{T}} \prvector = \grouppr_\agroup$
 using only edge re\-weightings, 
 our formulation seeks to minimize the fairness-loss function $\loss(\cdot, \gamma, \vectv)$,
-so that the group-wise \pagerank scores $\indvect{\agroup}^T \prvector$
+so that the group-wise \pagerank scores $\indvect{\agroup}^{\mathsf{T}} \prvector$
 are as close as possible to the corresponding target scores $\grouppr_\agroup$.
 
 For computing the \pagerank vector \prvector 
@@ -639,7 +639,7 @@ Hence, the total \pagerank scores in group $\vertices_\agroup$ are largely contr
 (re)\-starting at vertices in group $\vertices_\agroup$ \cite{tsioutsiouliklis_fairness-aware_2021}. 
 \iffalse
 To increase the diversity in the network, 
-it is desirable for the total \pagerank score $\indvect{\agroup}^T\prvector$  
+it is desirable for the total \pagerank score $\indvect{\agroup}^{\mathsf{T}}\prvector$  
 in group~$\vertices_\agroup$ to be equal to~$\grouppr_\agroup$
 \emph{when random walks (re)\-start at any~group}. 
 \fi
@@ -666,7 +666,7 @@ the group-adapted fairness-loss function is defined as
     \groupAdapLoss(\transmatrix, \gamma)  
         = \frac{1}{\nogroups} \sum_{\ell=1}^\nogroups \loss(\transmatrix, \gamma, \vectv_{\ell})
         = \frac{1}{\nogroups^2} \sum_{\ell=1}^\nogroups \sum_{\agroup=1}^\nogroups 
-                \left(\indvect{\agroup}^T \prvector_\ell - \grouppr_\agroup\right)^2,
+                \left(\indvect{\agroup}^{\mathsf{T}} \prvector_\ell - \grouppr_\agroup\right)^2,
 \end{equation}
 where $\prvector_\ell$ is the \pagerank vector with respect to parameters 
 $(\transmatrix, \gamma, \vectv_{\ell})$.
@@ -811,16 +811,16 @@ with respect to the transition matrix \transmatrix is given by
 \label{equation:gradient}
     \frac{\partial}{\partial \transmatrix} \loss(\transmatrix, \gamma, \vectv) 
 %        & = & 2 \gamma (1 - \gamma) \sum_{k=1}^{\nogroups} 
-%            \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right) 
-%            \matrixU^{-1} \vectv \indvect{\agroup}^T \matrixU^{-1} \nonumber \\
+%            \left(\indvect{\agroup}^{\mathsf{T}} \prvector - \grouppr_\agroup\right) 
+%            \matrixU^{-1} \vectv \indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \nonumber \\
          =  \frac{2(1 - \gamma)}{\gamma} \sum_{k=1}^{\nogroups} 
-            \left(\indvect{\agroup}^T \prvector - \grouppr_\agroup\right) \prvector \vecty_\agroup^T,   
+            \left(\indvect{\agroup}^{\mathsf{T}} \prvector - \grouppr_\agroup\right) \prvector \vecty_\agroup^{\mathsf{T}},   
 \end{equation}
 where  \prvector is the \pagerank vector with respect to $(\transmatrix, \gamma, \vectv)$, 
 and 
 $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup} = 
     \gamma (\unitary - (1 - \gamma) \transmatrix)^{-1} \indvect{\agroup}$, 
-with $\matrixU = \unitary - (1 - \gamma) \transmatrix^T$.
+with $\matrixU = \unitary - (1 - \gamma) \transmatrix^{\mathsf{T}}$.
 \end{prop}
 
 
@@ -828,7 +828,7 @@ with $\matrixU = \unitary - (1 - \gamma) \transmatrix^T$.
 \iffalse
 In terms of computational cost, 
 the gradient of the fairness loss 
-involves the inverse of the matrix $\matrixU = \unitary - (1 - \gamma) \transmatrix^T$, 
+involves the inverse of the matrix $\matrixU = \unitary - (1 - \gamma) \transmatrix^{\mathsf{T}}$, 
 which is computationally expensive. 
 To avoid a matrix inversion, 
 we approximate $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$ with a power iteration:
@@ -848,13 +848,13 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
     \STATE $\newtransmatrix \gets \transmatrix$, ${\iter} \gets 0$, ${\lossprev} \gets \infty$
     \WHILE {$|\loss(\newtransmatrix, \gamma, \vectv) - {\lossprev}| > \kappa $ and $\iter < N_{\text{iter}}$}
       \STATE $\iter \gets \iter + 1$
-      \STATE $\prvector \gets \text{iterating } \prvector^T = (1 - \gamma) \prvector^T \newtransmatrix + \gamma \vectv^T \text{ for } t_1 \text{ times}$
+      \STATE $\prvector \gets \text{iterating } \prvector^{\mathsf{T}} = (1 - \gamma) \prvector^{\mathsf{T}} \newtransmatrix + \gamma \vectv^{\mathsf{T}} \text{ for } t_1 \text{ times}$
       \STATE ${\lossprev} \gets \loss(\newtransmatrix, \gamma, \vectv)$
       \FOR {$\agroup = 1$ to $\nogroups$}
-        \STATE $\theta_\agroup \gets \indvect{\agroup}^T \prvector$
+        \STATE $\theta_\agroup \gets \indvect{\agroup}^{\mathsf{T}} \prvector$
         \STATE $\vecty_{\agroup} \gets$ $\gamma \sum_{i=1}^{t_2} (1-\gamma)^i \newtransmatrix^i \indvect{k}$
         % \FOR {$(i, j)$ where $\transmatrix[i, j] > 0$}
-          \STATE $\newtransmatrix \gets \newtransmatrix - \alpha \frac{2(1 - \gamma)}{\nogroups} (\theta_\agroup - \grouppr_\agroup) \prvector \vecty_k^T$
+          \STATE $\newtransmatrix \gets \newtransmatrix - \alpha \frac{2(1 - \gamma)}{\nogroups} (\theta_\agroup - \grouppr_\agroup) \prvector \vecty_k^{\mathsf{T}}$
         % \ENDFOR
         \ENDFOR
         \STATE $\newtransmatrix \gets {\project}(\newtransmatrix)$
@@ -869,13 +869,13 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
   \caption{\label{alg:poweriteration}\yapprox: power iteration approximation of $\vecty_\agroup$}
   \begin{algorithmic}[1]
     \REQUIRE Transition matrix \transmatrix, restart probability $\gamma$, group indicator vector $\indvect{\agroup}$, power iteration exponent~$t$
-    \ENSURE Approximation of $\gamma \indvect{\agroup}^T \matrixU^{-1}$
+    \ENSURE Approximation of $\gamma \indvect{\agroup}^{\mathsf{T}} \matrixU^{-1}$
     \STATE $\vecty \gets \indvect{\agroup}$
     % \STATE $\matrixU \gets \mathbf{I}_\novertices$ 
     \STATE $\matrixU \gets \text{Identity matrix of size } \novertices \cdot \novertices$ 
     \STATE $\indvect{s} \gets \mathbf{1} - \transmatrix \mathbf{1}$
     \FOR {$i = 1$ to $t$}
-      \STATE $\matrixU \gets (1 - \gamma) (\transmatrix \matrixU + \indvect{s} \vectv^T \matrixU)$
+      \STATE $\matrixU \gets (1 - \gamma) (\transmatrix \matrixU + \indvect{s} \vectv^{\mathsf{T}} \matrixU)$
       \STATE $\vecty \gets \vecty + \matrixU$
     \ENDFOR
     \RETURN $\gamma \vecty$
@@ -887,7 +887,7 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
 
 \noindent
 \textbf{Matrix inversion acceleration.}
-The calculation of $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$ involves the inverse of the matrix $\matrixU^T = \unitary - (1 - \gamma) \transmatrix$, which is computationally expensive. To avoid computing matrix inversion, we approximation $\matrixU^{-T}$ with the Neumann series
+The calculation of $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$ involves the inverse of the matrix $\matrixU^{\mathsf{T}} = \unitary - (1 - \gamma) \transmatrix$, which is computationally expensive. To avoid computing matrix inversion, we approximation $\matrixU^{-T}$ with the Neumann series
 % \begin{equation}
 % \label{eq:neuman}
 $    \matrixU^{-T} = \sum_{i=0}^{\infty} (1-\gamma)^i \transmatrix^i,$
@@ -907,7 +907,7 @@ by computing only the first $t$~series terms.
 % \begin{equation}\label{eq:power_iteration}
 %   \begin{aligned}
 %     \vecty_\agroup 
-%         & = \gamma \sum_{i=0}^{\infty} (1 - \gamma)^i (\transmatrix^T)^i \indvect{\agroup} \\
+%         & = \gamma \sum_{i=0}^{\infty} (1 - \gamma)^i (\transmatrix^{\mathsf{T}})^i \indvect{\agroup} \\
 %         & = \gamma \left(\indvect{\agroup} + (1 - \gamma) \transmatrix \indvect{\agroup} + (1 - \gamma)^2 \transmatrix (\transmatrix \indvect{\agroup}) + \ldots\right).
 %   \end{aligned}
 % \end{equation}
@@ -919,7 +919,7 @@ by computing only the first $t$~series terms.
 In Proposition~\ref{theorem:gradient-fairness-loss} we have defined
 $\vecty_\agroup = \gamma \matrixU^{-T} \indvect{\agroup}$.
 The $j$-th coordinate of~$\vecty_\agroup$ is given by
-$\vecty_{\agroup}[j] = \indvect{\agroup}^T (\gamma \matrixU^{-1} \mathbf{e}_j)$,
+$\vecty_{\agroup}[j] = \indvect{\agroup}^{\mathsf{T}} (\gamma \matrixU^{-1} \mathbf{e}_j)$,
 which represents the sum of \pagerank scores for the vertices in the group $\vertices_\agroup$, with the random walk restarting at the unit vector~$\vecte_j$. In other words, the random walk always (re)\-starts from vertex $j$. 
 
 Hence, the gradient of the fairness loss has the following intuitive interpretation:
@@ -958,8 +958,9 @@ and can be omitted, if we need space.
 \textbf{Gradient projection.} 
 % We use \newtransmatrix to denote the transition matrix obtained by the projected gradient-descent method.
 After each gradient descent step, 
-\newtransmatrix needs be projected back to the feasible set $\feasiblematrices(\transmatrix)$ or $\feasiblematrices(\transmatrix) \cap \resfeasiblematrices(\transmatrix)$.
-We perform the projection for each row of $\newtransmatrix$ separately. Since both constraints forbid adding non-existing edges, we only need to perform the projection for the non-zero columns. For any row of \transmatrix, let \vects be its non-zero elements, and the gradient projection aims to find a vector \vectt in the feasible area.
+\newtransmatrix needs be projected back to feasible area subject to constraint $\feasiblematrices(\transmatrix)$ or $\feasiblematrices(\transmatrix) \cap \resfeasiblematrices(\transmatrix)$.
+We perform the projection for each row of $\newtransmatrix$ separately. Since both constraints forbid adding non-existing edges, we solve the projection only for non-zero columns. Given any row of \transmatrix, let \vects be its non-zero elements, and \vectt be the vector after projection. We use $K = |
+\vects|$ to denote the cardinality of \vects.
 % For both constraints, we solve the projection for each row of $\newtransmatrix$ separately. Given one row, let $\vectalpha$ be the vector of size $K$ comprised of its non-zero elements.
 
 % \aris{What does ``calls for'' mean below?
@@ -970,12 +971,12 @@ We perform the projection for each row of $\newtransmatrix$ separately. Since bo
 
 % \aris{Overall, this subsection of gradient projection is very unclear to me.}
 
- Solving the projection subject to constraint 
-$\feasiblematrices(\transmatrix)$ is equivalent to solving the following problem:
+We first discuss the constraint
+$\feasiblematrices(\transmatrix)$. Projecting \vects to \vectt subject to $\feasiblematrices(\transmatrix)$ is equivalent to solving the following problem:
 \begin{equation*}
-    \vectalphaopt  =\underset {\vectr \in  \Delta^{k}}{\arg\min} \left\| \vectalpha - \vectr \right\|_2^2
+    \vectsopt  =\underset {\vectr \in  \mathcal{F}_1}{\arg\min} \left\| \vects - \vectr \right\|_2^2
 \end{equation*}
-where $\Delta ^{k-1} = \{ \vectr \in \mathbb{R}^{K-1} \mid \mathbf{1}^{\intercal} \vectr = 1, \vectr \geq 0\}$ is a probability simplex. This is a well studied problem~\citep{michelot1986finite, pardalos1990algorithm, duchi2008efficient, condat2016fast, cisse2017parseval}. Its solution is of the form: $\alpha^{*}_i = \max (0, \alpha_i - \tau(\vectalpha))$, with $\tau: \mathbb{R}^{K} \rightarrow \mathbb{R}$ the unique function satisfying $\sum_{i} (x_i - \tau(\vectalpha)) = 1$ for every $\textbf{\textit{x}} \in \mathbb{R}^{K}$. According to \citet{duchi2008efficient}, let $\alpha_1 \geq \alpha_2 \geq \cdots \geq \alpha_{K}$ be the sorted elements of $\vectalpha$, and $k(\vectalpha) = \max\{k \in (1, \cdots, K) \mid 1 + k \alpha_k > \sum_{j \leq k} \alpha_j \} $. Then, $\tau(\vectalpha)$ is given by:
+where $\mathcal{F}_1 = \{ \vectr \in \mathbb{R}^{K} \mid \mathbf{1}^{\mathsf{T}}\vectr = 1, \vectr \geq 0\}$ is a probability simplex. This is a well studied problem~\citep{michelot1986finite, pardalos1990algorithm, duchi2008efficient, condat2016fast, cisse2017parseval}. Its solution is of the form: $\alpha^{*}_i = \max (0, \alpha_i - \tau(\vectalpha))$, with $\tau: \mathbb{R}^{K} \rightarrow \mathbb{R}$ the unique function satisfying $\sum_{i} (x_i - \tau(\vectalpha)) = 1$ for every $\textbf{\textit{x}} \in \mathbb{R}^{K}$. According to \citet{duchi2008efficient}, let $\alpha_1 \geq \alpha_2 \geq \cdots \geq \alpha_{K}$ be the sorted elements of $\vectalpha$, and $k(\vectalpha) = \max\{k \in (1, \cdots, K) \mid 1 + k \alpha_k > \sum_{j \leq k} \alpha_j \} $. Then, $\tau(\vectalpha)$ is given by:
 \begin{equation*}
 	\tau(\vectalpha) = \frac{\left(\sum_{j \leq k(\vectalpha)} \alpha_j\right) -1}{k(\vectalpha)}.
 \end{equation*}
@@ -1061,18 +1062,18 @@ considering transition only for non-sink vertices,
 and another matrix $\transmatrix_{s}$ considering transition only for sink vertices.
 That is,
 \begin{equation}
-  \transmatrix = \transmatrix_{0} + \transmatrix_{s} = \transmatrix_{0} + \indvect{s} \vectv^T, 
+  \transmatrix = \transmatrix_{0} + \transmatrix_{s} = \transmatrix_{0} + \indvect{s} \vectv^{\mathsf{T}}, 
 \end{equation}
 with $\indvect{s}[i]=1$ if vertex $i$ is a sink vertex and otherwise $\indvect{s}[i]=0$.
 In this way, we can store and update only $\bigO(m)$ non-zero entries of $\transmatrix_{0}$.
 Equation~\eqref{eq:pagerank} is then modified to
 \begin{equation}
-    \prvector^T = (1 - \gamma) \prvector^T (\transmatrix_{0} + \indvect{s} \vectv^T) + \gamma \vectv^T,
+    \prvector^{\mathsf{T}} = (1 - \gamma) \prvector^{\mathsf{T}} (\transmatrix_{0} + \indvect{s} \vectv^{\mathsf{T}}) + \gamma \vectv^{\mathsf{T}},
 \end{equation}
 and Equation~\eqref{eq:yapprox} is modified to
 \begin{equation}
 %  \begin{aligned}
-    \vecty_\agroup = \gamma \sum_{i=0}^{\infty} (1 - \gamma)^i (\transmatrix_{0} + \indvect{s} \vectv^T)^i \indvect{\agroup}.
+    \vecty_\agroup = \gamma \sum_{i=0}^{\infty} (1 - \gamma)^i (\transmatrix_{0} + \indvect{s} \vectv^{\mathsf{T}})^i \indvect{\agroup}.
 %         & = \gamma (\indvect{\agroup} + (1 - \gamma) \transmatrix_{\text{{true}}} \indvect{\agroup} + (1 - \gamma)^2 \transmatrix_{\text{true}} (\transmatrix_{\text{true}} \indvect{\agroup}) + \ldots).
 %  \end{aligned}
 \end{equation}
@@ -1104,7 +1105,7 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
       \FOR {$\ell = 1$ to $\nogroups$}
         \STATE $\prvector_{\ell} \gets {\pralgo}(\newtransmatrix, \gamma,  \frac{1}{|\vertices_{\ell}|} \indvect{\ell})$
         \FOR {$\agroup = 1$ to $\nogroups$}
-          \STATE $\theta_\agroup \gets \indvect{\agroup}^T \prvector_{\ell}$
+          \STATE $\theta_\agroup \gets \indvect{\agroup}^{\mathsf{T}} \prvector_{\ell}$
           \STATE $\vecty_{\agroup} \gets$ ${\yapprox}(\newtransmatrix, \gamma, \indvect{\agroup}, t)$
           \FOR {$(i, j)$ where $\transmatrix[i, j] > 0$}
             \STATE $\newtransmatrix[i, j] \gets \newtransmatrix[i, j] - \alpha \frac{2(1 - \gamma)}{\gamma} (\theta_\agroup - \grouppr_\agroup) \prvector_{\ell}[i] \vecty_{\agroup}[j]$
@@ -1137,7 +1138,7 @@ with respect to the transition matrix \transmatrix is given by
 \label{eq:gradient_cross_fairness_loss}
     \frac{\partial}{\partial \transmatrix} \groupAdapLoss(\transmatrix, \gamma, \vectv) 
          = \frac{2 (1-\gamma)}{K^2} \sum_{k=1}^{\nogroups} 
-         \sum_{\ell=1}^{\nogroups} \left(\indvect{\agroup}^T \prvector_l - \grouppr_\agroup\right) \left( \prvector_l \indvect{\agroup}^T \matrixU^{-1} \right) .       
+         \sum_{\ell=1}^{\nogroups} \left(\indvect{\agroup}^{\mathsf{T}} \prvector_l - \grouppr_\agroup\right) \left( \prvector_l \indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \right) .       
 \end{aligned}
 \end{equation}
 
@@ -1417,7 +1418,7 @@ The revised transition matrix is $\newtransmatrix = \transmatrix_L + \mathbf{R}$
     \end{equation}
 and $out_{\agroup}(i)$ represents the number of out-neighbors of vertex $i$ that belongs to group \agroup, and $L_\agroup$ denotes the set of vertices whose portion of neighbors that belong to group \agroup is smaller than the fairness target $\grouppr_\agroup$. $\mathbf{R}$ is given by
 \begin{equation}
-    \mathbf{R} = \delta_1 \mathbf{x}^T + \delta_2 \mathbf{y}^T
+    \mathbf{R} = \delta_1 \mathbf{x}^{\mathsf{T}} + \delta_2 \mathbf{y}^{\mathsf{T}}
 \end{equation}
 where $\delta_1[i] = \grouppr_1 -\frac{(1-\grouppr_1)out_1(i)}{out_2(i)}$, $\delta_2[i] = (1-\grouppr_1) -\frac{\grouppr_1 out_2(i)}{out_1(i)}$. $\mathbf{x}$ and $\mathbf{y}$ are two indicator vectors where $\mathbf{x}(i) = 1 \text{ if }  i\in \group_1$ and $\mathbf{y}(i) = 1 \text{ if } i\in \group_2$.\\
 \noindent \lfprn \citep{tsioutsiouliklis_fairness-aware_2021}. 
@@ -1473,7 +1474,7 @@ neither do they change the restart vector.
 
 \lfprn and \lfpru are guaranteed to achieve perfect $\groupDist$-fairness, 
 % in \pagerank scores, 
-provided the restart vector is $\groupDist$-fair, i.e., $\indvect{\agroup}^T \vectv = \grouppr_\agroup$. Both algorithms modify the graph to be fully connected. We report fairness loss $L(\hat{\transmatrix}, \gamma, \vectv)$ and group-adapted fairness loss $L_g(\hat{\transmatrix}, \gamma, \vectv)$ for these two baselines with the restart vector $\vectv$ set to a uniform vector.
+provided the restart vector is $\groupDist$-fair, i.e., $\indvect{\agroup}^{\mathsf{T}} \vectv = \grouppr_\agroup$. Both algorithms modify the graph to be fully connected. We report fairness loss $L(\hat{\transmatrix}, \gamma, \vectv)$ and group-adapted fairness loss $L_g(\hat{\transmatrix}, \gamma, \vectv)$ for these two baselines with the restart vector $\vectv$ set to a uniform vector.
 
 
 % \begin{figure*}[t]
