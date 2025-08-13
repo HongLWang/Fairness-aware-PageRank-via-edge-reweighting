@@ -208,7 +208,7 @@ vertices in the \emph{blue} group is equal to~$1-\phi_{\text{red}}=\phi_\mathrm{
 
 \vspace{1mm}
 \para{Intervention strategies.}
-\agtext{To improve fairness for \pagerank-type link-analysis tasks,} 
+\agtext{To improve fairness for \pagerank analysis tasks,} 
 the task is to design an intervention strategy so that the \pagerank
 scores of the graph vertices become $\groupDist$-fair, or ``close enough'' to $\groupDist$-fair.
 Considering the \pagerank algorithm, 
@@ -605,7 +605,9 @@ In other words, $\resfeasiblematrices(\transmatrix)$ restricts the entries of th
 The motivation for defining the restricted $\groupDist$-\pagerank problem (Problem~\ref{problem:restricted-fair_problem})
 is to consider only solutions that make small modifications in the transition matrix $\transmatrix$.
 
-Without loss of generality, in this paper, we study both \fpr and \resfpr with a uniform restart vector $\vectv = [ \frac{\uniformvect}{\novertices},\ldots, \frac{\uniformvect}{\novertices}]$.
+Without loss of generality, in this paper, we study both \fpr and \resfpr with a uniform restart vector $\vectv = \left[ \frac{\uniformvect}{\novertices},\ldots, \frac{\uniformvect}{\novertices} \right]$.
+
+\aris{in the numerator above is it $\uniformvect$ or simply 1?}
 
 \iffalse
 \subsection{group-adapted Fair \pagerank}
@@ -978,6 +980,11 @@ For both constraints, we solve the projection for each row of $\newtransmatrix$ 
 
 \aris{What does ``calls for'' mean below?
 Also the equation uses $\Delta^{k}$ but then we define $\Delta^{k-1}$}
+
+\aris{We use $\gamma$ for the restart probability of pagerank, and now there is a vector $\vectr$ that looks almost the same. This is quite confusing. Btw, what is $\vectalpha$ and what is $\vectr$? It is not very clear.
+Finally, I would suggest not using greek letters for vectors because the boldface is not very visible.}
+
+\aris{Overall, this subsection of gradient projection is very unclear to me.}
 
 The constraint $\feasiblematrices(\transmatrix)$ calls for a Euclidean projection of $\vectalpha$ onto the probability simplex:
 \begin{equation*}
@@ -1837,9 +1844,11 @@ For all datasets except \book, the two variants of \crossgd exhibit comparable o
 \subsection{Ranking coefficient evaluation}
 We report the average Spearman’s rank correlation coefficient $\overline{\rho}$ for each method across multiple datasets. For each group, we compute the Spearman’s coefficient between the rankings of old and new PageRank values restricted to that group. These per-group coefficients are then aggregated using a weighted average, where each group’s weight corresponds to its proportion of the total items. The results for the \mind dataset are shown in \Cref{table:ranking_book}, while results for other datasets are provided in 
 \agtext{the full version~\citep[\Cref{appendix:more-experiments}]{fullversion}}.
-For each table, we bold the largest value and underline the second largest.
+In the tables, we depict with boldface the largest value and with underline the second largest.
 
-Across all $\phi$ values, \fairgd consistently attains the highest $\overline{\rho}$, followed by \fairgdrtwo and \fairgdrone in second and third place, respectively. These results indicate that \fairgd exhibits very good preservation of the relative PageRank score rankings within individual groups. These results suggest that, in practical applications, when adjusting the content displayed to users based on items’ PageRank scores to enhance fairness, fewer changes are required within
+Across all $\phi$ values, \fairgd consistently attains the highest $\overline{\rho}$, followed by \fairgdrtwo and \fairgdrone.
+% in second and third place, respectively. 
+These results indicate that \fairgd exhibits very good preservation of the relative PageRank score rankings within individual groups. These results suggest that, in practical applications, when adjusting the content displayed to users based on items’ PageRank scores to enhance fairness, fewer changes are required within
 each group. Instead, greater focus should be placed on adjusting
 the frequency or weighting of content across different groups.
 \subsection{Use case}
@@ -1848,7 +1857,7 @@ We visualize the graph structure of the \book dataset before and after edge rewe
 
 % We observe that \fairgd and its restricted versions \fairgdrone and \fairgdrtwo all achieve almost perfect target fairness score, with \fairgdrtwo leading to a denser structure than \fairgd and \fairgdrone. \crossgd also achieves a close to perfect fairness score, but at the cost of deleting a lot of edges. On the other hand, when the edge reweighting is restricted, \crossgdrone and \crossgdrtwo cannot achieve as good fairness scores as \crossgd.  \fairwalk and \crosswalk achieve very similar results in both fairness score and graph structure, the fairness loss is slightly better than \crossgdrone and \crossgdrtwo, but worse than the rest methods.
 
-We observe that \fairgd and its restricted variants, \fairgd~($0.1$, $0.1$) and \fairgdrtwo, achieve near-perfect target fairness scores, with \fairgdrtwo producing a denser structure than \fairgd and \fairgdrone. \crossgd also attains an almost perfect fairness score, but at the cost of removing a substantial number of edges. In contrast, when edge reweighting is restricted, algorithms \crossgdrone and \crossgdrtwo fail to match the fairness performance of \crossgd. Finally, \fairwalk and \crosswalk yield very similar results in both fairness scores and graph structure; their fairness loss is slightly lower than that of \crossgdrone and \crossgdrtwo, but higher than that of the remaining methods.
+We observe that \fairgd and its restricted variants, \fairgd~($0.1$, $0.1$) and \fairgdrtwo, achieve near-perfect target fairness scores, with \fairgdrtwo producing a denser structure than \fairgd and \fairgdrone. \crossgd also attains an almost perfect fairness score, but at the cost of removing a substantial number of edges. In contrast, when edge reweighting is restricted,  \crossgdrone and \crossgdrtwo fail to match the fairness performance of \crossgd. Finally, \fairwalk and \crosswalk yield very similar results in both fairness scores and graph structure; their fairness loss is slightly lower than that of \crossgdrone and \crossgdrtwo, but higher than that of the remaining methods.
 \section{Conclusion}
 
 We presented a novel approach for incorporating group
