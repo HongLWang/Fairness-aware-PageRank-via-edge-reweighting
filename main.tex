@@ -978,8 +978,8 @@ $\feasiblematrices(\transmatrix)$. Projecting \vects to \vectt subject to $\feas
 \begin{equation*}
     \vectsopt  =\underset {\vectr \in  \mathcal{F}_1}{\arg\min} \left\| \vects - \vectr \right\|_2^2
 \end{equation*}
-where $\mathcal{F}_1 = \{ \vectr \in \mathbb{R}^{K} \mid \mathbf{1}^{\mathsf{T}}\vectr = 1, \vectr \geq 0\}$ is a probability simplex. This is a well studied problem~\citep{michelot1986finite, pardalos1990algorithm, duchi2008efficient, condat2016fast, cisse2017parseval}.
-In \Cref{alg:project}, \agtext{shown in the full version~\citep[\Cref{appendix:pseudocode}]{fullversion}}, we use the method detailed by \citet{duchi2008efficient} to perform the projection of $\vects$ after every gradient update step. According to \citet{cisse2017parseval}, the computational complexity for the projection is $\bigO(KlogK)$.
+where $\mathcal{F}_1 = \{ \vectr \in \mathbb{R}^{K} \mid \mathbf{1}^{\mathsf{T}}\vectr = 1, \vectr \geq 0\}$ is a probability simplex. This is a well studied problem~\citep{michelot1986finite, pardalos1990algorithm, duchi2008efficient, condat2016fast, cisse2017parseval},computational complexity for the projection is $\bigO(KlogK)$.
+In \Cref{alg:project}, \agtext{shown in the full version~\citep[\Cref{appendix:pseudocode}]{fullversion}}, we use the method detailed by \citet{duchi2008efficient} to perform the projection of $\vects$ after every gradient update step. 
 
  % Its solution is of the form: $\alpha^{*}_i = \max (0, \alpha_i - \tau(\vectalpha))$, with $\tau: \mathbb{R}^{K} \rightarrow \mathbb{R}$ the unique function satisfying $\sum_{i} (x_i - \tau(\vectalpha)) = 1$ for every $\textbf{\textit{x}} \in \mathbb{R}^{K}$. According to \citet{duchi2008efficient}, let $\alpha_1 \geq \alpha_2 \geq \cdots \geq \alpha_{K}$ be the sorted elements of $\vectalpha$, and $k(\vectalpha) = \max\{k \in (1, \cdots, K) \mid 1 + k \alpha_k > \sum_{j \leq k} \alpha_j \} $. Then, $\tau(\vectalpha)$ is given by:
 % \begin{equation*}
@@ -1006,7 +1006,7 @@ We then discuss constraint $\feasiblematrices(\transmatrix) \cap \resfeasiblemat
 \begin{equation*}
 	\vectsopt  =\underset {\vectt \in  \mathcal{F}_2}{\arg\min} \left\| \vects - \vectt \right\|_2^2,
 \end{equation*}
-where $\mathcal{F}_2 = \{ \vectt \in \mathbb{R}^{K} \mid \mathbf{1}^{\mathsf{T}} \vectt = 1,  \vectl \leq \vectt \leq \vectu \}$, with $\vectl = \max \{0, (1 - \delta) \vects - \epsilon \}$ and $\vectu = \min \{1, (1 + \delta) \vects + \epsilon \}$. According to \citet{adam2022projections}, the solution is $\alpha_i^* = \text{clip} (\alpha_i + \lambdaopt, \ell_i, u_i)$, with $\text{clip}(x, a, b)$ defined as
+where $\mathcal{F}_2 = \{ \vectt \in \mathbb{R}^{K} \mid \mathbf{1}^{\mathsf{T}} \vectt = 1,  \vectl \leq \vectt \leq \vectu \}$, with $\vectl = \max \{\vect{0}, (1 - \delta) \vects - \epsilon \}$ and $\vectu = \min \{\vect{1}, (1 + \delta) \vects + \epsilon \}$. According to \citet{adam2022projections}, the solution is $s_i^* = \text{clip} (s_i + \lambdaopt, \ell_i, u_i)$, with $\text{clip}(x, a, b)$ defined as
 \begin{equation*}
 	\text{clip}(x, a, b) = \begin{cases}
 		a & \text{if } x \leq a, \\
@@ -1016,14 +1016,14 @@ where $\mathcal{F}_2 = \{ \vectt \in \mathbb{R}^{K} \mid \mathbf{1}^{\mathsf{T}}
 \end{equation*}
 and $\lambdaopt$ is the solution to the following equation
 \begin{equation*}
-	h(\lambda) := \sum_{i=1}^{K} \text{clip}(\alpha_i + \lambda, \ell_i, u_i) -1 = 0.
+	h(\lambda) := \sum_{i=1}^{K} \text{clip}(s_i + \lambda, \ell_i, u_i) -1 = 0.
 \end{equation*}
 Since $h$ is piecewise linear and non-decreasing in $\lambda$, \agtext{we can find~$\lambdaopt$} via a simple method proposed by \citet{adam2022projections}:
 % The rationale is the following:
 \begin{enumerate}[leftmargin=*]
-	\item For any $\lambda$, $\clip(\alpha_i, \ell_i, u_i)$ takes value $\ell_i$, $\lambda + \alpha_i$, or $u_i$, thus, we can rewrite $h(\lambda)$ as $h(\lambda) = \act(\lambda) \cdot \lambda + C$ for some constant~$C$, where $\act(\lambda) $ is the number of elements such that $\alpha_i + \lambda$ falls in range $[\ell_i, u_i)$.
+	\item For any $\lambda$, $\clip(s_i, \ell_i, u_i)$ takes value $\ell_i$, $\lambda + s_i$, or $u_i$, thus, we can rewrite $h(\lambda)$ as $h(\lambda) = \act(\lambda) \cdot \lambda + C$ for some constant~$C$, where $\act(\lambda) $ is the number of elements such that $\alpha_i + \lambda$ falls in range $[\ell_i, u_i)$.
 	\item Let $R$ be the increasing ranking of $2K$ items consisting of $\vectl - \vects$ and $\vectu - \vects$. For any $\lambda$ in interval $[R_j, R_{j+1})$, the function $\act(\lambda)$ remains constant.
-	\item Let $\Total(\lambda) = \sum_{i=1}^K \clip(\alpha_i + \lambda, \ell_i, u_i)$ and assume that $\mathcal{F}$ is non-empty. Then there must exist some $j \in \{1, \cdots, 2K\}$ such that $\Total(R_j) \leq 1$ and $\Total(R_{j+1}) > 1$, and we can conclude that $\lambda^*$ lies in range $[R_j, R_{j+1})$. Since $\act(R_j) = \act(\lambda^*)$, it follows that
+	\item Let $\Total(\lambda) = \sum_{i=1}^K \clip(s_i + \lambda, \ell_i, u_i)$ and assume that $\mathcal{F}_2$ is non-empty. Then there must exist some $j \in \{1, \cdots, 2K\}$ such that $\Total(R_j) \leq 1$ and $\Total(R_{j+1}) > 1$, and we can conclude that $\lambda^*$ lies in range $[R_j, R_{j+1})$. Since $\act(R_j) = \act(\lambda^*)$, it follows that
 	%\begin{equation*}
 	$(\lambda^{*} - R_j) \cdot \act(R_j) = 1 - \Total(R_j)$
 	%\end{equation*}
@@ -1618,6 +1618,12 @@ and for the remaining groups we distribute the scores $\grouppr_\agroup$ equally
 % $ \grouppr_\agroup = \frac{1-\grouppr}{\nogroups-1}, \forall \agroup \in \{2, \cdots, \nogroups\}$. 
 We vary \(\grouppr\) in the range  $ [0.1, 0.2, \dots, 0.9] $. 
 % to evaluate the performance of our algorithm compared to all baselines.
+
+\aris{Here writing $ \groupDist = (\grouppr, 1-\grouppr) $ is problematic for vector $\groupDist$ not being boldface.
+Either change
+$\groupDist$ or write
+$\groupDist = ({\grouppr}_1, 1-\grouppr_1) $
+}
 
 \vspace{1mm}
 The code and dataset used in this paper are available.%
