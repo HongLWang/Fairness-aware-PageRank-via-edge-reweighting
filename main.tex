@@ -982,9 +982,12 @@ After each gradient descent step,
 \newtransmatrix is projected back to the feasible set $\feasiblematrices(\transmatrix)$ or $\feasiblematrices(\transmatrix) \cap \resfeasiblematrices(\transmatrix)$.
 For both constraints, we solve the projection for each row of $\newtransmatrix$ separately. Given one row, let $\vectalpha$ be the vector of size $K$ comprised of its non-zero elements.
 
+\aris{What does ``calls for'' mean below?
+Also the equation uses $\Delta^{k}$ but then we define $\Delta^{k-1}$}
+
 The constraint $\feasiblematrices(\transmatrix)$ calls for a Euclidean projection of $\vectalpha$ onto the probability simplex:
 \begin{equation*}
-    \vectalphaopt  =\underset {\vectr \in  \Delta ^{k}}{\arg\min} \left\| \vectalpha - \vectr \right\|_2^2
+    \vectalphaopt  =\underset {\vectr \in  \Delta^{k}}{\arg\min} \left\| \vectalpha - \vectr \right\|_2^2
 \end{equation*}
 where $\Delta ^{k-1} = \{ \vectr \in \mathbb{R}^{K-1} \mid \mathbf{1}^{\intercal} \vectr = 1, \vectr \geq 0\}$ is a probability simplex. This is a well studied problem~\citep{michelot1986finite, pardalos1990algorithm, duchi2008efficient, condat2016fast, cisse2017parseval}. Its solution is of the form: $\alpha^{*}_i = \max (0, \alpha_i - \tau(\vectalpha))$, with $\tau: \mathbb{R}^{K} \rightarrow \mathbb{R}$ the unique function satisfying $\sum_{i} (x_i - \tau(\vectalpha)) = 1$ for every $\textbf{\textit{x}} \in \mathbb{R}^{K}$. According to \citet{duchi2008efficient}, let $\alpha_1 \geq \alpha_2 \geq \cdots \geq \alpha_{K}$ be the sorted elements of $\vectalpha$, and $k(\vectalpha) = \max\{k \in (1, \cdots, K) \mid 1 + k \alpha_k > \sum_{j \leq k} \alpha_j \} $. Then, $\tau(\vectalpha)$ is given by:
 \begin{equation*}
@@ -1018,7 +1021,7 @@ where $\mathcal{F} = \{ \vectr \in \mathbb{R}^{K} \mid \mathbf{1}^{\intercal} \v
 		b & \text{if } x \geq b,
 	\end{cases}
 \end{equation*}
-and $\lambdaopt$ is the solution that solves the function
+and $\lambdaopt$ is the solution to the following equation
 \begin{equation*}
 	h(\lambda) := \sum_{i=1}^{K} \text{clip}(\alpha_i + \lambda, \ell_i, u_i) -1 = 0.
 \end{equation*}
