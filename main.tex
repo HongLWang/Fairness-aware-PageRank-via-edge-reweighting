@@ -979,11 +979,15 @@ $\feasiblematrices(\transmatrix)$. Projecting \vects to \vectt subject to $\feas
 \begin{equation*}
     \vectsopt  =\underset {\vectr \in  \mathcal{F}_1}{\arg\min} \left\| \vects - \vectr \right\|_2^2
 \end{equation*}
-where $\mathcal{F}_1 = \{ \vectr \in \mathbb{R}^{K} \mid \mathbf{1}^{\mathsf{T}}\vectr = 1, \vectr \geq 0\}$ is a probability simplex. This is a well studied problem~\citep{michelot1986finite, pardalos1990algorithm, duchi2008efficient, condat2016fast, cisse2017parseval}. Its solution is of the form: $\alpha^{*}_i = \max (0, \alpha_i - \tau(\vectalpha))$, with $\tau: \mathbb{R}^{K} \rightarrow \mathbb{R}$ the unique function satisfying $\sum_{i} (x_i - \tau(\vectalpha)) = 1$ for every $\textbf{\textit{x}} \in \mathbb{R}^{K}$. According to \citet{duchi2008efficient}, let $\alpha_1 \geq \alpha_2 \geq \cdots \geq \alpha_{K}$ be the sorted elements of $\vectalpha$, and $k(\vectalpha) = \max\{k \in (1, \cdots, K) \mid 1 + k \alpha_k > \sum_{j \leq k} \alpha_j \} $. Then, $\tau(\vectalpha)$ is given by:
-\begin{equation*}
-	\tau(\vectalpha) = \frac{\left(\sum_{j \leq k(\vectalpha)} \alpha_j\right) -1}{k(\vectalpha)}.
-\end{equation*}
-The time complexity of the projection is $\mathcal{O}(KlogK)$ as it is dominated by sorting of elements in $\vectalpha$, and $K$ is typically small for sparse graphs. In \Cref{alg:project}, \agtext{shown in the full version~\citep[\Cref{appendix:pseudocode}]{fullversion}}, we use the method detailed by \citet{duchi2008efficient} to perform the projection of $\vectalpha$ after every gradient update step.
+where $\mathcal{F}_1 = \{ \vectr \in \mathbb{R}^{K} \mid \mathbf{1}^{\mathsf{T}}\vectr = 1, \vectr \geq 0\}$ is a probability simplex. This is a well studied problem~\citep{michelot1986finite, pardalos1990algorithm, duchi2008efficient, condat2016fast, cisse2017parseval}.
+In \Cref{alg:project}, \agtext{shown in the full version~\citep[\Cref{appendix:pseudocode}]{fullversion}}, we use the method detailed by \citet{duchi2008efficient} to perform the projection of $\vects$ after every gradient update step.
+
+ Its solution is of the form: $\alpha^{*}_i = \max (0, \alpha_i - \tau(\vectalpha))$, with $\tau: \mathbb{R}^{K} \rightarrow \mathbb{R}$ the unique function satisfying $\sum_{i} (x_i - \tau(\vectalpha)) = 1$ for every $\textbf{\textit{x}} \in \mathbb{R}^{K}$. According to \citet{duchi2008efficient}, let $\alpha_1 \geq \alpha_2 \geq \cdots \geq \alpha_{K}$ be the sorted elements of $\vectalpha$, and $k(\vectalpha) = \max\{k \in (1, \cdots, K) \mid 1 + k \alpha_k > \sum_{j \leq k} \alpha_j \} $. Then, $\tau(\vectalpha)$ is given by:
+% \begin{equation*}
+% 	\tau(\vectalpha) = \frac{\left(\sum_{j \leq k(\vectalpha)} \alpha_j\right) -1}{k(\vectalpha)}.
+% \end{equation*}
+% The time complexity of the projection is $\mathcal{O}(KlogK)$ as it is dominated by sorting of elements in $\vectalpha$, and $K$ is typically small for sparse graphs. 
+
 % $\feasiblematrices(\transmatrix) {\color{black}\cap \resfeasiblematrices(\transmatrix)}$ 
 % by the following steps:
 % \begin{enumerate}[leftmargin=*]
