@@ -432,8 +432,10 @@ $\prvector^T = \gamma \vectv^T (\unitary - (1 - \gamma) \transmatrix)^{-1}.$
 
 Building on the earlier definition of fairness-aware PageRank \citep{tsioutsiouliklis_fairness-aware_2021, tsioutsiouliklis_link_2022}, we consider the vertices of a graph to be partitioned into distinct groups. These groups may represent social categories based on sensitive attributes such as gender, ethnicity, or sexual orientation. We begin by defining the fair PageRank problem, followed by a discussion of various approaches to achieving PageRank fairness, and conclude with a formal definition of the $\groupDist$-\pagerank (\fpr) problem and the Restricted $\groupDist$-\pagerank (\resfpr) problem.
 
+
 \aris{I would keep {\groupDist} lowercase to be consistent with our conventions
 (boldface lowercase for vectors and boldface uppercase for matrices)}
+\honglian{right, I changed it to lower case. However, it does not produce boldface, it shows the same as simple $\phi$. I cannot use $bm{\phi}$ because it conflicts acmart.cls}
 
 \subsubsection{Group-wise fair \pagerank}
 %
@@ -605,9 +607,11 @@ In other words, $\resfeasiblematrices(\transmatrix)$ restricts the entries of th
 The motivation for defining the restricted $\groupDist$-\pagerank problem (Problem~\ref{problem:restricted-fair_problem})
 is to consider only solutions that make small modifications in the transition matrix $\transmatrix$.
 
-Without loss of generality, in this paper, we study both \fpr and \resfpr with a uniform restart vector $\vectv = \left[ \frac{\uniformvect}{\novertices},\ldots, \frac{\uniformvect}{\novertices} \right]$.
+Without loss of generality, in this paper, we study both \fpr and \resfpr with a uniform restart vector $\vectv = \left[ \frac{1}{\novertices},\ldots, \frac{1}{\novertices} \right]$.
 
-\aris{in the numerator above is it $\uniformvect$ or simply 1?}
+% \aris{in the numerator above is it $\uniformvect$ or simply 1?}
+% \honglian{they should be simply 1}
+
 
 \iffalse
 \subsection{group-adapted Fair \pagerank}
