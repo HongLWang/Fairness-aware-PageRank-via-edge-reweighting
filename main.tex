@@ -208,7 +208,7 @@ vertices in the \emph{blue} group is equal to~$1-\phi_{\text{red}}=\phi_\mathrm{
 
 \vspace{1mm}
 \para{Intervention strategies.}
-\agtext{To improve fairness for \pagerank analysis tasks,} 
+\agtext{To improve fairness for \pagerank problems,} 
 the task is to design an intervention strategy so that the \pagerank
 scores of the graph vertices become $\groupDist$-fair, or ``close enough'' to $\groupDist$-fair.
 Considering the \pagerank algorithm, 
@@ -222,8 +222,8 @@ $(iv)$~modifying the edge weights of the graph in a controlled manner to ensure 
 In this paper, we focus on intervention strategies of type ($iv$),
 namely, achieving fair \pagerank by re\-weighting the graph edges.
 Our motivation is that such interventions are 
-\emph{intrinsic to the graph structure} and often can be implemented with actionable operations. 
-For example, edge re\-weighting can be achieved by appropriately prioritizing/demoting content from one's connections in a social network. Similarly, strategies of type ($iii$) involving edge additions or deletions are also intrinsic to the graph structure but tend to be less practical. These strategies rely on link recommendations and have to account for the likelihood of acceptance, making them more complex to implement.
+\emph{intrinsic to the graph structure} and can be implemented with actionable operations. 
+For example, edge re\-weighting can be achieved by prioritizing/demoting content from one's connections in a social network. Strategies of type ($iii$) involving edge additions or deletions are also intrinsic to the graph structure but tend to be less practical. These strategies rely on link recommendations and have to account for the likelihood of accepting the recommended links, which introduces uncertainty and makes them challenging to implement.
 % To further compare the feasibility of the two types of strategies, consider the context of ranking Internet routes. Adjusting edge weights to prioritize under\-served areas is typically easier than adding new routes or removing existing ones. 
 
 Strategies of type ($i$) and ($ii$), i.e., modifying the \pagerank restart probability or restart vector are \emph{extrinsic to the graph structure} and rely on tuning hyper-parameters of the \pagerank algorithm. In many cases, it is not meaningful, nor actionable, to modify those hyper-parameters. For example, in the personalized \pagerank algorithm, the restart vector has a clear interpretation, which is to model the user interests and is not amenable to modification.
@@ -274,13 +274,13 @@ As we will see, we answer this question in the~affirmative.
 \para{Our approach.}
 % Motivated by the above discussion, 
 We present a new approach to incorporate fairness into the \pagerank algorithm by re\-weighting the transition probabilities of the \pagerank matrix. 
-More concretely, we formulate the problem of minimizing the \pagerank distance to a fair distribution while allowing only for re\-weighting the network edges within pre\-specified limits. 
-With our formulation, we can quantify and improve fairness with respect to many vertex groups in the network.
+More concretely, we seek to minimize the \pagerank distance to a fair distribution while allowing only for re\-weighting the network edges within pre\-specified limits. 
+Our approach handles multiple vertex groups in the network.
 Unlike earlier approaches, 
 we do not recommend that new edges be added to the network, nor do we adjust the restart vector. 
-Instead, we keep the topology of the underlying network unchanged and 
-only modify the relative importance of existing edges. 
-Additionally, we aim for globally-fair \pagerank, without requiring local fairness at each vertex.
+Instead, we keep the topology of the underlying network unchanged. 
+% and only modify the relative importance of existing edges. 
+% Additionally, we aim for globally-fair \pagerank, without requiring local fairness at each vertex.
 %
 If perfect fairness cannot be achieved,
 %  with the permissible transition-matrix modifications, 
@@ -337,7 +337,10 @@ provided in an anonymous link~\cite{fullversion}.}
 
 \section{Related work}
 
-In recent years, algorithmic fairness in graph mining has emerged as a prominent area of research --- for a comprehensive survey, see the recent paper by \citet{saxena2024fairsna}. This paper focuses on enhancing fairness in the content of the well-known \pagerank algorithm, which has been widely utilized for tasks such as vertex ranking, classification, and community detection. The objective in accounting for a fairness notion in the context of \pagerank, is to enable allocating \pagerank scores to vertices in a manner that considers both the vertices' group affiliations and the overall structure of the network~\citep{tsioutsiouliklis_fairness-aware_2021,saxena2024fairsna}.
+In recent years, algorithmic fairness in graph mining has emerged as a prominent area of research
+% --- for a comprehensive survey, see the recent paper by 
+\citep{saxena2024fairsna}. This paper focuses on enhancing fairness in the content of the well-known \pagerank algorithm, which has been widely used for ranking, classification, community detection, and more. The objective % in accounting for a fairness notion in the context of \pagerank, 
+is to allocate \pagerank scores to vertices in a manner that considers both the vertices' group affiliations and the overall structure of the network~\citep{tsioutsiouliklis_fairness-aware_2021,saxena2024fairsna}.
 
 In the standard \pagerank algorithm \citep{gleich_pagerank_2015,brin_anatomy_1998,tabrizi2013personalized}, 
 a random-walk process defines the transition from one vertex to its neighbors,
@@ -364,7 +367,9 @@ $\mathrm{LFPR}_N$, $\mathrm{LFPR}_U$, and $\mathrm{LFPR}_P$.
 Each variant reweights the transition matrix in a different way while incorporating a fair jump vector. 
 Although the authors suggest that $\mathrm{FSPR}$ and $\mathrm{LFPRs}$ 
 can be extended to scenarios involving more than two groups, 
-they do not provide details on the specific mechanisms for such an extension. 
+they do not provide details 
+% on the specific mechanisms 
+for such an extension. 
 
 Additionally, link recommendation has been explored as an alternative approach to promoting fairness in \pagerank. 
 In one such paper, \citet{tsioutsiouliklis_link_2022} present analytical formulas 
@@ -397,7 +402,7 @@ fairness over multiple groups.
 
 \section{Problem definition}
 
-In this section, we first present the necessary preliminaries, and then we define \pagerank fairness.
+% In this section, we first present the necessary preliminaries, and then we define \pagerank fairness.
 
 \subsection{Preliminaries}
 
@@ -878,28 +883,7 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
 \end{algorithm}
 \fi
 
-\iffalse
-\begin{algorithm}[t]
-\caption{\label{alg:project}\project: projection to feasible set}
-  \begin{algorithmic}[1]
-    \REQUIRE Transition matrix $\newtransmatrix$, original transition matrix \transmatrix, modification bound \boundfactor and \absboundfactor (optional).
-    \ENSURE Projected transition matrix $\newtransmatrix$
-     \STATE $\newtransmatrix[i, j] \gets 0$ for $(i, j)$ where $\transmatrix[i, j] = 0$
-    \STATE $\newtransmatrix[i, j] \gets 0$ for $(i, j)$ where $\newtransmatrix[i, j] < 0$
-    \IF{\boundfactor and \absboundfactor are provided}   
-    \WHILE{$\newtransmatrix \notin \resfeasiblematrices(\transmatrix)$}
-    \STATE $\newtransmatrix[i,j] = \max ((1-\boundfactor) \transmatrix[i,j] - \absboundfactor, \newtransmatrix[i,j] )$
-    \STATE $\newtransmatrix[i,j] = \min ((1+\boundfactor) \transmatrix[i,j] + \absboundfactor, \newtransmatrix[i,j])$
-    \STATE $\vects = \newtransmatrix \mathbf{1}$
-    \STATE $\newtransmatrix[i, j] \gets \newtransmatrix[i, j] / \vects[i]$ for $(i, j)$ where $\newtransmatrix[i, j] > 0$
-    \ENDWHILE
-    \ELSE
-    \STATE $\vects = \newtransmatrix \mathbf{1}$
-    \STATE $\newtransmatrix[i, j] \gets \newtransmatrix[i, j] / \vects[i]$ for $(i, j)$ where $\newtransmatrix[i, j] > 0$
-    \ENDIF
-  \end{algorithmic}
-\end{algorithm}
-\fi
+
 
 \noindent
 \textbf{Matrix inversion acceleration.}
@@ -975,18 +959,19 @@ and can be omitted, if we need space.
 % We use \newtransmatrix to denote the transition matrix obtained by the projected gradient-descent method.
 After each gradient descent step, 
 \newtransmatrix needs be projected back to the feasible set $\feasiblematrices(\transmatrix)$ or $\feasiblematrices(\transmatrix) \cap \resfeasiblematrices(\transmatrix)$.
-We perform the projection for each row of $\newtransmatrix$ separately. Since both constraints forbid adding non-existing edges, we only need to perform the projection for the non-zero columns.
+We perform the projection for each row of $\newtransmatrix$ separately. Since both constraints forbid adding non-existing edges, we only need to perform the projection for the non-zero columns. For any row of \transmatrix, let \vects be its non-zero elements, and the gradient projection aims to find a vector \vectt in the feasible area.
 % For both constraints, we solve the projection for each row of $\newtransmatrix$ separately. Given one row, let $\vectalpha$ be the vector of size $K$ comprised of its non-zero elements.
 
-\aris{What does ``calls for'' mean below?
-Also the equation uses $\Delta^{k}$ but then we define $\Delta^{k-1}$}
+% \aris{What does ``calls for'' mean below?
+% Also the equation uses $\Delta^{k}$ but then we define $\Delta^{k-1}$}
 
-\aris{We use $\gamma$ for the restart probability of pagerank, and now there is a vector $\vectr$ that looks almost the same. This is quite confusing. Btw, what is $\vectalpha$ and what is $\vectr$? It is not very clear.
-Finally, I would suggest not using greek letters for vectors because the boldface is not very visible.}
+% \aris{We use $\gamma$ for the restart probability of pagerank, and now there is a vector $\vectr$ that looks almost the same. This is quite confusing. Btw, what is $\vectalpha$ and what is $\vectr$? It is not very clear.
+% Finally, I would suggest not using greek letters for vectors because the boldface is not very visible.}
 
-\aris{Overall, this subsection of gradient projection is very unclear to me.}
+% \aris{Overall, this subsection of gradient projection is very unclear to me.}
 
-The constraint $\feasiblematrices(\transmatrix)$ calls for a Euclidean projection of $\vectalpha$ onto the probability simplex:
+ Solving the projection subject to constraint 
+$\feasiblematrices(\transmatrix)$ is equivalent to solving the following problem:
 \begin{equation*}
     \vectalphaopt  =\underset {\vectr \in  \Delta^{k}}{\arg\min} \left\| \vectalpha - \vectr \right\|_2^2
 \end{equation*}
@@ -1010,11 +995,11 @@ The time complexity of the projection is $\mathcal{O}(KlogK)$ as it is dominated
 
 % Since our optimization process uses element-wise updates for obtaining \newtransmatrix, the first step can be omitted. 
 
-The constraint $\feasiblematrices(\transmatrix)$ calls for a Euclidean projection of $\vectalpha$ onto the intersection of a probability simplex and a box:
+The constraint $\feasiblematrices(\transmatrix)$ calls for a Euclidean projection of $\vects$ onto the intersection of a probability simplex and a box:
 \begin{equation*}
-	\vectalphaopt  =\underset {\vectr \in  \mathcal{F}}{\arg\min} \left\| \vectalpha - \vectr \right\|_2^2,
+	\vectsopt  =\underset {\vectt \in  \mathcal{F}}{\arg\min} \left\| \vects - \vectt \right\|_2^2,
 \end{equation*}
-where $\mathcal{F} = \{ \vectr \in \mathbb{R}^{K} \mid \mathbf{1}^{\intercal} \vectr = 1,  \vectl \leq \vectr \leq \vectu \}$, with $\vectl = \max \{0, (1 - \delta) \vectalpha - \epsilon \}$ and $\vectu = \min \{1, (1 + \delta) \vectalpha + \epsilon \}$. According to \citet{adam2022projections}, the solution is $\alpha_i^* = \text{clip} (\alpha_i + \lambdaopt, \ell_i, u_i)$, with $\text{clip}(x, a, b)$ defined as
+where $\mathcal{F} = \{ \vectt \in \mathbb{R}^{K} \mid \mathbf{1}^{\intercal} \vectt = 1,  \vectl \leq \vectt \leq \vectu \}$, with $\vectl = \max \{0, (1 - \delta) \vects - \epsilon \}$ and $\vectu = \min \{1, (1 + \delta) \vects + \epsilon \}$. According to \citet{adam2022projections}, the solution is $\alpha_i^* = \text{clip} (\alpha_i + \lambdaopt, \ell_i, u_i)$, with $\text{clip}(x, a, b)$ defined as
 \begin{equation*}
 	\text{clip}(x, a, b) = \begin{cases}
 		a & \text{if } x \leq a, \\
@@ -1030,20 +1015,21 @@ Since $h$ is piecewise linear and non-decreasing in $\lambda$, \agtext{we can fi
 % The rationale is the following:
 \begin{enumerate}[leftmargin=*]
 	\item For any $\lambda$, $\clip(\alpha_i, \ell_i, u_i)$ takes value $\ell_i$, $\lambda + \alpha_i$, or $u_i$, thus, we can rewrite $h(\lambda)$ as $h(\lambda) = \act(\lambda) \cdot \lambda + C$ for some constant~$C$, where $\act(\lambda) $ is the number of elements such that $\alpha_i + \lambda$ falls in range $[\ell_i, u_i)$.
-	\item Let $R$ be the increasing ranking of $2K$ items consisting of $\vectl - \vectalpha$ and $\vectu - \vectalpha$. For any $\lambda$ in interval $[R_j, R_{j+1})$, the function $\act(\lambda)$ remains constant.
+	\item Let $R$ be the increasing ranking of $2K$ items consisting of $\vectl - \vects$ and $\vectu - \vects$. For any $\lambda$ in interval $[R_j, R_{j+1})$, the function $\act(\lambda)$ remains constant.
 	\item Let $\Total(\lambda) = \sum_{i=1}^K \clip(\alpha_i + \lambda, \ell_i, u_i)$ and assume that $\mathcal{F}$ is non-empty. Then there must exist some $j \in \{1, \cdots, 2K\}$ such that $\Total(R_j) \leq 1$ and $\Total(R_{j+1}) > 1$, and we can conclude that $\lambda^*$ lies in range $[R_j, R_{j+1})$. Since $\act(R_j) = \act(\lambda^*)$, it follows that
 	%\begin{equation*}
 	$(\lambda^{*} - R_j) \cdot \act(R_j) = 1 - \Total(R_j)$
 	%\end{equation*}
 	and thus we can compute $\lambda^{*}$ as 
 	\begin{equation*}
-		\lambda^{*} = \frac{1-Total(R_j)}{\act(R_j)}.
+		\lambda^{*} = \frac{1-\Total(R_j)}{\act(R_j)}.
 	\end{equation*}
 \end{enumerate}
-The time complexity of the projection is also $\mathcal{O}(KlogK)$ because the computation of $\lambda^*$ is dominated by sorting of $2K$ elements in $\vectl-\vectalpha$ and $\vectu-\vectalpha$.
+The time complexity of the projection is also $\mathcal{O}(KlogK)$ because the computation of $\lambda^*$ is dominated by sorting of $2K$ elements in $\vectl-\vects$ and $\vectu-\vects$.
 The details are given in Algorithm~\ref{alg:project} in the
 \agtext{full version of this paper
 \citep[\Cref{appendix:pseudocode}]{fullversion}.}
+
 
 
 % \haoyun{I am not sure if it is necessary to discuss how to handle sink vertices. \\
@@ -1888,7 +1874,7 @@ This work focuses on reweighting the transition matrix of a graph to achieve tar
 %%
 %% The next two lines define the bibliography style to be used, and
 %% the bibliography file.
-\clearpage
+% \clearpage
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{refs.bib}
 

@@ -219,27 +219,6 @@ We provide pseudocode for Algorithms \ref{alg:project} and \ref{alg:crossgd}.
 
 
 
-%\begin{algorithm}[t]
-%\caption{\label{alg:project}\project: projection to feasible set}
-%  \begin{algorithmic}[1]
-%    \REQUIRE Transition matrix $\newtransmatrix$, original transition matrix \transmatrix, modification bound \boundfactor and \absboundfactor (optional).
-%    \ENSURE Projected transition matrix $\newtransmatrix$
-%     \STATE $\newtransmatrix[i, j] \gets 0$ for $(i, j)$ where $\transmatrix[i, j] = 0$
-%    \STATE $\newtransmatrix[i, j] \gets 0$ for $(i, j)$ where $\newtransmatrix[i, j] < 0$
-%    \IF{\boundfactor and \absboundfactor are provided}   
-%    \WHILE{$\newtransmatrix \notin \resfeasiblematrices(\transmatrix)$}
-%    \STATE $\newtransmatrix[i,j] = \max ((1-\boundfactor) \transmatrix[i,j] - \absboundfactor, \newtransmatrix[i,j] )$
-%    \STATE $\newtransmatrix[i,j] = \min ((1+\boundfactor) \transmatrix[i,j] + \absboundfactor, \newtransmatrix[i,j])$
-%    \STATE $\vects = \newtransmatrix \mathbf{1}$
-%    \STATE $\newtransmatrix[i, j] \gets \newtransmatrix[i, j] / \vects[i]$ for $(i, j)$ where $\newtransmatrix[i, j] > 0$
-%    \ENDWHILE
-%    \ELSE
-%    \STATE $\vects = \newtransmatrix \mathbf{1}$
-%    \STATE $\newtransmatrix[i, j] \gets \newtransmatrix[i, j] / \vects[i]$ for $(i, j)$ where $\newtransmatrix[i, j] > 0$
-%    \ENDIF
-%  \end{algorithmic}
-%\end{algorithm}
-
 
 \begin{algorithm}[t]
 	\caption{\label{alg:project}\project: projection to feasible set}
