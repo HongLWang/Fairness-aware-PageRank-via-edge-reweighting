@@ -671,8 +671,9 @@ leads to the group-adapted \phiPageRank problem.
 
 \aris{Do we really need the ugly acronyms \gafpr and \resgafpr?
 Are we using them?}
+\honglian{We used them, but not very frequently. I've removed the acronyms and use their full name instead.}
 
-\begin{problem}[Group-adapted \phiPageRank (\gafpr)]
+\begin{problem}[Group-adapted \phiPageRank]
 \label{problem:cross-fair-loss}
 Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix \transmatrix of \graph, a restart probability $0 < \gamma < 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$ \agtext{satisfying $\|\groupDist\|_1 = 1$}, find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness-loss function
 % Given a graph $\graph = (\vertices, \edges)$ with  
@@ -692,7 +693,7 @@ where $\feasiblematrices(\transmatrix)$ is defined as in Problem~\ref{problem:fa
 Similarly, we define the restricted 
 version of the problem.
 
-\begin{problem}[Restricted Group-adapted \phiPageRank \\ (\resgafpr)]
+\begin{problem}[Restricted Group-adapted \phiPageRank]
 \label{problem:cross-restricted-fair-loss}
 Given a graph \graph with vertices partitioned into groups $\vertices_1, \ldots, \vertices_\nogroups$, the row-stochastic transition matrix $\transmatrix$ of \graph, a restart probability $0 < \gamma < 1$, as well as group-wise target \pagerank scores $\groupDist = (\grouppr_1, \ldots, \grouppr_\nogroups)$ \agtext{satisfying $\|\groupDist\|_1 = 1$}, a relative modification-bound factor $\boundfactor \ge 0$ and an absolute modification-bound factor $\absboundfactor \ge 0$, find a new transition matrix $\newtransmatrixopt$ that minimizes the group-adapted fairness-loss function $\groupAdapLoss(\newtransmatrixopt, \gamma)$, i.e.,
 \begin{equation*}
@@ -706,7 +707,7 @@ and $\resfeasiblematrices(\transmatrix)$ as in Problem~\ref{problem:restricted-f
 \iffalse
 \subsection{Restricting edge re\-weighting}
 
-In the \fpr and \gafpr problems, discussed in the previous section, 
+In the \fpr and Group-adapted \phiPageRank problems, discussed in the previous section, 
 we require that the changes in the transition matrix \transmatrix, 
 to obtain a new transition matrix \newtransmatrix, 
 should take place only on existing edges.
@@ -752,9 +753,9 @@ Notice that Inequalities~(\ref{inequalities:change-constraint})
 imply also the constraint ``if $\transmatrix[i, j] = 0$ then $\newtransmatrix[i, j] = 0$,''
 so it is not necessary to specify that constraint separately. 
 
-Similarly, we define the restricted group-adapted \phiPageRank (\resgafpr) problem.
+Similarly, we define the restricted group-adapted \phiPageRank problem.
 
-\begin{problem}[Restricted group-adapted \phiPageRank \\ (\resgafpr)]
+\begin{problem}[Restricted group-adapted \phiPageRank]
 Given a graph $\graph = (\vertices, \edges)$ with  
 row-stochastic transition matrix \transmatrix, 
 a restart probability $0 < \gamma < 1$, 
@@ -912,7 +913,7 @@ As the series terms decrease exponentially in mag\-ni\-tude,
 due to the decaying factor $(1-\gamma)$, 
 we can approximate $\vecty_\agroup$ efficiently 
 by computing only the first $t$~series terms.
-\textcolor{black}{We show that truncating the Neumann series to its first $50$ terms yields a relative error below $0.0003$. The detailed analysis is provided in \agtext{our full version}.}
+\textcolor{black}{We show that truncating the Neumann series to its first $50$ terms yields a relative error below $0.0003$. The detailed analysis is provided in \agtext{our full version}~\citep{fullversion}.}
 
 % $\vecty_\agroup$ with a power iteration:
 % \begin{equation}\label{eq:power_iteration}
@@ -986,7 +987,7 @@ where $\Delta ^{k-1} = \{ \vectr \in \mathbb{R}^{K-1} \mid \mathbf{1}^{\intercal
 \begin{equation*}
 	\tau(\vectalpha) = \frac{\left(\sum_{j \leq k(\vectalpha)} \alpha_j\right) -1}{k(\vectalpha)}.
 \end{equation*}
-The time complexity of the projection is $\mathcal{O}(KlogK)$ as it is dominated by sorting of elements in $\vectalpha$, and $K$ is typically small for sparse graphs. In \Cref{alg:project} \agtext{in~\citep[\Cref{appendix:pseudocode}]{fullversion}}, we use the method detailed by \citet{duchi2008efficient} to perform the projection of $\vectalpha$ after every gradient update step.
+The time complexity of the projection is $\mathcal{O}(KlogK)$ as it is dominated by sorting of elements in $\vectalpha$, and $K$ is typically small for sparse graphs. In \Cref{alg:project}, \agtext{shown in the full version~\citep[\Cref{appendix:pseudocode}]{fullversion}}, we use the method detailed by \citet{duchi2008efficient} to perform the projection of $\vectalpha$ after every gradient update step.
 % $\feasiblematrices(\transmatrix) {\color{black}\cap \resfeasiblematrices(\transmatrix)}$ 
 % by the following steps:
 % \begin{enumerate}[leftmargin=*]
@@ -1083,14 +1084,10 @@ and Equation~\eqref{eq:yapprox} is modified to
 \end{equation}
 }%olive
 \fi
-To sum up, our method is presented in Algorithms~\ref{alg:fairgd},
-{\color{red}\ref{alg:poweriteration}}, and~\ref{alg:project}.
+To sum up, our method is presented in Algorithms~\ref{alg:fairgd} and~\ref{alg:project}.
 Algorithm~\ref{alg:fairgd} (\fairgd) 
 is the overall projected gradient-descent scheme that 
 iteratively updates the matrix \newtransmatrix until convergence.
-Algorithm~{\color{red}\ref{alg:poweriteration}} (\yapprox)
-approximates vector $\vecty_\agroup$.
-% using power iterations.
 Algorithm~\ref{alg:project} (\project) in 
 \agtext{full version~\citep[\Cref{appendix:pseudocode}]{fullversion}}
 is the projection function, 
@@ -1130,7 +1127,7 @@ $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors 
 
 \subsection{Group-adapted \pagerank}
 
-The \fairgd algorithm can be extended to address both the \gafpr and \resgafpr problems by introducing an outer loop that iterates over all groups. This enhanced algorithm, referred to as \crossgd, 
+The \fairgd algorithm can be extended to address both the Group-adapted \phiPageRank and Restricted Group-adapted \phiPageRank problems by introducing an outer loop that iterates over all groups. This enhanced algorithm, referred to as \crossgd, 
 is detailed in~\Cref{alg:crossgd} in
 \agtext{the full version~\citep[\Cref{appendix:pseudocode}]{fullversion}}.
 
@@ -1595,7 +1592,7 @@ For the remaining multi-group datasets, we only compare with \fairwalk and \cros
 \noindent
 \textbf{$\fairgd(\boundfactor,\absboundfactor)$ and $\crossgd(\boundfactor, \absboundfactor)$.}
 % In the experiments, 
-For \resfpr and \resgafpr, we set $\boundfactor = \{ 0.1, 0.5\}$ and $\absboundfactor = 0.1$. 
+For Group-adapted \phiPageRank and Restricted Group-adapted \phiPageRank problems, we set $\boundfactor = \{ 0.1, 0.5\}$ and $\absboundfactor = 0.1$. 
 % \honglian{Explain for setting this two parameters to the current value?}
 % For all gradient-descent methods, 
 We perform a grid search over a logarithmically-spaced range of values between $10^{-3}$ and~$10^3$

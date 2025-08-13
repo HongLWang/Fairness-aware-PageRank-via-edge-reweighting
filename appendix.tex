@@ -298,7 +298,7 @@ We provide pseudocode for Algorithms \ref{alg:project} and \ref{alg:crossgd}.
 
 
 \begin{algorithm}
-\caption{\label{alg:crossgd}\crossgd: Projected gradient descent for \gafpr and \resgafpr}
+\caption{\label{alg:crossgd}\crossgd: Projected gradient descent for Group-adapted \phiPageRank and Restricted Group-adapted \phiPageRank}
   \begin{algorithmic}[1]
     \REQUIRE \transmatrix, $\gamma$, \vectv, 
 $\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors $\indvect{\agroup}$ for $\agroup = \{1, \cdots, \nogroups\}$, learning rate~$\alpha$, power iteration exponent~$t$, convergence criterion $\kappa$, maximum number of iterations $N_{\text{iter}}$.
