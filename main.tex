@@ -1784,8 +1784,8 @@ Graph structure of \book before and after edge reweighting by each method. The t
 
 We evaluate the fairness loss $\loss(\newtransmatrix, \gamma, \vectv)$
 % as defined in \Cref{eq:loss_function}, 
-on \fairgd, \fairgd~($0.1$, $0.1$), \fairgd~($0.5$, $0.1$), and all baselines across the five datasets. 
-The results are shown in \Cref{fig:loss_all_dataset}. 
+on \fairgd, {\fairgd}($0.1$, $0.1$), {\fairgd}($0.5$, $0.1$), and all baselines across the five datasets; 
+the results are shown in \Cref{fig:loss_all_dataset}. 
 We also evaluate the changes, denoted as $\Delta_\transmatrix$, to the original transition matrix; 
 % for each method across the five datasets; 
 the results are shown in \Cref{fig:change_all_dataset}.
@@ -1850,7 +1850,7 @@ We visualize the graph structure of the \book dataset before and after edge rewe
 
 % We observe that \fairgd and its restricted versions \fairgdrone and \fairgdrtwo all achieve almost perfect target fairness score, with \fairgdrtwo leading to a denser structure than \fairgd and \fairgdrone. \crossgd also achieves a close to perfect fairness score, but at the cost of deleting a lot of edges. On the other hand, when the edge reweighting is restricted, \crossgdrone and \crossgdrtwo cannot achieve as good fairness scores as \crossgd.  \fairwalk and \crosswalk achieve very similar results in both fairness score and graph structure, the fairness loss is slightly better than \crossgdrone and \crossgdrtwo, but worse than the rest methods.
 
-We observe that \fairgd and its restricted variants, \fairgd~($0.1$, $0.1$) and \fairgdrtwo, achieve near-perfect target fairness scores, with \fairgdrtwo producing a denser structure than \fairgd and \fairgdrone. \crossgd also attains an almost perfect fairness score, but at the cost of removing a substantial number of edges. In contrast, when edge reweighting is restricted,  \crossgdrone and \crossgdrtwo fail to match the fairness performance of \crossgd. Finally, \fairwalk and \crosswalk yield very similar results in both fairness scores and graph structure; their fairness loss is slightly lower than that of \crossgdrone and \crossgdrtwo, but higher than that of the remaining methods.
+We observe that \fairgd and its restricted variants, {\fairgd}($0.1$, $0.1$) and \fairgdrtwo, achieve near-perfect target fairness scores, with \fairgdrtwo producing a denser structure than \fairgd and \fairgdrone. \crossgd also attains an almost perfect fairness score, but at the cost of removing a substantial number of edges. In contrast, when edge reweighting is restricted,  \crossgdrone and \crossgdrtwo fail to match the fairness performance of \crossgd. Finally, \fairwalk and \crosswalk yield very similar results in both fairness scores and graph structure; their fairness loss is slightly lower than that of \crossgdrone and \crossgdrtwo, but higher than that of the remaining methods.
 \section{Conclusion}
 
 We presented a novel approach for incorporating group
