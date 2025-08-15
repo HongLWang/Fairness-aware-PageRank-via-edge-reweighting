@@ -44,10 +44,11 @@ Now, consider the group-wise target \pagerank score, defined as $\grouppr_1 = \f
 \section{Proof of Proposition~\ref{theorem:gradient-fairness-loss}}
 \label{appendix:omitted-proposition-proof}
 
+\phipagerankgradient*
 % \begin{proof}
 Recalling that $\prvector = \gamma \matrixU^{-1} \vectv$,
 we have the following:
-\begin{equation}
+\begin{equation*}
 \begin{aligned}
 \label{eq:gradient_fairness_loss}
     \frac{\partial}{\partial \transmatrix} \loss(\transmatrix, \gamma, \vectv) 
@@ -60,7 +61,7 @@ we have the following:
         & = \frac{2 \gamma}{K} \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^{\mathsf{T}} \prvector - \grouppr_\agroup\right) 
                 \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \vectv\right). 
 \end{aligned}
-\end{equation}
+\end{equation*}
 By the chain rule of matrix calculus \citep[Equation~(137)]{petersen_matrix_2008}, 
 we obtain:
 \begin{equation}
@@ -96,7 +97,7 @@ From Equation~\eqref{eq:chain_rule}, we get:
 %     & = \frac{1 - \gamma}{\gamma^2} \left( \prvector \vecty_\agroup^{\mathsf{T}} \right)[i, j].
 % \end{aligned}
 % \end{equation}
-\begin{equation}
+\begin{equation*}
 \label{eq:gradient_onek_Uinv_v}
 \begin{aligned}
 \frac{\partial}{\partial \transmatrix[i, j]} \left(\indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \vectv\right) 
@@ -105,7 +106,7 @@ From Equation~\eqref{eq:chain_rule}, we get:
     & = (1 - \gamma) \left( \matrixU^{-1} \vectv \indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \right)[i, j] \\
     & = \frac{1 - \gamma}{\gamma} \left( \prvector \indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \right)[i, j].
 \end{aligned}
-\end{equation}
+\end{equation*}
 
 Substituting~\eqref{eq:gradient_onek_Uinv_v} into Equation~\eqref{eq:gradient_fairness_loss} 
 leads to 
@@ -122,20 +123,21 @@ leads to
 \section{Proof of Proposition~\ref{theorem:adapted-gradient-fairness-loss}}
 \label{appendix:omitted-proposition-adapted-gradients}
 
+\gaphipagerankgradient*
 
 Similarly to the proof in Appendix \ref{appendix:omitted-proposition-proof}, for the group-adapted fairness loss, we can compute its gradient over $\transmatrix$ as follows:
 \begin{equation}
 \begin{aligned}
 \label{eq:gradient_fairness_loss_group_adapted}
-    \frac{\partial}{\partial \transmatrix} \loss(\transmatrix, \gamma, \vectv) 
-        & = \frac{\partial}{\partial \transmatrix} \frac{1}{K}
-                \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^{\mathsf{T}} \prvector_l - \grouppr_\agroup\right)^2 \\
-        & = \frac{2}{K} \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^{\mathsf{T}} \prvector_l - \grouppr_\agroup\right) 
-                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^{\mathsf{T}} \prvector_l - \grouppr_\agroup\right) \\
-        & = \frac{2}{\nogroups^2} \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^{\mathsf{T}} \prvector_l - \grouppr_\agroup\right) 
-                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^{\mathsf{T}} \prvector_l \right)  \\ 
-        & = \frac{2 \gamma}{K} \sum_{k=1}^{\nogroups} \left(\indvect{\agroup}^{\mathsf{T}} \prvector_l - \grouppr_\agroup\right) 
-                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \vectv_l \right). 
+    \frac{\partial}{\partial \transmatrix} \groupAdapLoss(\transmatrix, \gamma) 
+        & = \frac{\partial}{\partial \transmatrix} \frac{1}{\nogroups^2}
+    \sum_{k=1}^{\nogroups}\sum_{l=1}^{\nogroups} \left(\indvect{\agroup}^{\mathsf{T}} \prvector_{\ell} - \grouppr_\agroup\right)^2 \\
+        & = \frac{2}{\nogroups^2} \sum_{k=1}^{\nogroups} \sum_{l=1}^{\nogroups}\left(\indvect{\agroup}^{\mathsf{T}} \prvector_{\ell} - \grouppr_\agroup\right) 
+                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^{\mathsf{T}} \prvector_{\ell} - \grouppr_\agroup\right) \\
+        & = \frac{2}{\nogroups^2} \sum_{k=1}^{\nogroups} \sum_{l=1}^{\nogroups}\left(\indvect{\agroup}^{\mathsf{T}} \prvector_{\ell} - \grouppr_\agroup\right) 
+                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^{\mathsf{T}} \prvector_{\ell} \right)  \\ 
+        & = \frac{2 \gamma}{\nogroups^2} \sum_{k=1}^{\nogroups} \sum_{l=1}^{\nogroups}\left(\indvect{\agroup}^{\mathsf{T}} \prvector_{\ell} - \grouppr_\agroup\right) 
+                \frac{\partial}{\partial \transmatrix} \left(\indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \vectv_{\ell} \right). 
 \end{aligned}
 \end{equation}
 
@@ -144,9 +146,9 @@ According to \Cref{eq:gradient_onek_Uinv_v},
 \begin{equation}
 \label{eq:gradient_onek_Uinv_v_l}
 \begin{aligned}
-\frac{\partial}{\partial \transmatrix[i, j]} \left(\indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \vectv_l \right) 
-    & = (1 - \gamma) \left( \matrixU^{-1} \vectv_l \indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \right)[i, j] \\
-    & = \frac{1 - \gamma}{\gamma} \left( \prvector_l \indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \right)[i, j].
+\frac{\partial}{\partial \transmatrix[i, j]} \left(\indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \vectv_{\ell} \right) 
+    & = (1 - \gamma) \left( \matrixU^{-1} \vectv_{\ell} \indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \right)[i, j] \\
+    & = \frac{1 - \gamma}{\gamma} \left( \prvector_{\ell}\indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \right)[i, j].
 \end{aligned}
 \end{equation}
 Substituting \Cref{eq:gradient_onek_Uinv_v_l} to \Cref{eq:gradient_fairness_loss_group_adapted}, we get
@@ -154,9 +156,9 @@ Substituting \Cref{eq:gradient_onek_Uinv_v_l} to \Cref{eq:gradient_fairness_loss
 \begin{equation}
 \begin{aligned}
 \label{eq:gradient_cross_fairness_loss}
-    \frac{\partial}{\partial \transmatrix} \loss(\transmatrix, \gamma, \vectv) 
+    \frac{\partial}{\partial \transmatrix} \groupAdapLoss(\transmatrix, \gamma) 
          = \frac{2 (1-\gamma)}{K^2} \sum_{k=1}^{\nogroups} 
-         \sum_{l=1}^{\nogroups} \left(\indvect{\agroup}^{\mathsf{T}} \prvector_l - \grouppr_\agroup\right) \left( \prvector_l \indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \right)         
+         \sum_{\ell=1}^{\nogroups} \left(\indvect{\agroup}^{\mathsf{T}} \prvector_{\ell} - \grouppr_\agroup\right) \left( \prvector_{\ell} \indvect{\agroup}^{\mathsf{T}} \matrixU^{-1} \right)         
 \end{aligned}
 \end{equation}
 
@@ -165,44 +167,44 @@ Substituting \Cref{eq:gradient_onek_Uinv_v_l} to \Cref{eq:gradient_fairness_loss
 \section{Approximating $\vecty_k$}
 \label{appendix:Neumann series}
 
-In this section, we prove that for approximating $\vecty_k$, truncating the Neumann series to its first $50$ terms yields a relative error below $0.0003$.
+In this section, we prove that for approximating $\vecty_t$, truncating the Neumann series to its first $50$ terms yields a relative error below $0.0003$.
 
-According to the Neumann series formula, we can calculate the matrix inverse of a matrix $\textbf{X}$ as: 
+According to the Neumann series formula, we can calculate the matrix inverse of a matrix $\unitary - \textbf{X}$ as: 
 $
 (\textbf{I} - \textbf{X})^{-1} = \sum_{t=0}^\infty \textbf{X}^{\mathsf{T}}.
 $ 
-Let $\textbf{S}_k$ denote the partial sum of the Neumann series up to the $k$-th term, that is,
+Let $\textbf{S}_t$ denote the partial sum of the Neumann series up to the $t$-th term, that is,
 \begin{equation*}
-    \textbf{S}_k = \sum_{t=0}^k \textbf{X}^{\mathsf{T}} = \textbf{I} + \textbf{X} + \textbf{X}^2 + \dots + \textbf{X}^k.
+    \textbf{S}_t = \sum_{i=0}^t \textbf{X}^{\mathsf{T}} = \textbf{I} + \textbf{X} + \textbf{X}^2 + \dots + \textbf{X}^k.
 \end{equation*}
 We denote the truncation error as
 $
-\textbf{E}_k = (\textbf{I} - \textbf{X})^{-1} - \textbf{S}_k
-$, then we can express $\textbf{E}_k$ as the sum of the remaining terms:
+\textbf{E}_t = (\textbf{I} - \textbf{X})^{-1} - \textbf{S}_t
+$, then we can express $\textbf{E}_t$ as the sum of the remaining terms:
 \begin{equation*}
-    \textbf{E}_k = \sum_{t=k+1}^\infty \textbf{X}^{\mathsf{T}}
+    \textbf{E}_t = \sum_{i=t+1}^\infty \textbf{X}^{\mathsf{T}}
 \end{equation*}
-By factoring out $\textbf{X}^{k+1}$ from the series we get:
+By factoring out $\textbf{X}^{t+1}$ from the series we get:
 \begin{equation*}
-    \textbf{E}_k = \textbf{X}^{k+1} \sum_{t=0}^\infty \textbf{X}^{\mathsf{T}}.
+    \textbf{E}_t = \textbf{X}^{t+1} \sum_{i=0}^\infty \textbf{X}^{\mathsf{T}}.
 \end{equation*}
 Using the formula for the Neumann series, the infinite sum $\sum_{t=0}^\infty \textbf{X}^{\mathsf{T}}$ is equal to $(\textbf{I} - \textbf{X})^{-1}$. Thus:
 \begin{equation*}
-    \textbf{E}_k = \textbf{X}^{k+1} (\textbf{I} - \textbf{X})^{-1}
+    \textbf{E}_t = \textbf{X}^{t+1} (\textbf{I} - \textbf{X})^{-1}
 \end{equation*}
 By taking the matrix norm of both sides, we get
 \begin{equation*}
-    \|\textbf{E}_k\| \leq \|\textbf{X}^{k+1}\| \cdot \|(\textbf{I} - \textbf{X})^{-1}\|
+    \|\textbf{E}_t\| \leq \|\textbf{X}^{t+1}\| \cdot \|(\textbf{I} - \textbf{X})^{-1}\|
 \end{equation*}
 Given that $|\textbf{X}|<1$, it follows that
 \begin{equation*}
-    \|\textbf{E}_k\| \leq \|\textbf{X}\|^{k+1} \cdot \|(\textbf{I} - \textbf{X})^{-1}\|
+    \|\textbf{E}_t\| \leq \|\textbf{X}\|^{t+1} \cdot \|(\textbf{I} - \textbf{X})^{-1}\|
 \end{equation*}
-Thus, we conclude that the relative error for approximating $(1-\textbf{X})^{-1}$ is given by $\|\textbf{X}\|^{k+1}$.
+Thus, we conclude that the relative error for approximating $(1-\textbf{X})^{-1}$ using the first $t$ term of the Neumann series is given by $\|\textbf{X}\|^{t+1}$.
 
-% Since $\matrixU^{\mathsf{T}} = 1 - (1 - \gamma) \transmatrix$, to evaluate the approximation loss of $\vecty_k = \gamma \matrixU^{-T} \indvect{k}$, we let $\textbf{X}=(1-\gamma) \transmatrix $, with $\gamma$ set to $0.15$, and consequently, $|(1-\gamma) \transmatrix|_\infty = 0.85$. We conclude that the relative error of using the first $t$ term approximation is $0.85^{t+1}$. By setting $t = 50$ the relative error is smaller than 0.0003.
+% Since $\matrixU^{\mathsf{T}} = 1 - (1 - \gamma) \transmatrix$, to evaluate the approximation loss of $\vecty_t = \gamma \matrixU^{-T} \indvect{k}$, we let $\textbf{X}=(1-\gamma) \transmatrix $, with $\gamma$ set to $0.15$, and consequently, $|(1-\gamma) \transmatrix|_\infty = 0.85$. We conclude that the relative error of using the first $t$ term approximation is $0.85^{t+1}$. By setting $t = 50$ the relative error is smaller than 0.0003.
 
-Since $\matrixU^{\mathsf{T}} = 1 - (1 - \gamma) \transmatrix$, to evaluate the approximation error of $\vecty_k = \gamma \matrixU^{-T} \indvect{k}$, we set $\mathbf{X} = (1-\gamma) \transmatrix$ with $\gamma = 0.15$. Consequently, $\lVert (1-\gamma) \transmatrix \rVert_\infty = 0.85$. It follows that the relative error of the $t$-term approximation is $0.85^{\,t+1}$. Setting $t = 50$ yields a relative error below $0.0003$.
+Since $\matrixU^{\mathsf{T}} = 1 - (1 - \gamma) \transmatrix$, to evaluate the approximation error of $\vecty_t = \matrixU^{-T} \indvect{k}$, we set $\mathbf{X} = (1-\gamma) \transmatrix$ with $\gamma = 0.15$. Consequently, $\lVert (1-\gamma) \transmatrix \rVert_\infty = 0.85$. It follows that the relative error of the $t$-term approximation is $0.85^{\,t+1}$. Setting $t = 50$ yields a relative error below $0.0003$.
 
 
 
@@ -212,35 +214,68 @@ Since $\matrixU^{\mathsf{T}} = 1 - (1 - \gamma) \transmatrix$, to evaluate the a
 \section{Omitted algorithms}
 \label{appendix:pseudocode}
 
-We provide pseudocode for Algorithms \ref{alg:project} and \ref{alg:crossgd}.
+In this section, we provide pseudocode for Algorithms \ref{alg:project} and \ref{alg:crossgd}. 
+
+\Cref{alg:project} invokes \Cref{alg:root_finding} as a subroutine to compute the optimal Lagrangian dual variable $\lambda^{*}$. The implementation in \Cref{alg:root_finding} differs slightly in form from the procedure described by \citet{adam2022projections}, yet both are mathematically equivalent. For completeness, we now present a formal justification of the correctness of \Cref{alg:root_finding}, establishing that it indeed returns the optimal dual variable.
+
+
+According to \citet{adam2022projections}, the solution to the projection defined in \Cref{eq:projection_simplex_plus_box} is $s_i^* = \text{clip} (s_i + \lambdaopt, \ell_i, u_i)$, with $\text{clip}(x, a, b)$ defined as
+\begin{equation*}
+	\text{clip}(x, a, b) = \begin{cases}
+		a & \text{if } x \leq a, \\
+		x & \text{if } a < x < b, \\
+		b & \text{if } x \geq b,
+	\end{cases}
+\end{equation*}
+and $\lambdaopt$ is the solution to the following equation
+\begin{equation*}
+	h(\lambda) := \sum_{i=1}^{K} \text{clip}(s_i + \lambda, \ell_i, u_i) -1 = 0.
+\end{equation*}
+Since $h$ is piecewise linear and non-decreasing in $\lambda$, \checkedagtext{we can find~$\lambdaopt$} via a simple method proposed by \citet{adam2022projections}:
+% The rationale is the following:
+\begin{enumerate}[leftmargin=*]
+	\item For any $\lambda$, $\clip(s_i, \ell_i, u_i)$ takes value $\ell_i$, $\lambda + s_i$, or $u_i$, thus, we can rewrite $h(\lambda)$ as $h(\lambda) = \act(\lambda) \cdot \lambda + C$ for some constant~$C$, where $\act(\lambda) $ is the number of elements such that $s_i + \lambda$ falls in range $[\ell_i, u_i)$.
+	\item Let $R$ be the increasing ranking of $2N$ items consisting of $\vectl - \vects$ and $\vectu - \vects$. For any $\lambda$ in interval $[R_j, R_{j+1})$, the function $\act(\lambda)$ remains constant.
+	\item Let $\Total(\lambda) = \sum_{i=1}^N \clip(s_i + \lambda, \ell_i, u_i)$ and assume that $\mathcal{F}_2$ is non-empty. Then there must exist some $j \in \{1, \cdots, 2N\}$ such that $\Total(R_j) \leq 1$ and $\Total(R_{j+1}) > 1$, and we can conclude that $\lambda^*$ lies in range $[R_j, R_{j+1})$. Since $\act(R_j) = \act(\lambda^*)$, it follows that
+	%\begin{equation*}
+	$(\lambda^{*} - R_j) \cdot \act(R_j) = 1 - \Total(R_j)$
+	%\end{equation*}
+	and thus we can compute $\lambda^{*}$ as 
+	\begin{equation*}
+		\lambda^{*} = \frac{1-\Total(R_j)}{\act(R_j)}.
+	\end{equation*}
+\end{enumerate}
+
+
+
 
 % \textcolor{red}{gradient for group adapted case, should provide details; change projection methods.}
 
 
 
 
-
-\begin{algorithm}[t]
-	\caption{\label{alg:project}\project: projection to feasible set}
-	\begin{algorithmic}[1]
-		\REQUIRE Transition matrix $\newtransmatrix$, original transition matrix \transmatrix, modification bound \boundfactor and \absboundfactor (optional).
-		\ENSURE Projected transition matrix $\newtransmatrix$
-            \FOR{$i=1, \cdots, n$}
-            \STATE $\vectalpha \gets$ nonzero elements of $\newtransmatrix_i$
-		\IF{\boundfactor and \absboundfactor are provided} 
-        \STATE $\vectl = \max(0, \vectalpha(1-\delta) - \epsilon)$
-        \STATE $\vectu = \min(1, \vectalpha(1+\delta) + \epsilon)$
-        \STATE $\lambdaopt \gets \searchlambda(\vectalpha, \vectl, \vectu)$ 
-        \STATE $\vectalphaopt = \clip (\lambdaopt + \alpha, \vectl, \vectu)$
-		\ELSE
-		\STATE Rank elements in $\vectalpha$ such that $\alpha_1 \geq \cdots \geq \alpha_{|\vectalpha|}$
-		\STATE $k(\vectalpha) = \max \{k \in (1, \cdots, |\vectalpha|) \mid 1 + k \alpha_k > \sum_{j \leq k} \alpha_j \} $
-        \STATE $\tau(\vectalpha) = \frac{(\sum_{j \leq k(\vectalpha)} \alpha_j) -1}{k(\vectalpha)}$
-        \STATE $\vectalphaopt = \max(0,\vectalpha - \tau(\vectalpha))$
-	\ENDIF
-        \STATE non-zeros elements of $\newtransmatrix_i \gets \vectalphaopt$
+\begin{algorithm}
+\caption{\label{alg:crossgd}\crossgd: Projected gradient descent for Group-adapted \phiPageRank and Restricted Group-adapted \phiPageRank}
+  \begin{algorithmic}[1]
+    \REQUIRE \transmatrix, $\gamma$, \vectv, 
+$\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors $\indvect{\agroup}$ for $\agroup = \{1, \cdots, \nogroups\}$, learning rate~$\alpha$, iteration exponent~$t_1$ and $t_2$, convergence criterion $\kappa$, maximum number of iterations $N_{\text{iter}}$, modification bound \boundfactor and \absboundfactor (optional).
+    \ENSURE Optimized transition matrix $\newtransmatrix$
+    \STATE $\newtransmatrix \gets \transmatrix$, ${\iter} \gets 0$, ${\lossprev} \gets \infty$, $\prvector = \frac{1}{n} \indvect{}$
+    \WHILE {$|\groupAdapLoss(\newtransmatrix, \gamma) - {\lossprev}| > \kappa$ and $\iter < N_{\text{iter}}$}
+      \STATE $\iter \gets \iter + 1$
+      \STATE ${\lossprev} \gets \groupAdapLoss(\newtransmatrix, \gamma, \vectv)$
+      \FOR {$\ell = 1$ to $\nogroups$}
+       \STATE $\prvector \gets \text{iterating } \prvector^{\mathsf{T}} = (1 - \gamma) \prvector^{\mathsf{T}} \newtransmatrix + \frac{\gamma}{|\vertices_{\ell}|} \indvect{\ell}^{\mathsf{T}} \text{ for } t_1 \text{ times}$
+        % \STATE $\prvector_{\ell} \gets {\pralgo}(\newtransmatrix, \gamma,  \frac{1}{|\vertices_{\ell}|} \indvect{\ell})$
+        \FOR {$\agroup = 1$ to $\nogroups$}
+           \STATE $\vecty_{\agroup} \gets$ $\sum_{i=1}^{t_2} (1-\gamma)^i \newtransmatrix^i \indvect{k}$          
+            \STATE $\newtransmatrix \gets \newtransmatrix- \alpha \frac{2(1 - \gamma)}{\nogroups^2} (\indvect{\agroup}^{\mathsf{T}} \prvector_{\ell} - \grouppr_\agroup) \prvector_{\ell} \vecty_{\agroup}$
         \ENDFOR
-	\end{algorithmic}
+      \ENDFOR
+      \STATE $\newtransmatrix \gets {\project}(\newtransmatrix, \delta, \epsilon)$
+    \ENDWHILE
+    \RETURN $\newtransmatrix$
+  \end{algorithmic}
 \end{algorithm}
 
 
@@ -253,20 +288,21 @@ We provide pseudocode for Algorithms \ref{alg:project} and \ref{alg:crossgd}.
 
 
 
-\begin{algorithm}[t]
-	\caption{\label{alg:root_finding}\searchlambda: find the optimal dual variable}
+
+
+\begin{algorithm}[t]	\caption{\label{alg:root_finding}\searchlambda: find the optimal dual variable}
 	\begin{algorithmic}[1]
-		\REQUIRE vector $\vectalpha$, lower bound vector $\vectl$, upper bound vector $\vectu$
-		\ENSURE vector after projection $\vectalphaopt$
-            \STATE $K = |\vectalpha|$
-            \STATE $\vectlambda \gets$ non-decreasing ranking of $\vectl - \vectalpha$ and $\vectu-\vectalpha$.
+		\REQUIRE vector $\vects$, lower bound vector $\vectl$, upper bound vector $\vectu$
+		\ENSURE $\lambda^{*}$
+            \STATE $K = |\vects|$
+            \STATE $\vectlambda \gets$ non-decreasing ranking of $\vectl - \vects$ and $\vectu-\vects$.
             \STATE $\act = 1$, $\Total \gets \sum_j \vectl_j$
             \FOR{$i = 2,\cdots, 2K$}
             \STATE $\Total \gets \Total + \act \times (\vectlambda_i - \vectlambda_{i-1})$
             \IF{$\Total \geq 1$}
             \RETURN $\lambdaopt =  \frac{(1-\Total)}{\act} + \vectlambda_i$
             \ELSE
-            \STATE if $\vectlambda_i$ belongs to $\vectl - \vectalpha$ then $\text{Active++}$ else $\text{Active}\texttt{--}$
+            \STATE if $\vectlambda_i$ belongs to $\vectl - \vects$ then $\text{Active++}$ else $\text{Active}\texttt{--}$
             \ENDIF
             \ENDFOR
 	\end{algorithmic}
@@ -276,93 +312,48 @@ We provide pseudocode for Algorithms \ref{alg:project} and \ref{alg:crossgd}.
 
 
 
-\begin{algorithm}
-\caption{\label{alg:crossgd}\crossgd: Projected gradient descent for Group-adapted \phiPageRank and Restricted Group-adapted \phiPageRank}
-  \begin{algorithmic}[1]
-    \REQUIRE \transmatrix, $\gamma$, \vectv, 
-$\groupDist =(\grouppr_1, \ldots, \grouppr_\nogroups)$, group indicator vectors $\indvect{\agroup}$ for $\agroup = \{1, \cdots, \nogroups\}$, learning rate~$\alpha$, power iteration exponent~$t$, convergence criterion $\kappa$, maximum number of iterations $N_{\text{iter}}$.
-    \ENSURE Optimized transition matrix $\newtransmatrix$
-    \STATE $\newtransmatrix \gets \transmatrix$
-    \STATE ${\iter} \gets 0$
-    \STATE ${\lossprev} \gets \infty$
-    \WHILE {$|\groupAdapLoss(\newtransmatrix, \gamma, \vectv) - {\lossprev}| > \kappa$ and $\iter < N_{\text{iter}}$}
-      \STATE $\iter \gets \iter + 1$
-      \STATE ${\lossprev} \gets \groupAdapLoss(\newtransmatrix, \gamma, \vectv)$
-      \FOR {$\ell = 1$ to $\nogroups$}
-       \STATE $\prvector \gets \text{iterating } \prvector^{\mathsf{T}} = (1 - \gamma) \prvector^{\mathsf{T}} \newtransmatrix + \frac{\gamma}{|\vertices_{\ell}|} \indvect{\ell}^{\mathsf{T}} \text{ for } t_1 \text{ times}$
-        % \STATE $\prvector_{\ell} \gets {\pralgo}(\newtransmatrix, \gamma,  \frac{1}{|\vertices_{\ell}|} \indvect{\ell})$
-        \FOR {$\agroup = 1$ to $\nogroups$}
-          \STATE $\theta_\agroup \gets \indvect{\agroup}^{\mathsf{T}} \prvector_{\ell}$
-          % \STATE $\vecty_{\agroup} \gets$ ${\yapprox}(\newtransmatrix, \gamma, \indvect{\agroup}, t)$
-           \STATE $\vecty_{\agroup} \gets$ $\gamma \sum_{i=1}^{t_2} (1-\gamma)^i \newtransmatrix^i \indvect{k}$          
-            \STATE $\newtransmatrix \gets \newtransmatrix- \alpha \frac{2(1 - \gamma)}{\gamma} (\theta_\agroup - \grouppr_\agroup) \prvector_{\ell} \vecty_{\agroup}$
-        \ENDFOR
-      \ENDFOR
-      \STATE $\newtransmatrix \gets {\project}(\newtransmatrix)$
-    \ENDWHILE
-    \RETURN $\newtransmatrix$
-  \end{algorithmic}
-\end{algorithm}
 
 
 % \iffalse
-\section{Convergence Analysis for minimizing $\mathcal{L}(\transmatrix)$}
+
+
+
+\section{Convergence Analysis for minimizing $\loss(\transmatrix)$}
 \label{section:convergence_L}
 In this section, we first obtain an upper bound for the Lipschitz constant for the loss function, and then prove that the projected gradient descent method converges to a stationary point.
 
 Given restart probability $\gamma$ and restart vector $\vectv$, we can rewrite the loss function as :
 \begin{equation*}
-    \mathcal{L}(\transmatrix) = \frac{1}{K} \sum_{k=1}^K \left( g_k(\transmatrix) \right)^2
+    \loss(\transmatrix) = \frac{1}{K} \sum_{k=1}^K \left( g_k(\transmatrix) \right)^2
 \end{equation*}
-where $g_k(\transmatrix) = \indvect{\agroup}^{\mathsf{T}} \prvector - \phi_k$ and $\prvector = \gamma (I - (1-\gamma) \transmatrix^{\mathsf{T}})^{-1} \vectv.$
+where $g_k(\transmatrix) = \indvect{\agroup}^{\mathsf{T}} \prvector - \phi_k$ and $\prvector = \gamma (\unitary - (1-\gamma) \transmatrix^{\mathsf{T}})^{-1} \vectv.$
 
 
-\subsection{Gradient of the Loss $\mathcal{L}(\transmatrix)$}
+\subsection{Gradient of the Loss $\loss(\transmatrix)$}
 
-Though we have already provided the first-gradient analysis of the loss function $\mathcal{L}(\transmatrix)$, we restate it here for ease of analysis. We first compute the gradient of \(\mathcal{L}\) with respect to \(\transmatrix_{ij}\):
+Though we have already provided the first-gradient analysis of the loss function $\loss(\transmatrix)$, we rewrite it here for ease of analysis. We first compute the gradient of $\loss$ with respect to $\transmatrix_{ij}$:
 \begin{equation*}
-    \frac{\partial \mathcal{L}}{\partial \transmatrix_{ij}}
+    \frac{\partial \loss}{\partial \transmatrix_{ij}}
 = \frac{2}{K} \sum_{k=1}^K g_k \frac{\partial h_k}{\partial \transmatrix_{ij}}
 \end{equation*}
-where \( h_k(\transmatrix) = \indvect{\agroup}^{\mathsf{T}} \prvector \).
+where $ h_k(\transmatrix) = \indvect{\agroup}^{\mathsf{T}} \prvector $.
 
-% \paragraph{\textbf{Derivative of \( h_k(P) \) with Respect to \( P_{ij} \)}}
-
-Let \(\Amatrix = I - (1-\gamma) \transmatrix^{\mathsf{T}}\), then it holds that, $\Amatrix \prvector = \gamma \vectv$, and 
+According to \Cref{eq:gradient_fairness_loss_final},
+$\frac{\partial h_k}{\partial \transmatrix} = (1- \gamma )\prvector \indvect{k}^{\mathsf{T} }\invUmatrix$,
+therefore,
 \begin{equation*}
-    \frac{\partial \Amatrix \prvector}{\partial \transmatrix_{ij}} = \frac{\partial \gamma \vectv}{\partial \transmatrix_{ij}} = 0.
+\frac{\partial h_k}{\partial \transmatrix_{ij}} = (1-\gamma) \prvector_i (\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_j)
 \end{equation*}
-Using the product rule, it holds that
-\begin{equation*}
-    \frac{\partial \Amatrix}{\partial \transmatrix_{ij}} \prvector + \Amatrix \frac{\partial \prvector}{\partial \transmatrix_{ij}} = 0,
-\end{equation*}
-and thus
-\begin{equation*}
-    \frac{\partial \prvector}{\partial \transmatrix_{ij}} = -\invAmatrix\frac{\partial \Amatrix}{\partial \transmatrix_{ij}} \prvector.
-\end{equation*}
-where
-\begin{align*}
-    \frac{\partial \Amatrix}{\partial \transmatrix_{ij}} &= \frac{\partial I - (1 - \gamma)\partial \transmatrix^{\mathsf{T}}}{\partial \transmatrix_{ij}} \\
-    & = -(1-\gamma) \frac{\partial \transmatrix^{\mathsf{T}}}{\partial \transmatrix_{ij}} = -(1 - \gamma) \Ematrix_{ji},
-\end{align*}
-with $\Ematrix_{ji}$ denoting the matrix where only the $(j,i)$-th element is 1, and all other elements are zero. 
-
-Therefore,
-\begin{align*}
-\frac{\partial h_k}{\partial \transmatrix_{ij}} &= \indvect{\agroup}^{\mathsf{T}} \frac{\partial \prvector}{\partial \transmatrix_{ij}} \\
-&= (1-\gamma) \indvect{\agroup}^{\mathsf{T}} \invAmatrix \Ematrix_{ji} \prvector \\
-&= (1-\gamma) \prvector_i (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j)
-\end{align*}
 where $\matr{e}_j$ is the standard basis vector (1 at position $j$, zero elsewhere).
 
 
 
-\subsection{Second Derivative of the Loss $\mathcal{L}(P)$}
+\subsection{Second Derivative of the Loss $\loss(P)$}
 
 We now compute the second derivative of the loss:
 \begin{align*}
-\frac{\partial^2 \mathcal{L}}{\partial \transmatrix_{ij} \partial \transmatrix_{ab}}
-&= \frac{\partial}{\partial \transmatrix_{ab}} \left( \frac{\partial \mathcal{L}}{\partial \transmatrix_{ij}} \right) \\
+\frac{\partial^2 \loss}{\partial \transmatrix_{ij} \partial \transmatrix_{ab}}
+&= \frac{\partial}{\partial \transmatrix_{ab}} \left( \frac{\partial \loss}{\partial \transmatrix_{ij}} \right) \\
 &= \frac{\partial}{\partial \transmatrix_{ab}} \left[ \frac{2}{K} \sum_{k=1}^K g_k \frac{\partial h_k}{\partial \transmatrix_{ij}} \right] \\
 &= \frac{2}{K} \sum_{k=1}^K \left[
     \frac{\partial g_k}{\partial \transmatrix_{ab}} \frac{\partial h_k}{\partial \transmatrix_{ij}}
@@ -372,100 +363,103 @@ We now compute the second derivative of the loss:
 We calculate each term of the second derivative respectively.
 \paragraph{First term:}
 \[
-\frac{\partial g_k}{\partial \transmatrix_{ab}} = \frac{\partial h_k}{\partial \transmatrix_{ab}} = (1-\gamma) \prvector_a (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_b)
+\frac{\partial g_k}{\partial \transmatrix_{ab}} = \frac{\partial h_k}{\partial \transmatrix_{ab}} = (1-\gamma) \prvector_a (\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_b)
 \]
 
 \paragraph{Second term:}
 \begin{align*}
 \frac{\partial^2 h_k}{\partial \transmatrix_{ij} \partial \transmatrix_{ab}}
-&= (1-\gamma) \frac{\partial}{\partial \transmatrix_{ab}} \left[ \prvector_i (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j) \right] \\
+&= (1-\gamma) \frac{\partial}{\partial \transmatrix_{ab}} \left[ \prvector_i (\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_j) \right] \\
 &= (1-\gamma) \left[
-    \frac{\partial \prvector_i}{\partial \transmatrix_{ab}} (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j)
-    + \prvector_i \frac{\partial}{\partial \transmatrix_{ab}} (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j)
+    \frac{\partial \prvector_i}{\partial \transmatrix_{ab}} (\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_j)
+    + \prvector_i \frac{\partial}{\partial \transmatrix_{ab}} (\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_j)
 \right]
 \end{align*}
 We have:
 \[
-\frac{\partial \prvector_i}{\partial \transmatrix_{ab}} = (1-\gamma) [\invAmatrix \Ematrix_{ba} \prvector]_i
+\frac{\partial \prvector_i}{\partial \transmatrix_{ab}} = (1-\gamma) [\invUmatrix \Ematrix_{ba} \prvector]_i
 \]
 and
 \[
-\frac{\partial}{\partial \transmatrix_{ab}} (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j) = (1-\gamma) \indvect{\agroup}^{\mathsf{T}} \invAmatrix \Ematrix_{ba} \invAmatrix \matr{e}_j
+\frac{\partial}{\partial \transmatrix_{ab}} (\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_j) = (1-\gamma) \indvect{\agroup}^{\mathsf{T}} \invUmatrix \Ematrix_{ba} \invUmatrix \matr{e}_j
 \]
 {Combining the two terms, we get}
 \begin{align*}
 \frac{\partial^2 h_k}{\partial \transmatrix_{ij} \partial \transmatrix_{ab}} &=
 (1-\gamma)^2 \Big(
-    [\invAmatrix \Ematrix_{ba} \prvector]_i \cdot (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j)
-    + \prvector_i \cdot \indvect{\agroup}^{\mathsf{T}} \invAmatrix \Ematrix_{ba} \invAmatrix \matr{e}_j
+    [\invUmatrix \Ematrix_{ba} \prvector]_i \cdot (\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_j)
+    + \prvector_i \cdot \indvect{\agroup}^{\mathsf{T}} \invUmatrix \Ematrix_{ba} \invUmatrix \matr{e}_j
 \Big)
 \end{align*}
-
-The Hessian entry of \(\mathcal{L}(\transmatrix)\) at \(((ij), (ab))\) is:
+Thus, the Hessian entry of $\loss(\transmatrix)$ at coordinate $((ij), (ab))$ is:
 \begin{align}
 \label{eq:hessian}
-    & \frac{\partial^2 \mathcal{L}}{\partial \transmatrix_{ij} \partial \transmatrix_{ab}}
+    & \frac{\partial^2 \loss}{\partial \transmatrix_{ij} \partial \transmatrix_{ab}}
 = \frac{2}{K} \sum_{k=1}^K \Bigg[
-        (1-\gamma)^2 \prvector_a \prvector_i (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_b)(\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j)\\ \nonumber
+        (1-\gamma)^2 \prvector_a \prvector_i (\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_b)(\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_j)\\ \nonumber
     &+\ g_k(\transmatrix) \cdot (1-\gamma)^2 \Big(
-        [\invAmatrix \Ematrix_{ba} \prvector]_i \cdot (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j)
-        + \prvector_i \cdot \indvect{\agroup}^{\mathsf{T}} \invAmatrix \Ematrix_{ba} \invAmatrix \matr{e}_j
+        [\invUmatrix \Ematrix_{ba} \prvector]_i \cdot (\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_j)
+        + \prvector_i \cdot \indvect{\agroup}^{\mathsf{T}} \invUmatrix \Ematrix_{ba} \invUmatrix \matr{e}_j
     \Big)
 \Bigg]
 \end{align}
-\subsection{Lipschitz Constant for $\mathcal{L}(P)$}
-Since $\mathcal{L}$ is twice differentiable, $\mathcal{L}$ is Lipschitz smooth with constant $L$ if and only if the operator norm of the Hessian matrix $ \frac{\partial^2 \mathcal{L}}{\partial P_{ij} \partial P_{ab}}$ is bounded by $L$ for all $P$ in the domain.
+
+
+\subsection{\texorpdfstring{Lipschitz Constant for $\tfrac{\partial \loss}{\partial \transmatrix}$}{Lipschitz Constant for dL/d$\transmatrix$}}
+
+
+
+Since $\loss(\transmatrix)$ is twice differentiable, the first derivative of $\loss(\transmatrix)$ is Lipschitz smooth with constant $C$ if and only if the operator norm of the Hessian matrix $ \frac{\partial^2 \loss}{\partial \transmatrix_{ij} \partial \transmatrix_{ab}}$ is bounded by $C$ for all $\transmatrix$ in the domain.
 In this section, we flat the Hessian matrix and show an upper bound for its operator norm, which serves as an upper bound to its Lipschitz constant.
 
-In order to flatten the Hessian matrix, let $r \in [n^2]$ be the row indexes and $s \in [n^2]$ be the column indexes. Given any $(i,j)$ pair, we can calculate a unique flattened row index $r = (i-1)n + j$ and given any $(a,b)$ pair, we can calculate a unique flattened column index $s = (a-1)n + b$. Conversely, given any pair $r,s$ we can calculate the unique corresponding for indices $ i(r), j(r), a(s) \textit{ and } b(s)$ as follows:
+In order to flatten the Hessian matrix, let $r \in [n^2]$ be the row indexes and $s \in [n^2]$ be the column indexes. Given any $(i,j)$ pair, we can calculate a unique flattened row index $r = (i-1)n + j$ and given any $(a,b)$ pair, we can calculate a unique flattened column index $s = (a-1)n + b$. Conversely, given any pair $(r,s)$ we can calculate the unique corresponding four indices $ i(r), j(r), a(s) \textit{ and } b(s)$ as follows:
 \begin{align*}
     &i(r) = \lfloor \frac{r-1}{n}\rfloor + 1, j(r) = r - (i(r) -1)n \\
     &a(s) = \lfloor \frac{s-1}{n}\rfloor + 1, b(s) = s - (a(s) -1)n 
 \end{align*}
-
 We can then rewrite \Cref{eq:hessian} as
 \begin{align*}
 \label{eq:hessian}
      \Hmatrix_{rs}
 &= \frac{2}{K} \sum_{k=1}^K \Bigg[
-        (1-\gamma)^2 \prvector_{a(s)} \prvector_{i(r)}(\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_{b(s)})(\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_{j(r)})\\ \nonumber
+        (1-\gamma)^2 \prvector_{a(s)} \prvector_{i(r)}(\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_{b(s)})(\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_{j(r)})\\ \nonumber
     &+\ g_k(\transmatrix) \cdot (1-\gamma)^2 \Big(
-        [\invAmatrix \Ematrix_{b(s)a(s)} \prvector]_{i(r)} \cdot (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_{j(r)} \\ \nonumber 
-        &+ \ g_k(\transmatrix) \cdot (1-\gamma)^2 \prvector_{i(r)} \cdot \indvect{\agroup}^{\mathsf{T}} \invAmatrix \Ematrix_{b(s)a(s)} \invAmatrix \matr{e}_{j(r)}
+        [\invUmatrix \Ematrix_{b(s)a(s)} \prvector]_{i(r)} \cdot (\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_{j(r)} \\ \nonumber 
+        &+ \ g_k(\transmatrix) \cdot (1-\gamma)^2 \prvector_{i(r)} \cdot \indvect{\agroup}^{\mathsf{T}} \invUmatrix \Ematrix_{b(s)a(s)} \invUmatrix \matr{e}_{j(r)}
     \Big)
 \Bigg]
 \end{align*}
 Let 
 \begin{align*}
     \Hmatrix_{rs}^{(1)} & = \frac{2}{K} (1-\gamma)^2\sum_{k=1}^K 
-         \prvector_{a(s)} \prvector_{i(r)}(\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_{b(s)})(\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_{j(r)}) \\
+         \prvector_{a(s)} \prvector_{i(r)}(\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_{b(s)})(\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_{j(r)}) \\
         \Hmatrix_{rs}^{(2)} & = \frac{2}{K} (1-\gamma)^2\sum_{k=1}^K 
         \ g_k(\transmatrix) 
-        [\invAmatrix \Ematrix_{b(s)a(s)} \prvector]_{i(r)} \cdot (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_{j(r)}) \\    
+        [\invUmatrix \Ematrix_{b(s)a(s)} \prvector]_{i(r)} \cdot (\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_{j(r)}) \\    
         \Hmatrix_{rs}^{(3)} & = \frac{2}{K} (1-\gamma)^2\sum_{k=1}^K 
-        \ g_k(\transmatrix)  \prvector_{i(r)} \cdot \indvect{\agroup}^{\mathsf{T}} \invAmatrix \Ematrix_{b(s)a(s)} \invAmatrix \matr{e}_{j(r)} 
+        \ g_k(\transmatrix)  \prvector_{i(r)} \cdot \indvect{\agroup}^{\mathsf{T}} \invUmatrix \Ematrix_{b(s)a(s)} \invUmatrix \matr{e}_{j(r)} 
 \end{align*}
 Then it holds that
 \begin{equation*}
      \Hmatrix_{rs} =  \Hmatrix_{rs}^1 +  \Hmatrix_{rs}^2 +  \Hmatrix_{rs}^3
 \end{equation*}
-To be able to bound the operator norm of $H$, we bound the operator norm of $\Hmatrix^{(1)},  \Hmatrix^{(2)}, \text{and }  \Hmatrix^{(3)}$ separately.
+To be able to bound the operator norm of $\Hmatrix$, we bound the operator norm of $\Hmatrix^{(1)},  \Hmatrix^{(2)}, \text{and }  \Hmatrix^{(3)}$ separately.
 
 
-Before bounding the operator norm of each term, we first proof $\|\invAmatrix\|_2 \leq 1/\gamma$, which will be used multiple times in the following deriviation.
- The proof is the result of three observations: (1) the largest eigenvalue of $P^{\mathsf{T}}$ is 1, (2) the smallest eigenvalue of $\Amatrix$ is $\gamma$ and (3) the operator norm of the symmetric matrix $\|\invAmatrix\|_2$ is the reciprocal of the smallest absolute eigenvalue of $\Amatrix$. We provide details for each observation in the following:
+Before bounding the operator norm of each term, we first proof $\|\invUmatrix\|_2 \leq 1/\gamma$, which will be used multiple times in the following deriviation.
+ The proof is the result of three observations: (1) the largest eigenvalue of $\transmatrix^{\mathsf{T}}$ is 1, (2) the smallest eigenvalue of $\matrixU$ is $\gamma$ and (3) the operator norm, $\|\invUmatrix\|_2$, of matrix \invUmatrix is the reciprocal of the smallest absolute eigenvalue of $\matrixU$. We provide details for each observation in the following:
 \begin{enumerate}
-	\item Let $\textbf{1}$ be an all-one vector, i.e. $\textbf{1} = (1,1,...,1)^{\mathsf{T}}$. We can see $\textbf{1}$ is a eigenvector of $\transmatrix$ since $\transmatrix \textbf{1} = 1$. We also know the largest eigenvalue is bounded by the infinity norm, which is $\| \transmatrix\|_{\infty} = \max_i \sum_{j}|\transmatrix_{ij}| = 1$. Thus, the maximum eigenvalue of $P^{\mathsf{T}}$, which is equal to the maximum eigenvalue of $P$, is equal to 1.
+	\item Let $\indvect{}$ be an all-one vector, i.e. $\indvect{} = (1,1,...,1)^{\mathsf{T}}$. We can see $\indvect{}$ is a eigenvector of $\transmatrix$ since $\transmatrix \textbf{1} = 1$. We also know the largest eigenvalue is bounded by the infinity norm, which is $\| \transmatrix\|_{\infty} = \max_i \sum_{j}|\transmatrix_{ij}| = 1$. Thus, the maximum eigenvalue of $\transmatrix^{\mathsf{T}}$, which is equal to the maximum eigenvalue of $\transmatrix$, is equal to 1.
 	
-	\item Let $\lambda$ denote each eigenvalue of $\transmatrix^{\mathsf{T}}$, and $\mu$ each eigenvalue of $\Amatrix$. Since $\Amatrix = I - (1 - \gamma) \transmatrix^{\mathsf{T}}$, it holds that $\mu = 1 - (1 - \gamma) \lambda$. Thus the smallest eigenvalue of $\Amatrix$ occurs when $\lambda = 1$, leading to $u_{min} = 1 - (1 - \gamma) = \gamma$
+	\item Let $\sigma$ denote each eigenvalue of $\transmatrix^{\mathsf{T}}$, and $\mu$ each eigenvalue of $\matrixU$. Since $\matrixU = \unitary - (1 - \gamma) \transmatrix^{\mathsf{T}}$, it holds that $\mu = 1 - (1 - \gamma) \sigma$. Thus the smallest eigenvalue of $\matrixU$ occurs when $\sigma = 1$, leading to $\mu_{min} = 1 - (1 - \gamma) = \gamma$
 	
-	\item Combining (1) and (2), we get $\| \invAmatrix\| = \frac{1}{\mu_{min}} = \frac{1}{\gamma}$. 
+	\item Combining (1) and (2), we get $\| \invUmatrix\| = \frac{1}{\mu_{min}} = \frac{1}{\gamma}$. 
 \end{enumerate}
 
 \subsubsection{Bounding $\|\Hmatrix^{(1)}\|_2$}
-Let $\vectw_k$ of a vector of length $n^2$ that depends on $k$, specifically,  
+Let $\vectw_k$ of a vector of length $n^2$ that depends on group $k$, specifically,  
 \begin{equation*}
-    \vectw_k[r] = (1 - \gamma) \prvector_{i(r)} (\indvect{k}^{\mathsf{T}} \invAmatrix e_{j(r)})
+    \vectw_k[r] = (1 - \gamma) \prvector_{i(r)} (\indvect{k}^{\mathsf{T}} \invUmatrix e_{j(r)})
 \end{equation*}
 Then we can represent $\Hmatrix^{(1)}$ as a rank 1 matrix as follow:
 \begin{equation*}
@@ -473,12 +467,12 @@ Then we can represent $\Hmatrix^{(1)}$ as a rank 1 matrix as follow:
 \end{equation*}
 By the subadditivity of the spectral norm, and the identity $\|\vectw_k \vectw_k^{\mathsf{T}}\|_2 = \|\vectw_k\|_2^2$. We first bound the second norm of $\vectw_k$,  it follows that
 \begin{align*}
-    \|\vectw_k\|_2^2 &= {(1-\gamma)^2} \sum_{i=1}^{n}\prvector_{i}^2  \sum_{j=1}^{n} (\indvect{k}^{\mathsf{T}} \invAmatrix e_j)^2\\
-    & ={(1-\gamma)^2} \sum_{i=1}^{n}\prvector_{i}^2  \|\indvect{k}^{\mathsf{T}} \invAmatrix \|_2^2 \\
+    \|\vectw_k\|_2^2 &= {(1-\gamma)^2} \sum_{i=1}^{n}\prvector_{i}^2  \sum_{j=1}^{n} (\indvect{k}^{\mathsf{T}} \invUmatrix e_j)^2\\
+    & ={(1-\gamma)^2} \sum_{i=1}^{n}\prvector_{i}^2  \|\indvect{k}^{\mathsf{T}} \invUmatrix \|_2^2 \\
     & \stackrel{(a)}{\leq}  \frac{(1-\gamma)^2}{\gamma^2} \|\indvect{k}\|_2^2
 \end{align*}
-where (a) holds because $\sum_i \prvector_i^2 \leq 1$, and $\|\invAmatrix\| \leq \frac{1}{\gamma}$.
-We can then bound $\|H\|_2^1$ as follow:
+where (a) holds because $\sum_i \prvector_i^2 \leq 1$, and $\|\invUmatrix\| \leq \frac{1}{\gamma}$.
+We can then bound $\|\Hmatrix^{(1)}\|_2$ as follow:
 \begin{align}
 	\label{eq:boundh1}
 	\|\Hmatrix^{(1)}\|_2 &= \frac{2}{K}\sum_{k=1}^{K}\|\vectw_k\|_2^2 \\
@@ -488,7 +482,7 @@ We can then bound $\|H\|_2^1$ as follow:
 
 
 \subsubsection{Bounding $\|\Hmatrix^{(2)}\|_2$} 
-Let $\Xmatrix \in \mathbb{R}^{n\times n}$ be a matrix, and $\vectx \in \mathbb{R}^{n^2}$ is the vector obtained by flattening \Xmatrix.
+Let $\Xmatrix \in \mathbb{R}^{n\times n}$ be a matrix, and let $\vectx \in \mathbb{R}^{n^2}$ denote the vector obtained by flattening \Xmatrix.
 \iffalse
 that is, we can build a mapping from the index $z \in [n^2]$ of \vectx to an index pair $a(z), b(z)$ of $\Xmatrix$ such that $\vectx_z = \Xmatrix_{a(z), b(z)}$, where $z = (a(z)-1)n + b(z)$ and 
 \begin{equation*}
@@ -499,8 +493,8 @@ We can then obtain a vector $\vecty = \Hmatrix^{(2)} \vectx \in \mathbb{R}^{n^2}
 \begin{align*}
 	 \Ymatrix_{i(r), j(r)} &= \vecty_r  =\sum_{s = 1}^{n^2} \Hmatrix^{(2)}_{r,s} \vectx  \\
 	&= \sum_{a(s)=1}^{n} \sum_{b(s)=1}^{n} \Hmatrix^{(2)}_{(i(r),j(r)),(a(s),b(s))} \Xmatrix_{a(s),b(s)} \\
-	& \stackrel{(a)}{=} \frac{2(1-\gamma)^2}{K} \sum_{k=1}^{K} g_k \left[ \sum_{a, b} [\invAmatrix \Ematrix_{b a} \prvector]_i \Xmatrix_{a b} \right] (\indvect{k}^{\mathsf{T}} \invAmatrix \vecte_{j})	\\
-	&=  \frac{2(1-\gamma)^2}{K} \sum_{k=1}^{K} g_k \left[ \sum_{ b} \left(\invAmatrix \right)_{i,b} \left(\sum_a \prvector_a \Xmatrix_{a,b} \right) \right] (\indvect{k}^{\mathsf{T}} \invAmatrix \vecte_{j})
+	& \stackrel{(a)}{=} \frac{2(1-\gamma)^2}{K} \sum_{k=1}^{K} g_k \left[ \sum_{a, b} [\invUmatrix \Ematrix_{b a} \prvector]_i \Xmatrix_{a b} \right] (\indvect{k}^{\mathsf{T}} \invUmatrix \vecte_{j})	\\
+	&=  \frac{2(1-\gamma)^2}{K} \sum_{k=1}^{K} g_k \left[ \sum_{ b} \left(\invUmatrix \right)_{i,b} \left(\sum_a \prvector_a \Xmatrix_{a,b} \right) \right] (\indvect{k}^{\mathsf{T}} \invUmatrix \vecte_{j})
 \end{align*}
 where for equality (a) and the following deriviation, we replace $a(s), b(s)$ with $a,b$, and $i(r), j(r)$ with $(i,j)$ for ease of notation whenever the context is clear.
 
@@ -510,19 +504,19 @@ where for equality (a) and the following deriviation, we replace $a(s), b(s)$ wi
 %\end{align*} 
 Let $\vectu = \Xmatrix^{\mathsf{T}} \prvector$, $\vectz = \sum_{k=1}^{K} g_k \indvect{k}$, and $\vectw = \matr{A}^{-T} \vectz$, then we can rewrite $\Ymatrix$ as
 \begin{equation*}
-	\Ymatrix = \frac{2(1-\gamma)^2}{K} (\invAmatrix u) \vectw^{\mathsf{T}}
+	\Ymatrix = \frac{2(1-\gamma)^2}{K} (\invUmatrix u) \vectw^{\mathsf{T}}
 \end{equation*}
-Since  $(\invAmatrix u) \vectw^{\mathsf{T}}$ is a rank-1 matrix, the spectrual norm and the Frobenius norm of $(\invAmatrix u) \vectw^{\mathsf{T}}$ are equal. 
+Since  $(\invUmatrix u) \vectw^{\mathsf{T}}$ is a rank-1 matrix, the spectrual norm and the Frobenius norm of $(\invUmatrix u) \vectw^{\mathsf{T}}$ are equal. 
 Thus we can bound the operator norm of \Ymatrix as
 \begin{align*}
-	\|\Ymatrix\|_F & = \frac{2(1-\gamma)^2}{K} \|\invAmatrix \vectu\|_2   \|\vectw\|_2 \\
-	&\leq \frac{2(1-\gamma)^2}{K} (\|\invAmatrix\|_2  \|\vectu\|_2)  (\|\invAmatrix\|_2 \|\vectz\|_2)\\
+	\|\Ymatrix\|_F & = \frac{2(1-\gamma)^2}{K} \|\invUmatrix \vectu\|_2   \|\vectw\|_2 \\
+	&\leq \frac{2(1-\gamma)^2}{K} (\|\invUmatrix\|_2  \|\vectu\|_2)  (\|\invUmatrix\|_2 \|\vectz\|_2)\\
 	&\stackrel{(a)}{\leq} \frac{2(1-\gamma)^2}{K \gamma^2} \|\vectu\|_2 \|\vectz\|_2\\
 	& \leq \frac{2(1-\gamma)^2}{K \gamma^2} \|\Xmatrix^{\mathsf{T}} \prvector\|_2 \sum_{k=1}^{K} \|\indvect{k}\|_2 |g_k| \\
 	& \stackrel{(b)}{\leq}\frac{2(1-\gamma)^2}{K \gamma^2} \|\Xmatrix\|_F \|\prvector\|_2 \sum_{k=1}^{K} \|\indvect{k}\|_2 \\
 		& \stackrel{(c)}{\leq}\frac{2(1-\gamma)^2}{K \gamma^2} \|\Xmatrix\|_F  \sqrt{n} 
 \end{align*}
-where inequality (a) holds because $\|\invAmatrix\|_2 \leq \frac{1}{\gamma}$, (b) holds because $|g_k| \leq 1$ and (c) holds because $\|\prvector\| \leq 1$.
+where inequality (a) holds because $\|\invUmatrix\|_2 \leq \frac{1}{\gamma}$, (b) holds because $|g_k| \leq 1$ and (c) holds because $\|\prvector\| \leq 1$.
 
 Therefore, it holds that
 \begin{align*}
@@ -540,12 +534,12 @@ by dividing both side by $\|\vectx\|_2$ and taking the supremum over $\vectx \ne
 
 After reorganizing terms in $\Hmatrix^{(2)}$, we can obtain
 \begin{equation*}
-	\Hmatrix^{(2)}_{rs} = \frac{2(1-\gamma)^2}{K} \sum_{k=1}^{K} g_k \prvector_{a(s)} (\invAmatrix_{i(r)b(s)})\left(\indvect{k}^{\mathsf{T}} \invAmatrix \vecte_{j(r)}\right)
+	\Hmatrix^{(2)}_{rs} = \frac{2(1-\gamma)^2}{K} \sum_{k=1}^{K} g_k \prvector_{a(s)} (\invUmatrix_{i(r)b(s)})\left(\indvect{k}^{\mathsf{T}} \invUmatrix \vecte_{j(r)}\right)
 \end{equation*}
 
 For a fixed $(k,b)$ pair, we can define a vector $\vectx_{k,b} \in \mathbb{R}^{n^2}$ as follow
 \begin{equation*}
-    \vectx_{k,b}[r] = \sqrt{|g_k|}(1 - \gamma)^2 (\invAmatrix)_{i(r),b}(\indvect{k}^{\mathsf{T}} \invAmatrix \vecte_{j(r)})
+    \vectx_{k,b}[r] = \sqrt{|g_k|}(1 - \gamma)^2 (\invUmatrix)_{i(r),b}(\indvect{k}^{\mathsf{T}} \invUmatrix \vecte_{j(r)})
 \end{equation*}
 and for each $b$, we define a vector $\vectz_b \in \mathbb{R}^{n^2}$ as follow
 \begin{equation*}
@@ -559,8 +553,8 @@ We can then rewrite $\Hmatrix^{(2)}$ as the outer product of $\vectx_{k,b}$ and 
 To bound the operator borm of $\Hmatrix^{(2)}$, we first bound its components seperately. It holds that
 
 \begin{align*}
-	\|\vectx_{k,b}\|_2 &= \sqrt{|g_k|} (1 - \gamma)^2 \|\Amatrix \vecte_b \|_2 \|\indvect{k}^{\mathsf{T}} \invAmatrix\|_2 \\ 
-	&\leq \sqrt{|g_k|} (1 - \gamma)^2 ( \|\Amatrix \|_2)^2 \|\indvect{k}^{\mathsf{T}}\|_2 \leq \frac{(1-\gamma)^2\sqrt{|g_k|}}{\gamma^2} \|\indvect{k}^{\mathsf{T}}\|_2
+	\|\vectx_{k,b}\|_2 &= \sqrt{|g_k|} (1 - \gamma)^2 \|\matrixU \vecte_b \|_2 \|\indvect{k}^{\mathsf{T}} \invUmatrix\|_2 \\ 
+	&\leq \sqrt{|g_k|} (1 - \gamma)^2 ( \|\matrixU \|_2)^2 \|\indvect{k}^{\mathsf{T}}\|_2 \leq \frac{(1-\gamma)^2\sqrt{|g_k|}}{\gamma^2} \|\indvect{k}^{\mathsf{T}}\|_2
 \end{align*}
 and
 \begin{equation*}
@@ -576,23 +570,23 @@ where $m_k = \max_k \sqrt{|\group_{k}|}$.
 \fi
 \subsubsection{Bounding $\|\Hmatrix^{(3)}\|_2$} We can reorganize terms in $\Hmatrix^{(3)}$ and it holds that
 \begin{equation*}
-	\Hmatrix^{(3)}_{rs} = \frac{2(1-\gamma)^2}{K} \sum_{k=1}^{K} g_k \prvector_{i(r)} (\invAmatrix)_{a(s),j(r)} (\vectz_k)_{b(s)}
+	\Hmatrix^{(3)}_{rs} = \frac{2(1-\gamma)^2}{K} \sum_{k=1}^{K} g_k \prvector_{i(r)} (\invUmatrix)_{a(s),j(r)} (\vectz_k)_{b(s)}
 \end{equation*}
-where $\vectz_k = \indvect{k}^{\mathsf{T}} \invAmatrix$.
+where $\vectz_k = \indvect{k}^{\mathsf{T}} \invUmatrix$.
 
-Let $(C_k)_{(i(r), j(r)),(a(s), b(s))} = \prvector_{i(r)} (\invAmatrix)_{a(s), j(r)} (\vectz_k)_{b(s)}$, we can further rewrite $\Hmatrix^{2}$ as follow:
+Let $(\Cmatrix_k)_{(i(r), j(r)),(a(s), b(s))} = \prvector_{i(r)} (\invUmatrix)_{a(s), j(r)} (\vectz_k)_{b(s)}$, we can further rewrite $\Hmatrix^{2}$ as follow:
 \begin{equation}
-	\Hmatrix^{(3)}_{rs} = \frac{2(1-\gamma)^2}{K} \sum_{k=1}^{K} g_k C_k
+	\Hmatrix^{(3)}_{rs} = \frac{2(1-\gamma)^2}{K} \sum_{k=1}^{K} g_k \Cmatrix_k
 	\label{eq:H3}
 \end{equation}
-Furthermore, since the three factors $\prvector_i(r)$, $(\invAmatrix)_{a(s), j(e)}$, $(\vectz_k)_{b(s)}$ depend on disjoint index pairs, $C_k$ can be represented as a triple outer product and reshaped as 
+Furthermore, since the three factors $\prvector_i(r)$, $(\invUmatrix)_{a(s), j(e)}$, $(\vectz_k)_{b(s)}$ depend on disjoint index pairs, $\Cmatrix_k$ can be represented as a triple outer product and reshaped as 
 \begin{equation*}
-	C_k = \prvector \otimes \invAmatrix \otimes \vectz_k  
+	\Cmatrix_k = \prvector \otimes \invUmatrix \otimes \vectz_k  
 \end{equation*}
-and thus we can bound the operator norm of $C_k$ as 
+and thus we can bound the operator norm of $\Cmatrix_k$ as 
 \begin{align*}
-	\|C_k\|_2  &= \|\prvector\|_2  \|\invAmatrix\|_2 \|\vectz_k\|_2 \\
-	& \leq 1 \times \frac{1}{\gamma} \times \|\invAmatrix\|_2\|1_k\|_2 \\
+	\|\Cmatrix_k\|_2  &= \|\prvector\|_2  \|\invUmatrix\|_2 \|\vectz_k\|_2 \\
+	& \leq 1 \times \frac{1}{\gamma} \times \|\invUmatrix\|_2\|1_k\|_2 \\
 	& \leq  \frac{1}{\gamma^2} \|1_k\|_2
 \end{align*}
 Therefore, we can bound the operator norm of $\Hmatrix^{(3)}$ as
@@ -613,11 +607,11 @@ where inequality (a) is due to Cauchy-Schwarz inequatlity.
 
 \iffalse
 \begin{equation*}
-	\vectalpha_{k,b,j}[r] = (1 - \gamma) \prvector_{i(r)} (\indvect{k}^{\mathsf{T}} \invAmatrix \vecte_b) \matr{1} (j(r) = j)
+	\vectalpha_{k,b,j}[r] = (1 - \gamma) \prvector_{i(r)} (\indvect{k}^{\mathsf{T}} \invUmatrix \vecte_b) \matr{1} (j(r) = j)
 \end{equation*}
 we also define for each $(b,j)$ pair a vector $\vectbeta_{b,j}$ as
 \begin{equation*}
- \vectbeta_{b,j}[s] = 	(1 - \gamma) (\invAmatrix)_{a(s),j} \matr{1} (b(s) = b)
+ \vectbeta_{b,j}[s] = 	(1 - \gamma) (\invUmatrix)_{a(s),j} \matr{1} (b(s) = b)
 \end{equation*}
 We can express $\Hmatrix^{(3)}$ as a sum of rank-one outer products as follow.
 \begin{equation*}
@@ -625,15 +619,15 @@ We can express $\Hmatrix^{(3)}$ as a sum of rank-one outer products as follow.
 \end{equation*}
 To bound the operator norm of $\Hmatrix^{(3)}$, we bound each component seperately as follows:
 \begin{align*}
-	\|\vectalpha_{k,b,j}\|_2 &\leq (1-\gamma) \|p\|_2 |\indvect{k}^{\mathsf{T}} \invAmatrix e_b| \matr{1}(j(r) = j) \\
-	& \leq (1 - \gamma) |\indvect{k}^{\mathsf{T}} \invAmatrix e_b| \sum_{i=1}^{n} \prvector_i^2 \matr{1}(j(r) = j) \\
-	&  \leq (1 - \gamma) \|\indvect{k}\|_2 \|\invAmatrix\|_2 \|e_b\|_2 \matr{1}(j(r) = j)\\
+	\|\vectalpha_{k,b,j}\|_2 &\leq (1-\gamma) \|p\|_2 |\indvect{k}^{\mathsf{T}} \invUmatrix e_b| \matr{1}(j(r) = j) \\
+	& \leq (1 - \gamma) |\indvect{k}^{\mathsf{T}} \invUmatrix e_b| \sum_{i=1}^{n} \prvector_i^2 \matr{1}(j(r) = j) \\
+	&  \leq (1 - \gamma) \|\indvect{k}\|_2 \|\invUmatrix\|_2 \|e_b\|_2 \matr{1}(j(r) = j)\\
 	& \leq \frac{1-\gamma}{\gamma} \|\indvect{k}\|_2 \matr{1}(j(r) = j)
 \end{align*}
 and,
 \begin{align*}
-	\|\vectbeta_{b,j}\|_2 & \leq (1-\gamma) \|\invAmatrix \vecte_j\|_2 \matr{1} (b(s) = b)\\
-	& \leq  (1-\gamma) \|\invAmatrix\|_2  \|\vecte_j\|_2 \matr{1} (b(s) = b) \\
+	\|\vectbeta_{b,j}\|_2 & \leq (1-\gamma) \|\invUmatrix \vecte_j\|_2 \matr{1} (b(s) = b)\\
+	& \leq  (1-\gamma) \|\invUmatrix\|_2  \|\vecte_j\|_2 \matr{1} (b(s) = b) \\
 	&\leq \frac{1-\gamma}{\gamma} \matr{1} (b(s) = b)
 \end{align*}
 We can bound $\|H^3\|_2$ as below
@@ -642,37 +636,51 @@ We can bound $\|H^3\|_2$ as below
 	&  \leq \frac{2}{K} \sum_{k=1}^{K} g_{max} \|\indvect{k}^{\mathsf{T}}\|_2 \sum_{b=1}^{n} \frac{1-\gamma}{\gamma}
 \end{align*}
 \fi
-\subsubsection{the Lipschitz constant for $\Delta \mathcal{L}$}
+\subsubsection{The Lipschitz constant for the first derivative of $\loss(\transmatrix)$}
 Combining \Cref{eq:boundh1}, \Cref{eq:boundh2} and \Cref{eq:boundh3}, it follows that
 \begin{equation*}
 	\|\Hmatrix\|_2 \leq \|\Hmatrix^{(1)}\|_2 +  \|\Hmatrix^{(2)}\|_2 +  \|\Hmatrix^{(3)}\|_2 \leq \frac{2(1-\gamma)^2}{K \gamma^2} (n+ \sqrt{n} + \sqrt{Kn})
 \end{equation*}
-Let $L = \frac{2(1-\gamma)^2}{K \gamma^2} (n+ \sqrt{n} + \sqrt{Kn})$, it follows that $\Delta \mathcal{L}$ is $L$-Lipschitz. 
+Let $C = \frac{2(1-\gamma)^2}{K \gamma^2} (n+ \sqrt{n} + \sqrt{Kn})$, it follows that $\frac{\partial \loss}{\partial \transmatrix}$ is $C$-Lipschitz. 
 
 
-\subsection{Convergence analysis of the projected gradient descent method for minimizing $\mathcal{L}(\transmatrix)$}
-Since $\mathcal{L}(P)$ is a differentiable function and  $\Delta \mathcal{L}$ is $L$-Lipschitz, and its feasible set $\resfeasiblematrices(\transmatrix) \cap \feasiblematrices(\transmatrix)$ is convex and closed, the projected gradient update with constant step size $0 \leq \alpha \leq 2/L$ converges to a stationary point, which is a local minimum of $\mathcal{L}$ over $\resfeasiblematrices(\transmatrix) \cap \feasiblematrices(\transmatrix)$ \cite{bertsekas1997nonlinear}.
+\subsection{Convergence analysis of the projected gradient descent method for minimizing $\loss(\transmatrix)$}
+We have proved $\loss(P)$ is a differentiable function and its first derivative is $C$-Lipschitz, since its feasible set $\resfeasiblematrices(\transmatrix) \cap \feasiblematrices(\transmatrix)$ is convex and closed, the projected gradient update with constant step size $0 \leq \alpha \leq 2/C$ converges to a stationary point, which is a local minimum of $\loss(\transmatrix)$ over $\resfeasiblematrices(\transmatrix) \cap \feasiblematrices(\transmatrix)$ \cite{bertsekas1997nonlinear}.
 
 
-\section{Convergence Analysis for minimizing $\mathcal{L}_g(\transmatrix)$}
+\section{Convergence Analysis for minimizing $\groupAdapLoss(\transmatrix)$}
 \label{section:convergence_Lg}
 
-We can derive the Hessian matrix of $\mathcal{L}_g(\transmatrix)$ and its Lipschitz constant in a manner analogous to that for $\mathcal{L}(\transmatrix)$. Specifically, let $\textbf{H}_g$ be the Hessian matrix of $\mathcal{L}_g$, then it holds that  
+We can derive the Hessian matrix of $\groupAdapLoss(\transmatrix)$ and its Lipschitz constant in a manner analogous to that of $\loss(\transmatrix)$. Specifically, let $\textbf{H}_g$ be the Hessian matrix of $\groupAdapLoss$, then it holds that  
 \begin{align}
 \label{eq:hessian_adapt}
-& \textbf{H}_g[(i,j),(a,b)] = 
-     \frac{\partial^2 \mathcal{L}_g}{\partial \transmatrix_{ij} \partial \transmatrix_{ab}}  \\ \nonumber
+& \Hmatrix_g[(i,j),(a,b)] = 
+     \frac{\partial^2 \groupAdapLoss}{\partial \transmatrix_{ij} \partial \transmatrix_{ab}}  \\ \nonumber
 & = \frac{2}{K^2} \sum_{k=1}^K \sum_{l=1}^K \Bigg[
-        (1-\gamma)^2 {\prvector_l}_a {\prvector_l}_i (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_b)(\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j)\\ \nonumber
+        (1-\gamma)^2 {\prvector_{\ell}}_a {\prvector_{\ell}}_i (\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_b)(\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_j)\\ \nonumber
     &+\ g_k(\transmatrix) \cdot (1-\gamma)^2 \Big(
-        [\invAmatrix \Ematrix_{ba} {\prvector_l}]_i \cdot (\indvect{\agroup}^{\mathsf{T}} \invAmatrix \matr{e}_j)
-        + {\prvector_l}_i \cdot \indvect{\agroup}^{\mathsf{T}} \invAmatrix \Ematrix_{ba} \invAmatrix \matr{e}_j
+        [\invUmatrix \Ematrix_{ba} {\prvector_{\ell}}]_i \cdot (\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_j)
+        + {\prvector_{\ell}}_i \cdot \indvect{\agroup}^{\mathsf{T}} \invUmatrix \Ematrix_{ba} \invUmatrix \matr{e}_j
     \Big)
 \Bigg]
 \end{align}
-Equation~\eqref{eq:hessian_adapt} follows directly from \Cref{eq:hessian} by replacing $\prvector$ with $\prvector_l$ throughout and introducing an additional summation over $l \in \{1, \ldots, \nogroups\}$.  
-
-The derivation of the Lipschitz constant for $\mathcal{H}$ remains valid for the inner sum of $\mathcal{H}_g$ when $\prvector$ is replaced by $\prvector_l$. Given the additivity property of the operator norm, we conclude that the Lipschitz constant of $\mathcal{L}_g$ is equal to that of $\mathcal{L}_g$, and the projected gradient descent method converges to a local minima with a constant step size $0 \leq \alpha \leq 2/L$.
+Equation~\eqref{eq:hessian_adapt} follows directly from \Cref{eq:hessian} by replacing $\prvector$ with $\prvector_{\ell}$ throughout, introducing an additional summation over $l \in {1, \ldots, \nogroups}$, and dividing by the extra term $K$.
+Let $\Hmatrix_g^k$ denote the inner sum of $\Hmatrix_g$, that is,
+\begin{align*}
+   & \Hmatrix_g^k = \frac{2}{K} \sum_{l=1}^K \Bigg[
+        (1-\gamma)^2 {\prvector_{\ell}}_a {\prvector_{\ell}}_i (\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_b)(\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_j)\\ \nonumber
+    &+\ g_k(\transmatrix) \cdot (1-\gamma)^2 \Big(
+        [\invUmatrix \Ematrix_{ba} {\prvector_{\ell}}]_i \cdot (\indvect{\agroup}^{\mathsf{T}} \invUmatrix \matr{e}_j)
+        + {\prvector_{\ell}}_i \cdot \indvect{\agroup}^{\mathsf{T}} \invUmatrix \Ematrix_{ba} \invUmatrix \matr{e}_j
+    \Big)
+\Bigg]
+\end{align*}
+It is straightforward to see that the derivation of an upper bound on the operator norm of $\Hmatrix$ remains valid for $\Hmatrix_g^k$ when $\prvector$ is replaced by $\prvector_{\ell}$. That is, $\Hmatrix$ and $\Hmatrix_g^k$ share the same operator norm upper bound $C$. 
+Given the subadditivity property of the operator norm, it holds that
+\begin{equation*}
+    \|\Hmatrix_g\|_2 \leq \frac{1}{\nogroups} \sum_{k=1}^{K} \|\Hmatrix_g^k\|_2 = \|\Hmatrix\|_2 = C
+\end{equation*}
+Therefore, we have established that the operator norm of $\groupAdapLoss$ is bounded by $C$, which is equivalent to stating that the Lipschitz constant of its gradient is also bounded by $C$. Consequently, projected gradient descent converges to a local minimum when using a constant step size $0 \leq \alpha \leq 2/C$.
 
 
 \section{Experimental settings}
@@ -681,16 +689,16 @@ The derivation of the Lipschitz constant for $\mathcal{H}$ remains valid for the
 \label{appendix:datasets}
 
 \noindent 
-\book.\footnote{\url{http://www-personal.umich.edu/~mejn/netdata/}} This is an undirected network of political books sold on Amazon. Each edge represents frequent co-purchases of two books. The books are categorized into three groups: liberal, neutral, and conservative. Since the network is undirected, each edge is converted into two directed edges. 
+\book \footnote{\url{http://www-personal.umich.edu/~mejn/netdata/}} This is an undirected network of political books sold on Amazon. Each edge represents frequent co-purchases of two books. The books are categorized into three groups: liberal, neutral, and conservative. Since the network is undirected, each edge is converted into two directed edges. 
 
 \smallskip
 \noindent 
-\blogs \citep{adamic_political_2005}. \Amatrix directed network of political blogs, where each edge represents a hyperlink between two blogs. The vertices are divided into two groups: liberal and conservative blogs.
+\blogs \citep{adamic_political_2005}. A directed network of political blogs, where each edge represents a hyperlink between two blogs. The vertices are divided into two groups: liberal and conservative blogs.
 
 \smallskip
 \noindent 
-\mind \citep{wu2020mind} \Amatrix dataset built from user impression logs on Microsoft News. Each log captures a user's impressions of current news articles, along with their reading history. News articles are labeled, and we construct a directed graph from these logs, filtering out news articles with a frequency of fewer than 50 occurrences. \Amatrix directed edge is created from a historically read news article to a current one if both appear in the same user's log. For each news vertex, only the top-5 weighted edges are retained. The two vertex groups correspond to lifestyle-related and society-related news.%
-\footnote{The original dataset contains 14 labels. We aggregate vertices with the labels \{lifestyle, food and drink, sports, health\} into group 1, and those with the labels \{entertainment, travel, tv, news, finance, movies, autos, music, weather, video\} into group~2.}
+\mind \citep{wu2020mind} A dataset built from user impression logs on Microsoft News. Each log captures a user's impressions of current news articles, along with their reading history. News articles are labeled, and we construct a directed graph from these logs, filtering out news articles with a frequency of fewer than 50 occurrences. A directed edge is created from a historically read news article to a current one if both appear in the same user's log. The two vertex groups correspond to lifestyle-related and society-related news\fnlabels.
+
 
 \smallskip
 \noindent 
@@ -781,20 +789,28 @@ This algorithm extends \fairwalk by taking into account the distance of each ver
 \section{Additional experimental results} 
 \label{appendix:more-experiments}
 
+\subsection{Ranking Coefficient for the group-wise \pagerank weights}
 % \aris{say something about the tables below}
 
-In Tables \ref{table:ranking_book} to \ref{table:ranking_slashdot}, we report the weighted average Spearman's rank correlation coefficient $\overline{\rho}$ obtained from all methods for datasets \book, \blogs, \twitter, and \slashdot, respectively.
-
-On the \book and \twitter datasets, the Spearman's rank correlation coefficients are too very small, indicating all methods cannot preserve the original \pagerank ranking within groups.
+In Tables \ref{table:ranking_blog} and \ref{table:ranking_slashdot}, we report the weighted average Spearman’s rank correlation coefficient, $\overline{\rho}$, for all methods on the \blogs and \slashdot datasets, respectively. Results for the \book and \twitter datasets are omitted, as the average coefficients are close to zero across all methods, indicating that none of the methods can preserve the original \pagerank rankings within groups.
 
 On the \blogs dataset, \crossgdrone achieves the highest correlation coefficient, followed by \lfprn and \lfpru. \fairgdrtwo and \crossgd obtain the lowest values, while the remaining methods yield comparable performance. 
 On the \slashdot dataset, algorithm \crossgdrone again achieves the highest value, followed by \crossgdrtwo. Algorithms \crossgd, \fairgd, and its variants \fairgdrone and \fairgdrtwo produce comparable results, whereas \fairwalk and \crosswalk perform the worst.
 
+\subsection{Ranking Coefficient for the edge weights}
+
+In Tables \ref{table:edge_ranking_book} to \ref{table:edge_ranking_mind}, we present the average Spearman’s rank correlation coefficient, $\tilde{\rho}$, for each method on the \book, \blogs and 
+\mind dataset. For each node, we compute the Spearman’s coefficient between the rankings of its original and updated outgoing edge weights, and then report the average coefficient across all nodes.
+We omit the results for the datasets \twitter and \slashdot, as the average coefficients are all approximately in the range $[0.999–1)$ across all methods.
+
+\fairwalk performs consistently well across all three datasets, achieving the best results on the \book dataset and second-best results on the remaining datasets. \crossgdrone and \crossgd($0.5$,$0.1$) attain the second-best performance on the \book and \blogs datasets, and the third-best on the \mind dataset. \fairgd achieves the optimal outcome on the \mind dataset.
+
+For the two-group datasets, \lfpru and \lfprn perform noticeably worse than the other methods. This outcome is expected, as both methods substantially modify the underlying graph structure.
+
+In conclusion, \fairwalk best preserves the edge weight ranking across datasets, while \crossgdrone and \crossgdrtwo also perform very well.
 
 
-
-
-
+\iffalse
 \begin{table*}[t]
 \centering
 \caption{
@@ -819,8 +835,7 @@ $0.9$ & 1.00 & 1.04 & -0.34 & -0.25 & 0.82 & -0.30 & \underline{1.18} & \textbf{
 \end{small}
 \label{table:ranking_book}
 \end{table*}
-
-
+\fi
 
 
 
@@ -828,23 +843,22 @@ $0.9$ & 1.00 & 1.04 & -0.34 & -0.25 & 0.82 & -0.30 & \underline{1.18} & \textbf{
 \begin{table*}[t]
 \centering
 \caption{\label{table:ranking_blog}
-Average Spearman's coefficient of each method for the \blogs dataset}
+Average Spearman's coefficient $\overline{\rho}$ between the \pagerank weight of each method for the \blogs dataset}
 \vspace{-2mm}
 \begin{small}
 \begin{tabular}{c|cccccccccc}
 \hline
 $\phi$ & \fairwalk & \crosswalk &  \lfpru & \lfprn & \fairgd & $\fairgd(0.1, 0.1)$ & $\fairgd(0.5, 0.1)$ & \crossgd & $\crossgd(0.1, 0.1)$ & $\crossgd(0.5, 0.1)$ \\
 \hline
-$0.1$ & \underline{0.57} & 0.51 & 0.56 & 0.55 & 0.53 & 0.55 & 0.44 & 0.40 &
-\textbf{0.59} & 0.56 \\
-$0.2$ & \underline{0.58} & 0.53 & 0.55 & \textbf{0.59} & 0.51 & 0.52 & 0.50 & 0.44 & \textbf{0.59} & 0.57 \\
-$0.3$ & 0.57 & 0.50 & \underline{0.58} & \textbf{0.59} & 0.57 & 0.57 & 0.55 & 0.46 & \textbf{0.59} & 0.56 \\
-$0.4$ & \underline{0.60} & 0.54 & 0.57 & \underline{0.60} & 0.52 & 0.52 & 0.53 & 0.42 & \textbf{0.61} & 0.56 \\
-$0.5$ & 0.59 & 0.51 & 0.59 & 0.58 & \textbf{0.67} & \textbf{0.67} & 0.59 & 0.45 & \underline{0.61} & 0.55 \\
-$0.6$ & 0.58 & 0.49 & \underline{0.60} & 0.58 & 0.57 & 0.57 & 0.57 & 0.48 & \textbf{0.62} & 0.54 \\
-$0.7$ & 0.59 & 0.51 & \underline{0.60} & 0.57 & 0.55 & 0.56 & 0.55 & 0.46 & \textbf{0.62} & 0.57 \\
-$0.8$ & \textbf{0.61} & 0.50 & \underline{0.60} & \textbf{0.61} & 0.53 & 0.56 & 0.48 & 0.49 & \textbf{0.61} & 0.57 \\
-$0.9$ & 0.58 & 0.50 & \underline{0.61} & \textbf{0.62} & 0.54 & 0.52 & 0.52 & 0.49 & \textbf{0.62} & 0.60 \\
+0.1 & \underline{0.573} & 0.506 & 0.558 & 0.547 & 0.437 & 0.423 & 0.437 & 0.423 & \textbf{0.594} & 0.561 \\
+0.2 & 0.579 & 0.527 & 0.552 & \textbf{0.591} & 0.483 & 0.488 & 0.515 & 0.446 & \underline{0.587} & 0.568 \\
+0.3 & 0.568 & 0.497 & 0.577 & \underline{0.593} & 0.534 & 0.553 & 0.542 & 0.433 & \textbf{0.598} & 0.553 \\
+0.4 & \underline{0.602} & 0.539 & 0.566 & 0.597 & 0.560 & 0.555 & 0.540 & 0.442 & \textbf{0.616} & 0.551 \\
+0.5 & \underline{0.590} & 0.513 & 0.588 & 0.577 & 0.562 & 0.564 & 0.577 & 0.451 & \textbf{0.609} & 0.557 \\
+0.6 & 0.576 & 0.490 & 0.599 & 0.579 & 0.557 & 0.569 & 0.570 & \textbf{0.801} & \underline{0.614} & 0.545 \\
+0.7 & 0.588 & 0.511 & 0.604 & 0.567 & 0.586 & 0.574 & 0.573 & \textbf{0.754} & \underline{0.627} & 0.570 \\
+0.8 & \underline{0.612} & 0.502 & 0.602 & \textbf{0.613} & 0.510 & 0.489 & 0.493 & 0.492 & 0.604 & 0.575 \\
+0.9 & 0.584 & 0.498 & 0.606 & \underline{0.617} & 0.516 & 0.506 & 0.501 & 0.503 & \textbf{0.620} & 0.555 \\
 \hline
 \end{tabular}
 \end{small}
@@ -878,10 +892,10 @@ $0.9$ & 0.58 & 0.50 & \underline{0.61} & \textbf{0.62} & 0.54 & 0.52 & 0.52 & 0.
 
 
 
-
+\iffalse
 \begin{table*}[t]
 \centering
-\caption{The average Spearman's coefficient for each method on the \twitter dataset. Each element in the matrix is scaled by $10^{-3}$ to show the actual values.}
+\caption{The average Spearman's coefficient for the \pagerank weight for each method on the \twitter dataset. Each element in the matrix is scaled by $10^{-3}$ to show the actual values.}
 \vspace{-2mm}
 \begin{small}
 \begin{tabular}{c|cccccccccc}
@@ -902,29 +916,29 @@ $0.9$ & \underline{14.85} & -1.09 & -0.37 & -3.70 & -5.84 & -4.24 & \textbf{15.7
 \end{small}
 \label{table:ranking_twitter}
 \end{table*}
-
+\fi
 
 
 
 \begin{table*}[t]
 \centering
 \caption{
-Average Spearman's coefficient of each method for the \slashdot dataset}
+Average Spearman's coefficient $\overline{\rho}$ between the \pagerank weight of each method for the \slashdot dataset}
 \vspace{-2mm}
 \begin{small}
 \begin{tabular}{c|cccccccccc}
 \hline
 $\phi$ & \fairwalk & \crosswalk &  \fairgd & $\fairgd(0.1, 0.1)$ & $\fairgd(0.5, 0.1)$ & \crossgd & $\crossgd(0.1, 0.1)$ & $\crossgd(0.5, 0.1)$ \\
 \hline
-$0.1$  & 0.12 & 0.12 & 0.22 & 0.21 & 0.22 & 0.21 & \textbf{0.29} & \underline{0.24}\\ 
-$0.2$  & 0.14 & 0.13 & 0.22 & 0.22 & 0.22 & 0.21 & \textbf{0.31} & \underline{0.25}\\ 
-$0.3$  & 0.15 & 0.13 & 0.23 & {0.24} & {0.24} & {0.24} & \textbf{0.31} & \underline{0.25}\\ 
-$0.4$  & 0.14 & 0.14 & 0.22 & 0.23 & 0.24 & 0.24 & \textbf{0.31} & \underline{0.27}\\ 
-$0.5$  & 0.12 & 0.12 & 0.21 & 0.21 & 0.21 & 0.22 & \textbf{0.30} & \underline{0.26}\\ 
-$0.6$  & 0.13 & 0.12 & 0.22 & 0.23 & 0.23 & 0.21 & \textbf{0.29} & \underline{0.25}\\ 
-$0.7$  & 0.13 & 0.12 & {0.23} & {0.23} & {0.23} & 0.21 & \textbf{0.28} & \underline{0.25}\\ 
-$0.8$  & 0.13 & 0.12 & {0.23} & {0.23} & {0.24} & 0.22 & \textbf{0.28} & \underline{0.25}\\ 
-$0.9$  & 0.12 & 0.12 & {0.23} & 0.22 & {0.23} & 0.22 & \textbf{0.27} & \underline{0.25}\\ 
+0.1 & 0.123 & 0.124 & 0.221 & 0.215 & 0.217 & 0.212 & \textbf{0.295} & \underline{0.244} \\
+0.2 & 0.140 & 0.131 & 0.219 & 0.217 & 0.216 & 0.213 & \textbf{0.312} & \underline{0.251} \\
+0.3 & 0.146 & 0.135 & {0.245} & 0.239 & 0.241 & 0.238 & \textbf{0.310} & \underline{0.251} \\
+0.4 & 0.135 & 0.143 & 0.229 & 0.231 & 0.235 & {0.243} & \textbf{0.308} & \underline{0.271} \\
+0.5 & 0.121 & 0.120 & 0.218 & 0.212 & 0.213 & {0.223} & \textbf{0.296} & \underline{0.261} \\
+0.6 & 0.131 & 0.119 & 0.221 & 0.228 & {0.228} & 0.211 & \textbf{0.287} & \underline{0.254} \\
+0.7 & 0.129 & 0.117 & 0.226 & 0.229 & {0.232} & 0.212 & \textbf{0.282} & \underline{0.248} \\
+0.8 & 0.128 & 0.117 & 0.235 & 0.230 & {0.235} & 0.224 & \textbf{0.280} & \underline{0.250 }\\
+0.9 & 0.125 & 0.122 & 0.230 & 0.224 & {0.229} & 0.224 & \textbf{0.271} & \underline{0.254} \\
 \hline
 \end{tabular}
 \end{small}
@@ -940,22 +954,22 @@ $0.9$  & 0.12 & 0.12 & {0.23} & 0.22 & {0.23} & 0.22 & \textbf{0.27} & \underlin
 \begin{table*}[t]
 \centering
 \caption{
-Average Spearman's coefficient between node edge weight rankings for the \book dataset. .}
+Average Spearman's coefficient $\tilde{\rho}$ between edge weight rankings for the \book dataset}
 \vspace{-2mm}
 \begin{small}
 \begin{tabular}{c|cccccccccc}
 \hline
 $\phi$ & \fairwalk & \crosswalk &  \fairgd & $\fairgd(0.1, 0.1)$ & $\fairgd(0.5, 0.1)$ & \crossgd & $\crossgd(0.1, 0.1)$ & $\crossgd(0.5, 0.1)$ \\
 \hline
-0.1 & 0.989 & 0.974 & 0.897 & 0.919 & 0.889 & 0.853 & 0.975 & 0.976 \\
-0.2 & 0.989 & 0.975 & 0.976 & 0.919 & 0.940 & 0.855 & 0.976 & 0.975 \\
-0.3 & 0.989 & 0.975 & 0.963 & 0.946 & 0.976 & 0.869 & 0.977 & 0.977 \\
-0.4 & 0.989 & 0.974 & 0.969 & 0.959 & 0.964 & 0.871 & 0.977 & 0.977 \\
-0.5 & 0.989 & 0.973 & 0.965 & 0.961 & 0.972 & 0.862 & 0.978 & 0.976 \\
-0.6 & 0.988 & 0.976 & 0.973 & 0.945 & 0.950 & 0.879 & 0.979 & 0.977 \\
-0.7 & 0.988 & 0.975 & 0.942 & 0.943 & 0.932 & 0.865 & 0.977 & 0.977 \\
-0.8 & 0.988 & 0.974 & 0.921 & 0.939 & 0.922 & 0.865 & 0.976 & 0.977 \\
-0.9 & 0.988 & 0.974 & 0.907 & 0.938 & 0.920 & 0.909 & 0.977 & 0.977 \\
+0.1 & \textbf{0.989} & 0.974 & 0.897 & 0.919 & 0.889 & 0.853 & 0.975 & \underline{0.976} \\
+0.2 & \textbf{0.989} & 0.975 & \underline{0.976} & 0.919 & 0.940 & 0.855 & \underline{0.976} & 0.975 \\
+0.3 & \textbf{0.989} & 0.975 & 0.963 & 0.946 & 0.976 & 0.869 & \underline{0.977 }& \underline{0.977} \\
+0.4 & \textbf{0.989} & 0.974 & 0.969 & 0.959 & 0.964 & 0.871 & \underline{0.977} & \underline{0.977 }\\
+0.5 & \textbf{0.989} & 0.973 & 0.965 & 0.961 & 0.972 & 0.862 & \underline{0.978} & 0.976 \\
+0.6 & \textbf{0.988} & 0.976 & 0.973 & 0.945 & 0.950 & 0.879 & \underline{0.979} & 0.977 \\
+0.7 & \textbf{0.988} & 0.975 & 0.942 & 0.943 & 0.932 & 0.865 & \underline{ 0.977} & \underline{0.977} \\
+0.8 & \textbf{0.988} & 0.974 & 0.921 & 0.939 & 0.922 & 0.865 & 0.976 & \underline{0.977} \\
+0.9 & \textbf{0.988} & 0.974 & 0.907 & 0.938 & 0.920 & 0.909 & 0.977 & \underline{0.977} \\
 \hline
 \end{tabular}
 \end{small}
@@ -969,22 +983,22 @@ $\phi$ & \fairwalk & \crosswalk &  \fairgd & $\fairgd(0.1, 0.1)$ & $\fairgd(0.5,
 \begin{table*}[t]
 \centering
 \caption{\label{table:edge_ranking_blog}
-Average Spearman's coefficient between node edge weight rankings on the \blogs dataset}
+Average Spearman's coefficient $\tilde{\rho}$ between edge weight rankings on the \blogs dataset}
 \vspace{-2mm}
 \begin{small}
 \begin{tabular}{c|cccccccccc}
 \hline
 $\phi$ & \fairwalk & \crosswalk &  \lfpru & \lfprn & \fairgd & $\fairgd(0.1, 0.1)$ & $\fairgd(0.5, 0.1)$ & \crossgd & $\crossgd(0.1, 0.1)$ & $\crossgd(0.5, 0.1)$ \\
 \hline
-0.1 & 0.997 & 0.991 & -0.249 & 0.282 & 0.987 & 0.987 & 0.987 & 0.984 & 0.996 & 0.996 \\
-0.2 & 0.997 & 0.991 & -0.142 & 0.284 & 0.992 & 0.991 & 0.992 & 0.984 & 0.995 & 0.996 \\
-0.3 & 0.997 & 0.991 & -0.107 & 0.284 & 0.995 & 0.995 & 0.995 & 0.986 & 0.996 & 0.996 \\
-0.4 & 0.997 & 0.991 & -0.074 & 0.284 & 0.995 & 0.995 & 0.995 & 0.986 & 0.996 & 0.996 \\
-0.5 & 0.997 & 0.991 & 0.157  & 0.486 & 0.995 & 0.995 & 0.995 & 0.988 & 0.996 & 0.996 \\
-0.6 & 0.997 & 0.991 & 0.161  & 0.486 & 0.995 & 0.995 & 0.995 & 0.995 & 0.996 & 0.996 \\
-0.7 & 0.997 & 0.991 & 0.186  & 0.486 & 0.995 & 0.995 & 0.995 & 0.995 & 0.996 & 0.996 \\
-0.8 & 0.997 & 0.991 & 0.226  & 0.486 & 0.991 & 0.990 & 0.990 & 0.984 & 0.995 & 0.996 \\
-0.9 & 0.997 & 0.991 & 0.290  & 0.486 & 0.987 & 0.988 & 0.987 & 0.984 & 0.995 & 0.996 \\
+0.1 & \textbf{0.997} & 0.991 & -0.249 & 0.282 & 0.987 & 0.987 & 0.987 & 0.984 & \underline{0.996} & \underline{0.996} \\
+0.2 & \textbf{0.997}& 0.991 & -0.142 & 0.284 & 0.992 & 0.991 & 0.992 & 0.984 & 0.995 & \underline{0.996} \\
+0.3 & \textbf{0.997} & 0.991 & -0.107 & 0.284 & 0.995 & 0.995 & 0.995 & 0.986 & \underline{0.996} & \underline{0.996}\\
+0.4 & \textbf{0.997} & 0.991 & -0.074 & 0.284 & 0.995 & 0.995 & 0.995 & 0.986 & \underline{0.996} & \underline{0.996} \\
+0.5 & \textbf{0.997} & 0.991 & 0.157  & 0.486 & 0.995 & 0.995 & 0.995 & 0.988 & \underline{0.996} & \underline{0.996} \\
+0.6 & \textbf{0.997} & 0.991 & 0.161  & 0.486 & 0.995 & 0.995 & 0.995 & 0.995 & \underline{0.996} & \underline{0.996} \\
+0.7 & \textbf{0.997} & 0.991 & 0.186  & 0.486 & 0.995 & 0.995 & 0.995 & 0.995 & \underline{0.996} & \underline{0.996} \\
+0.8 & \textbf{0.997} & 0.991 & 0.226  & 0.486 & 0.991 & 0.990 & 0.990 & 0.984 & 0.995 & \underline{0.996} \\
+0.9 & \textbf{0.997} & 0.991 & 0.290  & 0.486 & 0.987 & 0.988 & 0.987 & 0.984 & 0.995 & \underline{0.996} \\
 \hline
 \end{tabular}
 \end{small}
@@ -996,52 +1010,27 @@ $\phi$ & \fairwalk & \crosswalk &  \lfpru & \lfprn & \fairgd & $\fairgd(0.1, 0.1
 \begin{table*}[t]
 \centering
 \caption{\label{table:edge_ranking_mind}
-Average Spearman's coefficient between node edge weight rankings on the \mind dataset. Each value in the table has been multiplied by 10 to better highlight the small differences between them.}
+Average Spearman's coefficient $\tilde{\rho}$ between edge weight rankings on the \mind dataset.}
 \vspace{-2mm}
 \begin{small}
 \begin{tabular}{c|cccccccccc}
 \hline
 $\phi$ & \fairwalk & \crosswalk &  \lfpru & \lfprn & \fairgd & $\fairgd(0.1, 0.1)$ & $\fairgd(0.5, 0.1)$ & \crossgd & $\crossgd(0.1, 0.1)$ & $\crossgd(0.5, 0.1)$ \\
 \hline
-0.1 & 9.989 & 9.983 & 3.179 & 8.416 & 9.999 & 9.999 & 9.999 & 9.982 & 9.985 & 9.992 \\
-0.2 & 9.990 & 9.984 & 3.063 & 8.417 & 9.999 & 9.999 & 9.999 & 9.982 & 9.988 & 9.983 \\
-0.3 & 9.988 & 9.983 & 3.062 & 8.417 & 9.999 & 9.999 & 9.999 & 9.982 & 9.988 & 9.983 \\
-0.4 & 9.989 & 9.983 & 2.978 & 8.417 & 9.999 & 9.999 & 9.999 & 9.983 & 9.988 & 9.985 \\
-0.5 & 9.988 & 9.982 & 2.978 & 8.418 & 9.999 & 9.998 & 9.999 & 9.983 & 9.985 & 9.985 \\
-0.6 & 9.988 & 9.983 & 2.978 & 8.418 & 9.999 & 9.996 & 9.997 & 9.983 & 9.985 & 9.981 \\
-0.7 & 9.988 & 9.982 & 2.948 & 8.418 & 9.999 & 9.995 & 9.996 & 9.985 & 9.985 & 9.981 \\
-0.8 & 9.988 & 9.982 & 2.948 & 8.418 & 9.998 & 9.994 & 9.995 & 9.966 & 9.985 & 9.981 \\
-0.9 & 9.988 & 9.983 & 2.938 & 8.418 & 9.996 & 9.993 & 9.993 & 9.957 & 9.985 & 9.981 \\
+0.1 & \underline{0.999} & 0.998 & 0.318 & 0.842 & \textbf{$\approx 1$} & \textbf{$\approx 1$} & \textbf{$\approx 1$} & 0.998 & 0.998 & \underline{0.999} \\
+0.2 & \underline{0.999} & 0.998 & 0.306 & 0.842 & \textbf{$\approx 1$} & \textbf{$\approx 1$} & \textbf{$\approx 1$} & 0.998 & \underline{0.999} & 0.998 \\
+0.3 & \underline{0.999} & 0.998 & 0.306 & 0.842 & \textbf{$\approx 1$} & \textbf{$\approx 1$} & \textbf{$\approx 1$} & 0.998 & \underline{0.999} & 0.998 \\
+0.4 & \underline{0.999} & 0.998 & 0.298 & 0.842 & \textbf{$\approx 1$} & \textbf{$\approx 1$} & \textbf{$\approx 1$} & 0.998 & \underline{0.999} & \underline{0.999} \\
+0.5 & \underline{0.999} & 0.998 & 0.298 & 0.842 & \textbf{$\approx 1$} & \underline{0.999} & \textbf{$\approx 1$} & 0.998 & 0.998 & 0.998 \\
+0.6 & \underline{0.999} & 0.998 & 0.298 & 0.842 & \textbf{$\approx 1$} & \textbf{$\approx 1$} & \underline{0.999} & 0.998 & 0.998 & 0.998 \\
+0.7 & 0.999 & 0.998 & 0.295 & 0.842 & \textbf{$\approx 1$} & \textbf{$\approx 1$} & \underline{0.999} & 0.998 & 0.998 & 0.998 \\
+0.8 & 0.999 & 0.998 & 0.295 & 0.842 & \textbf{$\approx 1$} & \underline{0.999} & \underline{0.999} & 0.997 & 0.998 & 0.998 \\
+0.9 & \underline{0.999} & 0.998 & 0.294 & 0.842 & \textbf{$\approx 1$} & \underline{0.999} & \underline{0.999} & 0.996 & 0.998 & 0.998 \\
 \hline
 \end{tabular}
 \end{small}
 \end{table*}
 
 
-
-\begin{table*}[t]
-\centering
-\caption{The average Spearman's coefficient between node edge weight rankings on the \twitter dataset. Each value in the table has been multiplied by 10 to better highlight the small differences between them.
-}
-\vspace{-2mm}
-\begin{small}
-\begin{tabular}{c|cccccccccc}
-\hline
-$\phi$ & \fairwalk & \crosswalk &  \fairgd & $\fairgd(0.1, 0.1)$ & $\fairgd(0.5, 0.1)$ & \crossgd & $\crossgd(0.1, 0.1)$ & $\crossgd(0.5, 0.1)$ \\
-\hline
-0.1 & 9.9997 & 9.9978 & 9.9974 & 9.9981 & 9.9979 & 9.9974 & 9.9989 & 9.9989 \\
-0.2 & 9.9997 & 9.9978 & 9.9976 & 9.9981 & 9.9980 & 9.9973 & 9.9989 & 9.9989 \\
-0.3 & 9.9997 & 9.9978 & 9.9978 & 9.9981 & 9.9980 & 9.9971 & 9.9989 & 9.9989 \\
-0.4 & 9.9997 & 9.9978 & 9.9986 & 9.9986 & 9.9986 & 9.9971 & 9.9989 & 9.9989 \\
-0.5 & 9.9997 & 9.9978 & 9.9981 & 9.9981 & 9.9982 & 9.9971 & 9.9989 & 9.9988 \\
-0.6 & 9.9997 & 9.9979 & 9.9977 & 9.9981 & 9.9980 & 9.9971 & 9.9989 & 9.9989 \\
-0.7 & 9.9997 & 9.9978 & 9.9976 & 9.9981 & 9.9982 & 9.9975 & 9.9988 & 9.9988 \\
-0.8 & 9.9997 & 9.9978 & 9.9975 & 9.9981 & 9.9983 & 9.9971 & 9.9988 & 9.9988 \\
-0.9 & 9.9997 & 9.9977 & 9.9974 & 9.9981 & 9.9983 & 9.9977 & 9.9989 & 9.9989 \\
-\hline
-\end{tabular}
-\end{small}
-\label{table:edge_ranking_twitter}
-\end{table*}
 
 

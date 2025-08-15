@@ -9,8 +9,10 @@
 \usepackage{cleveref}
 \usepackage{enumitem}
 \usepackage{makecell}
-
+\usepackage{thm-restate}
 %% comments
+\usepackage{fixfoot}
+
 
 \newcommand{\aris}[1]{\noindent\textcolor{orange}{\textbf{[Aris:]}~{#1}}\xspace}
 \newcommand{\haoyun}[1]{\noindent\textcolor{blue}{\textbf{[Haoyun:]}~{#1}}\xspace}
@@ -42,6 +44,9 @@
     {} 
 
 \newcommand{\agtext}[1]{{\color{olive}{#1}}}
+\newcommand{\checkedagtext}[1]{{\color{black}{#1}}}
+
+
 
 
 %% paragraphs
@@ -66,11 +71,14 @@
 \newcommand{\newtransmatrix}{\ensuremath{\hat{\matr{P}}}\xspace}
 \newcommand{\newtransmatrixopt}{\ensuremath{\matr{P}^{*}}\xspace}
 \newcommand{\Amatrix}{\ensuremath{\matr{A}}\xspace}
-\newcommand{\invAmatrix}{\ensuremath{\matr{A}^{-1}}\xspace}
+\newcommand{\invUmatrix}{\ensuremath{\matr{U}^{-1}}\xspace}
 \newcommand{\Ematrix}{\ensuremath{\matr{E}}\xspace}
 \newcommand{\Hmatrix}{\ensuremath{\matr{H}}\xspace}
 \newcommand{\Xmatrix}{\ensuremath{\matr{X}}\xspace}
 \newcommand{\Ymatrix}{\ensuremath{\matr{Y}}\xspace}
+\newcommand{\Cmatrix}{\ensuremath{\matr{C}}\xspace}
+\newcommand{\ubound}{\ensuremath{u}\xspace}
+\newcommand{\lbound}{\ensuremath{\ell}\xspace}
 
 
 \newcommand{\Total}{\ensuremath{\text{Total}}\xspace}
@@ -85,8 +93,8 @@
 \newcommand{\vectt}{\ensuremath{\vect{t}}\xspace}
 
 
-\newcommand{\vectl}{\ensuremath{\boldsymbol{\ell}}\xspace}
-\newcommand{\vectu}{\ensuremath{\boldsymbol{u}}\xspace}
+\newcommand{\vectl}{\ensuremath{\vect{\ell}}\xspace}
+\newcommand{\vectu}{\ensuremath{\vect{u}}\xspace}
 \newcommand{\vectr}{\ensuremath{\vect{r}}\xspace}
 \newcommand{\vectw}{\ensuremath{\vect{w}}\xspace}
 \newcommand{\vectz}{\ensuremath{\vect{z}}\xspace}
@@ -144,10 +152,11 @@
 
 %% algorithms and Baselines
 
-
 \newcommand{\pagerank}{Page\-Rank\xspace}
 \newcommand{\phiPageRank}{\groupDist-\pagerank}
-
+\newcommand{\resphiPageRank}{Restricted \phiPageRank}
+\newcommand{\gaphiPageRank}{Group-adapted \phiPageRank}
+\newcommand{\resgaphiPageRank}{Restricted group-adapted \phiPageRank}
 
 \newcommand{\yapprox}{{\texttt{yApprox}}\xspace}
 \newcommand{\project}{{\texttt{Project}}\xspace}
@@ -158,11 +167,11 @@
 
 \newcommand{\fairgd}{{\texttt{FairGD}}\xspace}
 
-\newcommand{\fairgdrone}{\ensuremath{\fairgd(0.1,0.1)}\xspace}
-\newcommand{\fairgdrtwo}{\ensuremath{\fairgd(0.5,0.1)}\xspace}
+\newcommand{\fairgdrone}{\ensuremath{\fairgd}($0.1$,~$0.1$)\xspace}
+\newcommand{\fairgdrtwo}{\ensuremath{\fairgd}($0.5$,~$0.1$)\xspace}
 \newcommand{\crossgd}{{\texttt{AdaptGD}}\xspace}
-\newcommand{\crossgdrone}{\ensuremath{\crossgd(0.1,0.1)}\xspace}
-\newcommand{\crossgdrtwo}{\ensuremath{\crossgd(0.5,0.1)}\xspace}
+\newcommand{\crossgdrone}{\ensuremath{\crossgd}($0.1$,~$0.1$)\xspace}
+\newcommand{\crossgdrtwo}{\ensuremath{\crossgd}($0.5$,~$0.1$)\xspace}
 
 % \newcommand{\fairwalk}{\textsf{\small FairWalk}\xspace}
 % \newcommand{\crosswalk}{\textsf{\small CrossWalk}\xspace}
@@ -188,3 +197,12 @@
 \newcommand{\twitter}{\textsf{Twitter}\xspace}
 \newcommand{\slashdot}{\textsf{Slashdot}\xspace}
 \newcommand{\mind}{\textsf{MIND}\xspace}
+
+
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+
+
+
+
+\DeclareFixedFootnote{\fnlabels}{The original dataset contains 14 labels. We aggregate vertices with the labels \{lifestyle, food and drink, sports, health\} into group 1, and those with the labels \{entertainment, travel, tv, news, finance, movies, autos, music, weather, video\} into group~2.}
